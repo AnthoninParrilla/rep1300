@@ -10,6 +10,15 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="REP 1300">
 <meta name="theme-color" content="#12171c">
+<script>
+// enregistrement du service worker : rend le simulateur utilisable hors ligne
+// après un premier chargement en ligne (nécessite le fichier sw.js à côté)
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
 <style>
   :root{
     --panel:#12171c;
