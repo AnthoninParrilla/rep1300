@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Synoptique REP 1300 MWe — Palier P4 · bêta 0.9</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · bêta 0.98</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -165,6 +165,19 @@ if('serviceWorker' in navigator){
   .anim .fdash{animation:dashmove 1.2s linear infinite}
   @keyframes dashmove{to{stroke-dashoffset:-18}}
   @media (prefers-reduced-motion:reduce){.anim .fdash{animation:none}}
+#boomFx{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:0;
+  background:radial-gradient(circle at 42% 38%,#fff 0%,#ffd27a 22%,#ff8c3b 45%,#e6483d 65%,transparent 82%);}
+#boomFx.go{animation:boomFlash 2.4s ease-out;}
+@keyframes boomFlash{0%{opacity:0}4%{opacity:1}18%{opacity:.95}45%{opacity:.55}100%{opacity:0}}
+body.shake{animation:quake .9s linear;}
+@keyframes quake{
+  0%,100%{transform:translate(0,0)}10%{transform:translate(-7px,4px)}20%{transform:translate(8px,-5px)}
+  30%{transform:translate(-6px,-6px)}40%{transform:translate(7px,5px)}50%{transform:translate(-8px,2px)}
+  60%{transform:translate(6px,-4px)}70%{transform:translate(-4px,5px)}80%{transform:translate(5px,-2px)}
+  90%{transform:translate(-3px,1px)}}
+#iBoom{background:#3a1010;border-color:#ff5548;color:#ff8c7a;font-weight:700;letter-spacing:1px;
+  animation:boomPulse 1.6s ease-in-out infinite;}
+@keyframes boomPulse{0%,100%{box-shadow:0 0 0 0 rgba(230,72,61,.0)}50%{box-shadow:0 0 14px 2px rgba(230,72,61,.55)}}
 </style>
 </head>
 <body>
@@ -173,7 +186,7 @@ if('serviceWorker' in navigator){
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">bêta 0.9 · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">bêta 0.98 · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -545,6 +558,7 @@ if('serviceWorker' in navigator){
         <div class="al" id="aLls">LLS en service</div>
         <div class="al" id="aCrf">Perte CRF</div>
         <div class="al" id="aSec">Perte SEC/RRI</div>
+        <div class="al" id="aRra">Perte RRA</div>
         <div class="al" id="aActP">Activité primaire</div>
         <div class="al" id="aActV">Activité vapeur</div>
         <div class="al" id="aActE">Activité enceinte</div>
@@ -668,12 +682,14 @@ if('serviceWorker' in navigator){
       <h2>Eau alimentaire de secours — ASG</h2>
       <div class="row">
         <label>Motopompe (élec.)</label>
-        <button class="sw" id="bMps">MPS</button>
+        <button class="sw" id="bMpsA">MPS A</button>
+        <button class="sw" id="bMpsB">MPS B</button>
         <span class="val" id="mpsVal">arrêt</span>
       </div>
       <div class="row">
         <label>Turbopompe (vapeur GV)</label>
-        <button class="sw" id="bTps">TPS</button>
+        <button class="sw" id="bTpsA">TPS A</button>
+        <button class="sw" id="bTpsB">TPS B</button>
         <span class="val" id="tpsVal">arrêt</span>
       </div>
       <div class="row"><span class="note" id="asgNote">Chaque pompe ≈ 5 % du débit nominal — dimensionnée pour la puissance résiduelle. Démarrage automatique sur niveau GV très bas.</span></div>
@@ -788,6 +804,12 @@ if('serviceWorker' in navigator){
     <div class="card">
       <h2>Incidents</h2>
       <div class="row">
+        <button class="inc" id="iReset" style="border-color:#4fc57a;color:#4fc57a">⟲ RÉINITIALISER LA SIMULATION</button>
+      </div>
+      <div class="row">
+        <button class="inc" id="iBoom">☢ TOUT FAIRE PÉTER (démo)</button>
+      </div>
+      <div class="row">
         <button class="inc" id="iTrip">Déclenchement turbine</button>
         <button class="inc" id="iGmpp">Perte GMPP</button>
       </div>
@@ -811,6 +833,10 @@ if('serviceWorker' in navigator){
       <div class="row">
         <button class="inc" id="iGaine">Rupture de gaine</button>
         <button class="inc" id="iFtgv">Fuite tube GV</button>
+      </div>
+      <div class="row">
+        <button class="inc" id="iRra">Perte RRA</button>
+        <button class="inc" id="iRtgv">RTGV franche</button>
       </div>
     </div>
 
@@ -837,6 +863,7 @@ if('serviceWorker' in navigator){
     <pre id="recTxt" class="log" style="max-height:52vh;font-size:11px"></pre>
   </div>
 </div>
+<div id="boomFx"></div>
 <div id="coreModal" style="display:none;position:fixed;inset:0;background:rgba(4,7,9,.85);z-index:50;padding:12px;overflow:auto">
   <div class="card" style="max-width:560px;margin:3vh auto">
     <h2 style="display:flex;align-items:center;gap:8px">Carte du cœur — 193 assemblages
@@ -894,7 +921,8 @@ if('serviceWorker' in navigator){
     dmg:0, h2:0, encFail:false, h2boom:false,
     gctMode:'auto', gctM:0, gctaMode:'auto', gctaM:0,
     pzrAuto:true, heatM:false, sprayM:false, sebimM:false,
-    lvlCuve:100
+    lvlCuve:100, rraF:false,
+    mpsA:false, mpsB:false, tpsA:false, tpsB:false
   };
 
   // ---- source froide : présélections par type de site (T eau brute / eau froide tour) ----
@@ -919,7 +947,7 @@ if('serviceWorker' in navigator){
   };
   var PRESET={
     RP:   {Pn:1.0,   Tavg:310,Ppzr:155,pzrSet:155,Psteam:71,gv:50,turb:100,rod:95,gmpp:true, rra:false},
-    ANGV: {Pn:0.0002,Tavg:297,Ppzr:155,pzrSet:155,Psteam:81,gv:50,turb:0,  rod:0, Cb:200, gmpp:true, rra:false},
+    ANGV: {Pn:0.0002,Tavg:297,Ppzr:155,pzrSet:155,Psteam:81,gv:50,turb:0,  rod:0, Cb:200, gmpp:true, rra:false, asgOn:true},
     ANRRA:{Pn:0.0002,Tavg:120,Ppzr:25, pzrSet:25, turb:0,  rod:0, Cb:500, gmpp:true, rra:true},
     APIF: {Pn:0.0002,Tavg:60, Ppzr:3,  pzrSet:3,  turb:0,  rod:0, Cb:800, gmpp:false,rra:true},
     APIO: {Pn:0.0002,Tavg:50, Ppzr:1,  pzrSet:1,  turb:0,  rod:0, Cb:1000,gmpp:false,rra:true},
@@ -927,6 +955,8 @@ if('serviceWorker' in navigator){
     RCD:  {Pn:0,Pres:0,Tavg:30,Ppzr:1, pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true}
   };
   function isHot(){return S.etat==='RP'||S.etat==='ANGV';}
+  // demi-écart branches chaude/froide : ΔT triplé en thermosiphon (débit effondré)
+  function dTgm(){return 14*S.Ptot*(S.gmpp?1:3);}
 
   // ---- journal des événements (horodatage en temps simulé) ----
   var logBox=el('log');
@@ -945,8 +975,8 @@ if('serviceWorker' in navigator){
 
   // ---- enregistreur capteurs (pas 0,5 s simulé, stockage sur changement) ----
   var REC_CH=[
-    {id:'thot', lbl:'T branche chaude', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg+14*S.Ptot;}},
-    {id:'tcold',lbl:'T branche froide', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg-14*S.Ptot;}},
+    {id:'thot', lbl:'T branche chaude', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg+dTgm();}},
+    {id:'tcold',lbl:'T branche froide', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg-dTgm();}},
     {id:'ppzr', lbl:'P pressuriseur',   u:'bar', d:1, eps:0.3, get:function(){return S.Ppzr;}},
     {id:'pgv',  lbl:'P vapeur GV',      u:'bar', d:1, eps:0.3, get:function(){return S.Psteam;}},
     {id:'ngv',  lbl:'Niveau GV',        u:'%',   d:1, eps:0.5, get:function(){return S.gv;}},
@@ -1058,7 +1088,7 @@ if('serviceWorker' in navigator){
     var nG=Math.round(S.gaine*60), nM=Math.round(S.dmg*193);
     var rankHot=asmByHot.indexOf(a);
     var fondu=rankHot<nM, rompu=fondu||rankHot<nG;
-    var Tc=(S.Tavg-14*S.Ptot)+30*S.Ptot*a.f*2+(fondu?900:0)+(rompu&&!fondu?40:0);
+    var Tc=(S.Tavg-dTgm())+30*S.Ptot*a.f*2+(fondu?900:0)+(rompu&&!fondu?40:0);
     if(S.etat==='RCD')Tc=0;
     var pf=a.bu*(1+a.f*0.2);
     return {T:Tc,P:S.Pn*100*a.f,B:a.bu,F:pf,rompu:rompu,fondu:fondu};
@@ -1131,7 +1161,11 @@ if('serviceWorker' in navigator){
     }
     S.etat=e;
     S.scram=false;S.tripMsg="";S.note="";
-    S.areAvail=true;S.asgLatch=false;S.mps=false;S.tps=false;
+    S.areAvail=true;S.asgLatch=false;
+    // AN/GV : l'ASG (motopompe) est le moyen d'alimentation en service — l'eau
+    // part en vapeur au GCTa quand le poste d'eau (condenseur/ARE) est indisponible
+    S.mpsA=!!p.asgOn;S.mpsB=!!p.asgOn;S.tpsA=false;S.tpsB=false;
+    if(p.asgOn)log('Configuration ASG : motopompes MPS voies A et B en service — alimentation normale des GV au palier, turbopompes TPS disponibles sur vapeur','cyan');
     S.breche=0;S.inv=100;S.accu=100;S.Penc=1;S.sebim=false;
     S.ishp=false;S.isbp=false;S.eas=false;S.sigIS=false;S.easLatch=false;S.isoEnc=false;S.isBlk=false;
     S.gctSet=74;S.gctTgt=74;el('gctSp').value=74;
@@ -1140,12 +1174,17 @@ if('serviceWorker' in navigator){
     S.crf=true;S.sec=true;S.PcondX=0;S.fuiteGV=0;
     S.actGV=0.001;S.actCvi=0.001;S.actEnc=0.005;
     S.h2=0;S.h2boom=false;S.encFail=false;
-    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';
+    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';S.rraF=false;el('iRra').textContent='Perte RRA';
     if(e==='APR'||e==='RCD'){
       if(S.gaine>0.001||S.dmg>0.001)log('Rechargement : assemblages défaillants déchargés — gaines saines','dim');
       S.gaine=0;S.dmg=0;S.actP=0.02;
     }
     el('iCrf').textContent='Perte CRF';el('iSec').textContent='Perte SEC';
+    el('iApr').textContent='Brèche primaire (APRP)';el('iGmpp').textContent='Perte GMPP';
+    el('iTrip').textContent='Déclenchement turbine';el('iAre').textContent='Perte eau alimentaire normale (ARE)';
+    el('iFtgv').textContent='Fuite tube GV';el('iRtgv').textContent='RTGV franche';
+    el('iH3').textContent='Défaillance diesels (H3)';
+    if(S.gaine<=0.001)el('iGaine').textContent='Rupture de gaine';
     el('iLoop').textContent='Perte source extérieure';
     el('turb').value=S.turb;el('rod').value=S.rod;
     log('OPÉRATEUR : passage à l\u2019état '+ETAT_LBL[e],'cyan');
@@ -1272,19 +1311,23 @@ if('serviceWorker' in navigator){
       // Capacité pleine > ~37 bar, arrêt < ~12 bar. Régulation de vitesse propre
       // (maintien du ΔP aux vannes réglantes) : la vitesse suit la demande.
       var tpaCap=clamp((S.Psteam-12)/25,0,1);
-      S.tpaRun=S.areAvail&&tpaCap>0&&!dry;
+      // la TPA échappe au condenseur : sans vide, pas de TPA — et son barillet est en aval des VIV
+      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv;
       // ARE : régulation trois éléments ou manuel — bornée par la capacité TPA
       var areReg=S.areAvail
-        ?(S.areAuto?clamp(S.Ptot*100+(50-S.gv)*2,0,100):S.areM)
+        ?(S.areAuto?clamp(S.Ptot*100+(50-S.gv)*2,0,110):S.areM)
         :0;
       S.areOut=Math.min(areReg,S.tpaRun?115*tpaCap:0);
       var tpaTgt=S.tpaRun?clamp(22+0.8*S.areOut,0,100)*tpaCap:0;
       S.tpaN+=(tpaTgt-S.tpaN)*(1-Math.exp(-dt/5));
 
       // ASG : la TPS a besoin de vapeur GV (> 8 bar), la MPS d'électricité
+      S.mps=S.mpsA||S.mpsB; S.tps=S.tpsA||S.tpsB;
       var tpsOk=S.tps&&S.Psteam>8;
       S.tpsOk=tpsOk;
-      S.asg=(S.mps&&elecOk?0.05:0)+(tpsOk?0.05:0);
+      // 4 pompes ASG (2 voies) : 2,5 % chacune — motopompes sur électricité, turbopompes sur vapeur.
+      S.asg=(((S.mpsA?0.025:0)+(S.mpsB?0.025:0))*(elecOk?1:0)
+            +((S.tpsA?0.025:0)+(S.tpsB?0.025:0))*(S.Psteam>8?1:0))*clamp((62-S.gv)/8,0,1);
 
       // niveau GV : (eau alimentaire ARE + ASG) − évaporation (∝ P totale)
       S.gv+=((S.areOut/100)+S.asg-S.Ptot)*4*dt;
@@ -1319,7 +1362,11 @@ if('serviceWorker' in navigator){
       S.inj=inj;
       // inventaire primaire — ébullition par la résiduelle si primaire dépressurisé
       var boil=(S.Ppzr<45&&(S.breche>0||S.sebim))?S.Pres*0.6:0;
-      S.inv=clamp(S.inv+(inj-fB-fS-boil)*dt,0,100);
+      var fG=S.fuiteGV>=3?0.06*clamp((S.Ppzr-S.Psteam)/140,0,1):0;
+      if(fG>0)S.gv=Math.min(100,S.gv+fG*3*dt);
+      // appoint RCV/REA : refait lentement l'inventaire quand plus rien ne fuit
+      var app=(S.breche===0&&S.fuiteGV<3&&!S.sebim&&S.inv<100)?0.02:0;
+      S.inv=clamp(S.inv+(inj+app-fB-fS-boil-fG)*dt,0,100);
       // effet pression : décharge/brèche dépressurisent, l'injection soutient
       S.Ppzr+=(-(fB*8+fS*6)+inj*4)*dt;
       S.Ppzr=clamp(S.Ppzr,Math.max(1,S.Penc),190);
@@ -1354,7 +1401,7 @@ if('serviceWorker' in navigator){
       var dtc=dt*S.accel;
       // bilan chauffage résiduel / refroidissement RRA — la source froide du RRA
       // est le RRI, refroidi par SEC : perte SEC = perte du refroidissement RRA
-      S.Tavg+=((S.Pres*3800/2500)-((S.rra&&S.sec)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc;
+      S.Tavg+=((S.Pres*3800/2500)-((S.rra&&S.sec&&!S.rraF)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc;
       S.relEnc=0;
       S.Tavg=clamp(S.Tavg,15,350);
       // GV à l'arrêt : pression = saturation à Tmoy
@@ -1370,7 +1417,7 @@ if('serviceWorker' in navigator){
 
     // électrique — rendement fonction du vide condenseur (source froide, saison)
     var eta=clamp(1+(0.055-S.Pcond)*0.9,0.88,1.04);
-    var pet=(S.turb/100)*1300*Math.min(1.2,S.Psteam/71)*eta;
+    var pet=(S.turb/100)*1300*Math.min(1.2,S.Psteam/71)*eta*(S.viv?1:0);
     S.Pelec+=(pet-S.Pelec)*(1-Math.exp(-dt/4));
     if(S.turb<1) S.Pelec=Math.max(0,S.Pelec*(1-dt*0.8));
 
@@ -1479,14 +1526,14 @@ if('serviceWorker' in navigator){
     if(S.gv<12&&!S.asgLatch){
       if(S.inhASG){logInhib('asg','démarrage automatique ASG (niveau GV très bas)');}
       else{
-        S.mps=true;S.tps=true;S.asgLatch=true;
+        S.mpsA=true;S.mpsB=true;S.tpsA=true;S.tpsB=true;S.asgLatch=true;
         S.note="Démarrage automatique de l'ASG sur niveau GV très bas.";
         log('AUTO : démarrage ASG (MPS + TPS) sur niveau GV très bas','amber');
       }
     }
     if(S.gv>35){S.asgLatch=false;if(S.note&&S.note.indexOf('ASG')>=0)S.note="";}
     if(S.scram) return;
-    var Thot=S.Tavg+14*S.Ptot;
+    var Thot=S.Tavg+dTgm();
     if(S.Pn>1.15) scramReq("AU automatique : surpuissance neutronique (> 115 % PN).");
     else if(Thot>335) scramReq("AU automatique : température branche chaude excessive.");
     else if(S.gv<8) scramReq(S.areAvail
@@ -1557,14 +1604,16 @@ if('serviceWorker' in navigator){
   gctSp.addEventListener('input',function(){S.gctTgt=+gctSp.value;});
   gctSp.addEventListener('change',function(){log('OPÉRATEUR : consigne pression GCT '+(+gctSp.value).toFixed(1)+' bar (rampe en cours)','cyan');});
 
-  el('bMps').onclick=function(){
-    S.mps=!S.mps;
-    log('OPÉRATEUR : motopompe ASG '+(S.mps?'en service':'à l\u2019arrêt'),'cyan');
-  };
-  el('bTps').onclick=function(){
-    S.tps=!S.tps;
-    log('OPÉRATEUR : turbopompe ASG '+(S.tps?'demandée':'à l\u2019arrêt'),'cyan');
-  };
+  function bindAsg(id,key,lbl,verb){
+    el(id).onclick=function(){
+      S[key]=!S[key];
+      log('OPÉRATEUR : '+lbl+' '+(S[key]?verb:'à l\u2019arrêt'),'cyan');
+    };
+  }
+  bindAsg('bMpsA','mpsA','motopompe ASG voie A','en service');
+  bindAsg('bMpsB','mpsB','motopompe ASG voie B','en service');
+  bindAsg('bTpsA','tpsA','turbopompe ASG voie A','demandée');
+  bindAsg('bTpsB','tpsB','turbopompe ASG voie B','demandée');
 
   function bindHold(btn,key,lbl){
     var on=function(e){e.preventDefault();if(!S[key])log('OPÉRATEUR : '+lbl+' engagée','cyan');S[key]=true;};
@@ -1577,17 +1626,66 @@ if('serviceWorker' in navigator){
   bindHold(el('bBori'),'bori','borication RCV');
   bindHold(el('bDilu'),'dilu','dilution RCV');
 
+  el('iReset').onclick=function(){location.reload();};
+  el('iBoom').onclick=function(){
+    log('☢ SÉQUENCE DÉMONSTRATION — toutes les protections inhibées, cumul d\u2019initiateurs. Ne pas reproduire sur une vraie tranche.','red');
+    S.aarInhib=true;S.inhIsoE=true;S.inhIsoV=true;S.inhIS=true;S.inhEAS=true;S.inhASG=true;S.inhKrt=true;
+    S.breche=1;S.gaine=0.3;el('iApr').textContent='Isoler la brèche';
+    var fx=el('boomFx');
+    // t+1,2 s : effondrement primaire, fusion amorcée — les capteurs plongent
+    setTimeout(function(){
+      S.dmg=Math.max(S.dmg,0.6);S.h2=9.4;S.actP=20;
+      S.inv=48;S.Ppzr=60;
+      log('Fusion du cœur en cours — dépressurisation primaire, hydrogène en accumulation rapide','red');
+    },1200);
+    // t+2,6 s : DÉFLAGRATION — turbine, VIV et GMPP détruites, GV vidés, plus un MWe
+    setTimeout(function(){
+      fx.classList.remove('go');void fx.offsetWidth;fx.classList.add('go');
+      document.body.classList.add('shake');
+      setTimeout(function(){document.body.classList.remove('shake');},950);
+      S.turb=0;el('turb').value=0;S.Pelec=0;
+      S.viv=false;S.gmpp=false;S.gmppTimer=-1;
+      S.gv=12;S.Psteam=28;S.Ppzr=25;S.inv=25;
+      S.Penc=4.2;S.h2=12; // la déflagration porte l'enceinte au-delà de la rupture
+      log('DÉFLAGRATION — salle des machines et lignes vapeur dévastées, perte totale de la production','red');
+    },2600);
+    // t+3,8 s : découvrement complet, ruine de la tranche
+    setTimeout(function(){
+      S.inv=12;S.dmg=1;S.gaine=1;
+      log('Découvrement complet du cœur — la tranche est perdue. Réinitialiser pour rejouer.','red');
+    },3800);
+  };
   el('iTrip').onclick=function(){
-    log('INCIDENT injecté : déclenchement turbine','amber');
-    S.turb=0;turb.value=0;
+    if(S.turb>1){
+      log('INCIDENT injecté : déclenchement turbine','amber');
+      S.turb=0;turb.value=0;
+      el('iTrip').textContent='Recoupler turbine';
+    }else{
+      S.turb=100;turb.value=100;
+      el('iTrip').textContent='Déclenchement turbine';
+      log('OPÉRATEUR : turbine recouplée — vannes d\u2019admission rouvertes','cyan');
+    }
   };
   el('iGmpp').onclick=function(){
-    if(!S.gmpp)return;
-    log('INCIDENT injecté : perte des GMPP','amber');
-    S.gmpp=false;S.gmppTimer=30;
+    if(S.gmpp){
+      log('INCIDENT injecté : perte des GMPP — passage en thermosiphon (ΔT primaire élargi)','amber');
+      S.gmpp=false;S.gmppTimer=30;
+      el('iGmpp').textContent='Relancer GMPP';
+      if(isHot()&&S.Pn>0.05)scramReq('AU automatique : baisse de vitesse GMPP (RPR).');
+    }else{
+      S.gmpp=true;S.gmppTimer=-1;
+      el('iGmpp').textContent='Perte GMPP';
+      log('OPÉRATEUR : GMPP relancées — circulation forcée rétablie','cyan');
+    }
   };
   el('iAre').onclick=function(){
-    if(!S.areAvail)return;
+    if(!S.areAvail){
+      S.areAvail=true;
+      el('iAre').textContent='Perte eau alimentaire normale (ARE)';
+      log('OPÉRATEUR : ARE rétablie','cyan');
+      return;
+    }
+    el('iAre').textContent='Rétablir ARE';
     log('INCIDENT injecté : perte de l\u2019eau alimentaire normale (ARE)','amber');
     S.areAvail=false;
   };
@@ -1602,9 +1700,15 @@ if('serviceWorker' in navigator){
     }
   };
   el('iApr').onclick=function(){
-    if(S.breche>0)return;
-    S.breche=1;
-    log('INCIDENT injecté : BRÈCHE PRIMAIRE (APRP) — perte de réfrigérant vers l\u2019enceinte','red');
+    if(S.breche>0){
+      S.breche=0;
+      el('iApr').textContent='Brèche primaire (APRP)';
+      log('OPÉRATEUR : brèche primaire isolée — l\u2019appoint RCV/REA refait l\u2019inventaire','cyan');
+    }else{
+      S.breche=1;
+      el('iApr').textContent='Isoler la brèche';
+      log('INCIDENT injecté : BRÈCHE PRIMAIRE (APRP) — perte de réfrigérant vers l\u2019enceinte','red');
+    }
   };
   el('iLoop').onclick=function(){
     if(S.reseau){
@@ -1639,19 +1743,56 @@ if('serviceWorker' in navigator){
              :'INCIDENT injecté : PERTE SEC — perte du RRI : RRA et refroidissement des sauvegardes indisponibles','red');
   };
   el('iGaine').onclick=function(){
+    if(S.gaine>0&&S.dmg<0.01){
+      S.gaine=0;S.actP=0.02;
+      el('iGaine').textContent='Rupture de gaine';
+      log('MAINTENANCE : assemblages défaillants remplacés — activité primaire en décroissance (hypothèse simulateur)','cyan');
+      return;
+    }
+    el('iGaine').textContent='Réparer gaines';
     S.gaine=Math.min(0.3,S.gaine+0.03);
     log('INCIDENT injecté : RUPTURE DE GAINE — relâchement de produits de fission au primaire (KRT RCV). ~'+Math.round(S.gaine*193/3*3)+' crayons affectés, assemblages marqués sur la carte du cœur.','red');
   };
   el('iFtgv').onclick=function(){
-    if(S.fuiteGV>0)return;
+    if(S.fuiteGV>0){
+      S.fuiteGV=0;
+      el('iFtgv').textContent='Fuite tube GV';el('iRtgv').textContent='RTGV franche';
+      log('MAINTENANCE : tube GV bouchonné — fin du transfert primaire/secondaire','cyan');
+      return;
+    }
+    el('iFtgv').textContent='Colmater fuite GV';
     S.fuiteGV=1;
     log('INCIDENT injecté : FUITE TUBE GV — transfert primaire → secondaire, surveiller KRT VVP et CVI. Isolement VVP automatique sur très haute activité.','red');
   };
+  el('iRra').onclick=function(){
+    S.rraF=!S.rraF;
+    el('iRra').textContent=S.rraF?'Rétablir RRA':'Perte RRA';
+    log(S.rraF?'INCIDENT injecté : PERTE RRA — plus de refroidissement à l\u2019arrêt, la résiduelle réchauffe le primaire'
+              :'OPÉRATEUR : RRA rétabli','red');
+  };
+  el('iRtgv').onclick=function(){
+    if(S.fuiteGV>=3){
+      S.fuiteGV=0;
+      el('iRtgv').textContent='RTGV franche';el('iFtgv').textContent='Fuite tube GV';
+      log('MAINTENANCE : tube rompu bouchonné — fin du transfert primaire/secondaire','cyan');
+      return;
+    }
+    el('iRtgv').textContent='Bouchonner le tube';
+    S.fuiteGV=6;
+    log('INCIDENT injecté : RTGV — RUPTURE FRANCHE D\u2019UN TUBE GV. Transfert primaire → secondaire massif. Conduite : isoler le GV affecté (VIV) et ramener P primaire sous P vapeur pour annuler la fuite.','red');
+  };
   el('iH3').onclick=function(){
+    if(S.h3){
+      S.h3=false;S.lls=false;S.diesel=true;
+      el('iH3').textContent='Défaillance diesels (H3)';
+      log('OPÉRATEUR : diesels LHP/LHQ réparés et recouplés — sortie de situation H3, LLS à l\u2019arrêt','cyan');
+      return;
+    }
     if(!S.diesel){
       log('Incident H3 sans objet : les diesels LHP/LHQ ne sont pas sollicités','dim');
       return;
     }
+    el('iH3').textContent='Réparer diesels';
     S.diesel=false;S.h3=true;S.lls=true;
     S.eas=false;S.ishp=false;S.isbp=false;
     log('INCIDENT injecté : DÉFAILLANCE DES DIESELS LHP/LHQ — perte totale des sources électriques (situation H3). Démarrage du turbo-alternateur d\u2019ultime secours LLS : instrumentation et joints GMPP alimentés. Moyens restants : ASG turbopompe (TPS, vapeur GV) et GCTa. MPS, RIS et EAS non alimentés.','red');
@@ -1844,7 +1985,7 @@ if('serviceWorker' in navigator){
     aGmpp:'Perte GMPP',aXe:'Antiréactivité xénon élevée',
     aPenc:'Pression enceinte haute',
     aDecouv:'Découvrement du cœur',aIso:'Isolement enceinte',
-    aCrf:'Perte CRF',aSec:'Perte SEC / RRI',
+    aCrf:'Perte CRF',aSec:'Perte SEC / RRI',aRra:'Perte RRA',
     aActP:'Activité primaire (KRT RCV)',aActV:'Activité vapeur (KRT VVP)',
     aActE:'Activité enceinte (KRT EBA)',aDmg:'Endommagement du cœur',
     aH2:'Concentration H2 enceinte'
@@ -1879,7 +2020,7 @@ if('serviceWorker' in navigator){
   }
 
   function render(){
-    var Thot=S.Tavg+14*S.Ptot;
+    var Thot=S.Tavg+dTgm();
     var dry=S.gv<=1;
     var hot=isHot();
 
@@ -1952,7 +2093,7 @@ if('serviceWorker' in navigator){
 
     // instrumentation
     el('sThot').textContent=fmt(Thot)+' °C';
-    el('sTcold').textContent=fmt(S.Tavg-14*S.Ptot)+' °C';
+    el('sTcold').textContent=fmt(S.Tavg-dTgm())+' °C';
     el('sPgv').textContent=fmt(S.Psteam)+' bar';
     el('sTvap').textContent=fmt(tsat(S.Psteam),0)+' °C';
     el('sPadm').textContent=fmt(S.Padm)+' bar';
@@ -2040,11 +2181,18 @@ if('serviceWorker' in navigator){
     el('turbVal').textContent=Math.round(S.turb)+' %';
     el('areVal').textContent=S.areAvail?((S.areAuto?'Auto · ':'')+Math.round(S.areOut)+' %'):'indispo.';
     if(S.areAuto) are.value=Math.round(S.areOut);
-    el('bMps').classList.toggle('on',S.mps);
-    el('bTps').classList.toggle('on',S.tpsOk);
-    el('bTps').classList.toggle('warn',S.tps&&!S.tpsOk);
-    el('mpsVal').textContent=S.mps?((S.reseau||S.diesel)?'5 %':'NON ALIMENTÉE'):'arrêt';
-    el('tpsVal').textContent=S.tpsOk?'5 %':(S.tps?'P vap < 8 b':'arrêt');
+    var eOk=S.reseau||S.diesel;
+    el('bMpsA').classList.toggle('on',S.mpsA&&eOk);
+    el('bMpsB').classList.toggle('on',S.mpsB&&eOk);
+    el('bMpsA').classList.toggle('warn',S.mpsA&&!eOk);
+    el('bMpsB').classList.toggle('warn',S.mpsB&&!eOk);
+    el('bTpsA').classList.toggle('on',S.tpsA&&S.tpsOk);
+    el('bTpsB').classList.toggle('on',S.tpsB&&S.tpsOk);
+    el('bTpsA').classList.toggle('warn',S.tpsA&&!S.tpsOk);
+    el('bTpsB').classList.toggle('warn',S.tpsB&&!S.tpsOk);
+    var nM=(S.mpsA?1:0)+(S.mpsB?1:0), nT=(S.tpsA?1:0)+(S.tpsB?1:0);
+    el('mpsVal').textContent=nM?(eOk?(nM*2.5).toFixed(1)+' %':'NON ALIMENTÉES'):'arrêt';
+    el('tpsVal').textContent=nT?(S.Psteam>8?(nT*2.5).toFixed(1)+' %':'P vap < 8 b'):'arrêt';
     el('gctSpVal').textContent=Math.abs(S.gctSet-S.gctTgt)>0.05
       ?S.gctSet.toFixed(1)+' → '+S.gctTgt.toFixed(1)+' bar'
       :S.gctSet.toFixed(1)+' bar';
@@ -2060,7 +2208,7 @@ if('serviceWorker' in navigator){
     el('pPe').textContent=Math.round(S.Pelec)+' MWe';
     el('pTavg').textContent=fmt(S.Tavg)+' °C';
     el('pThot').textContent=fmt(Thot)+' °C';
-    el('pTcold').textContent=fmt(S.Tavg-14*S.Ptot)+' °C';
+    el('pTcold').textContent=fmt(S.Tavg-dTgm())+' °C';
     el('pPzr').textContent=fmt(S.Ppzr)+' bar';
     el('pPvap').textContent=fmt(S.Psteam)+' bar';
     el('pGv').textContent=fmt(S.gv)+' %';
@@ -2144,6 +2292,7 @@ if('serviceWorker' in navigator){
     setAl('aLls',S.lls?'amber':'');
     setAl('aCrf',!S.crf?'red':'');
     setAl('aSec',!S.sec?'red':'');
+    setAl('aRra',(S.rraF&&!hot)?'red':'');
     setAl('aActP',S.actP>1?'red':S.actP>0.2?'amber':'');
     setAl('aActV',S.actGV>1?'red':S.actGV>0.2?'amber':'');
     setAl('aActE',S.actEnc>1?'red':S.actEnc>0.2?'amber':'');
@@ -2193,6 +2342,9 @@ if('serviceWorker' in navigator){
       msg.textContent="GCT-condenseur indisponible ou saturé : décharge vapeur à l'atmosphère par le GCTa (consigne plus haute, capacité réduite).";
     }else if(!S.crf&&hot){
       msg.textContent="Perte CRF : plus d'évacuation au condenseur, le vide s'effondre ("+Math.round(S.Pcond*1000)+" mbar). Déclenchement turbine sur vide dégradé, puis GCT-c indisponible — repli sur GCTa.";
+    }else if(S.rraF&&!hot&&S.Tavg<100){
+      var tEbu=(100-S.Tavg)/Math.max(1e-6,S.Pres*3800/2500);
+      msg.textContent="Perte RRA : la résiduelle ("+Math.round(S.Pres*3800)+" MWth) réchauffe le primaire sans évacuation. Ébullition dans ~"+Math.round(tEbu/60)+" min"+(S.etat==='APIO'||S.etat==='APR'?" — PRIMAIRE OUVERT, danger en piscine.":".")+" Rétablir le RRA ou un appoint.";
     }else if(!S.sec){
       msg.textContent="Perte SEC : le RRI n'est plus refroidi — RRA indisponible (réchauffement en états froids) et refroidissement des sauvegardes dégradé.";
     }else if(S.fuiteGV>0&&hot){
