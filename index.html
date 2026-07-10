@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Synoptique REP 1300 MWe — Palier P4 · bêta 0.98</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · bêta 0.99</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -186,7 +186,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">bêta 0.98 · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">bêta 0.99 · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1004,7 +1004,7 @@ body.shake{animation:quake .9s linear;}
       if(lv===undefined||Math.abs(v-lv)>c.eps||S.t-recLastT[c.id]>=180){
         var a=recData[c.id];
         a.push([S.t,v]);
-        if(a.length>6000)a.shift();
+        if(a.length>6000)a.splice(0,1500); // purge amortie, borne mémoire stricte
         recLastV[c.id]=v;recLastT[c.id]=S.t;
       }
     });
@@ -1027,9 +1027,12 @@ body.shake{animation:quake .9s linear;}
   function recRender(){
     var chs=REC_CH.filter(function(c){return recSelSet[c.id];});
     if(!chs.length){el('recTxt').textContent='(sélectionner au moins un capteur)';el('recCount').textContent='0 pts';return;}
-    // base de temps : union des horodatages des voies sélectionnées (400 derniers)
+    // base de temps : union des horodatages sur une fenêtre glissante
+    // (601 derniers points par voie — le rendu affiche au plus 400 lignes)
+    var win={};
+    chs.forEach(function(c){win[c.id]=recData[c.id].slice(-601);});
     var tset={};
-    chs.forEach(function(c){recData[c.id].forEach(function(p){tset[p[0].toFixed(1)]=+p[0].toFixed(1);});});
+    chs.forEach(function(c){win[c.id].forEach(function(p){tset[p[0].toFixed(1)]=+p[0].toFixed(1);});});
     var times=Object.keys(tset).map(Number).sort(function(a,b){return a-b;});
     var start=Math.max(0,times.length-400);
     el('recCount').textContent=times.length+' pts';
@@ -1042,17 +1045,20 @@ body.shake{animation:quake .9s linear;}
     for(var i=0;i<times.length;i++){
       var t=times[i], row=tfmt(t)+'  ';
       for(var k=0;k<chs.length;k++){
-        var a=recData[chs[k].id];
+        var a=win[chs[k].id];
         while(ptr[k]+1<a.length&&a[ptr[k]+1][0]<=t+1e-6)ptr[k]++;
         var v=(a.length&&a[ptr[k]][0]<=t+1e-6)?a[ptr[k]][1].toFixed(chs[k].d):'—';
         row+=pad(v,15);
       }
       if(i>=start)lines.push(row);
     }
-    el('recTxt').textContent=lines.join('\n');
-    el('recTxt').scrollTop=el('recTxt').scrollHeight;
+    var box=el('recTxt');
+    // autoscroll seulement si l'utilisateur suivait déjà le bas du tableau
+    var atBottom=(box.scrollHeight-box.scrollTop-(box.clientHeight||0))<48;
+    box.textContent=lines.join('\n');
+    if(atBottom)box.scrollTop=box.scrollHeight;
   }
-  el('recOpen').onclick=function(){el('recModal').style.display='block';recRender();};
+  el('recOpen').onclick=function(){el('recModal').style.display='block';recRender();el('recTxt').scrollTop=el('recTxt').scrollHeight;};
   el('recClose').onclick=function(){el('recModal').style.display='none';};
   el('recClear').onclick=function(){
     REC_CH.forEach(function(c){recData[c.id]=[];delete recLastV[c.id];delete recLastT[c.id];});
@@ -1220,6 +1226,8 @@ body.shake{animation:quake .9s linear;}
   function tsat(p){return 100.9*Math.pow(Math.max(p,0.05),0.245);} // saturation eau, fit 1–160 bar
 
   function physStep(dt){
+    // agrégats ASG recalculés à chaque pas, quels que soient l'état et la branche
+    S.mps=S.mpsA||S.mpsB; S.tps=S.tpsA||S.tpsB;
     var hot=isHot();
     // CVI : extraction des incondensables — sinon accumulation et perte du vide
     if(S.cvi) S.air=Math.max(0,S.air-S.air*dt/8);
@@ -1322,7 +1330,6 @@ body.shake{animation:quake .9s linear;}
       S.tpaN+=(tpaTgt-S.tpaN)*(1-Math.exp(-dt/5));
 
       // ASG : la TPS a besoin de vapeur GV (> 8 bar), la MPS d'électricité
-      S.mps=S.mpsA||S.mpsB; S.tps=S.tpsA||S.tpsB;
       var tpsOk=S.tps&&S.Psteam>8;
       S.tpsOk=tpsOk;
       // 4 pompes ASG (2 voies) : 2,5 % chacune — motopompes sur électricité, turbopompes sur vapeur.
@@ -1338,11 +1345,11 @@ body.shake{animation:quake .9s linear;}
       var pnat=155+(S.Tavg-310)*0.8-(100-S.inv)*1.4;
       var ctrl;
       if(S.pzrAuto){
-        ctrl=clamp((155-S.Ppzr)*0.45,-0.9,0.9);
+        ctrl=clamp((155-S.Ppzr)*0.45,-0.9,0.12); // chaufferettes lentes, aspersion rapide
         S.heat=S.Ppzr<154.5&&S.breche===0; S.spray=S.Ppzr>155.8;
       }else{
         S.heat=S.heatM; S.spray=S.sprayM;
-        ctrl=(S.heat?0.3:0)-(S.spray?0.45:0);
+        ctrl=(S.heat?0.12:0)-(S.spray?0.45:0);
       }
       S.Ppzr+=((pnat-S.Ppzr)*0.12+ctrl)*dt;
 
@@ -1350,7 +1357,8 @@ body.shake{animation:quake .9s linear;}
       // ou ouverture volontaire opérateur : gavé-ouvert)
       if(S.Ppzr>172)S.sebim=true; else if(S.Ppzr<166&&!S.sebimM)S.sebim=false;
       if(S.sebimM)S.sebim=true;
-      var fS=S.sebim?0.2+(S.Ppzr-172)*0.06:0;
+      var fS=S.sebim?Math.max(0.12,0.2+(S.Ppzr-172)*0.06):0;
+      if(S.sebim)S.Ppzr-=0.4*dt; // détente de la bulle vapeur par la décharge
       // brèche primaire : débit ∝ taille et écart de pression, étranglé si inventaire épuisé
       var fB=S.breche*0.25*Math.sqrt(Math.max(S.Ppzr-S.Penc,0)/155)*Math.min(1,S.inv/20);
       // RIS : ISHP (refoulement < 150 bar), accumulateurs passifs (< 42 bar), ISBP (< 12 bar)
@@ -1398,7 +1406,7 @@ body.shake{animation:quake .9s linear;}
     }else{
       // états froids : plus de boucle rapide (cinétique nulle) — toute la
       // thermique est lente et s'intègre au pas accéléré
-      var dtc=dt*S.accel;
+      var dtc=dt; // ligne de temps unifiée : la boucle porte l'accélération
       // bilan chauffage résiduel / refroidissement RRA — la source froide du RRA
       // est le RRI, refroidi par SEC : perte SEC = perte du refroidissement RRA
       S.Tavg+=((S.Pres*3800/2500)-((S.rra&&S.sec&&!S.rraF)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc;
@@ -1972,7 +1980,7 @@ body.shake{animation:quake .9s linear;}
 
   // ---- rendu ----
   var msg=el('msg'), clock=el('clock');
-  var renderTick=0;
+  var renderTick=0, recRT=0;
   function fmt(x,d){return x.toFixed(d===undefined?1:d);}
   function pcm(x){return (x>=0?"+":"−")+Math.abs(Math.round(x))+" pcm";}
   function setAl(id,st){var n=el(id);n.classList.toggle('amber',st==='amber');n.classList.toggle('red',st==='red');alTrack(id,st);}
@@ -2084,9 +2092,10 @@ body.shake{animation:quake .9s linear;}
     // synoptique — ASG
     el('asgpipe').setAttribute('opacity',S.asg>0?1:0.25);
     el('fAsg').setAttribute('opacity',S.asg>0?0.55:0);
-    el('iMps').setAttribute('opacity',S.mps?1:0.25);
-    el('iTps').setAttribute('opacity',S.tpsOk?1:0.25);
-    el('cMps').setAttribute('stroke',S.mps?'#4fc57a':'#3b4a54');
+    var mpsRun=S.mps&&(S.reseau||S.diesel)&&isHot();
+    el('iMps').setAttribute('opacity',mpsRun?1:0.25);
+    el('iTps').setAttribute('opacity',(S.tpsOk&&isHot())?1:0.25);
+    el('cMps').setAttribute('stroke',mpsRun?'#4fc57a':'#3b4a54');
     el('cTps').setAttribute('stroke',S.tpsOk?'#4fc57a':(S.tps?'#8c6d1e':'#3b4a54'));
     el('tpsSteam').setAttribute('opacity',S.tpsOk?0.7:0.25);
     el('asgTxt').textContent=Math.round(S.asg*100)+' %';
@@ -2128,7 +2137,7 @@ body.shake{animation:quake .9s linear;}
     // cuve : couvercle / piscine / combustible selon l'état
     var headOn=!(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
     el('gHead').style.opacity=headOn?1:0;
-    el('gPool').setAttribute('opacity',headOn?0:0.85);
+    el('gPool').setAttribute('opacity',(S.etat==='APIO'||S.etat==='APR')?0.85:0);
     el('rods').style.opacity=(headOn&&S.etat!=='RCD')?1:0;
     var fuelOn=(S.etat!=='RCD');
     el('gFuel').style.opacity=fuelOn?1:0;
@@ -2170,6 +2179,8 @@ body.shake{animation:quake .9s linear;}
     el('bHeatM').classList.toggle('on',!S.pzrAuto&&S.heatM);
     el('bSprayM').classList.toggle('on',!S.pzrAuto&&S.sprayM);
     if(coreOpen&&(renderTick++%8===0))coreRender();
+    recRT++;
+    if(recRT%30===0&&el('recModal').style.display==='block')recRender();
 
     // afficheur principal
     el('digMain').textContent=S.digSel==='th'?String(Math.round(S.Ptot*3800)):String(Math.round(S.Pelec));
@@ -2377,10 +2388,14 @@ body.shake{animation:quake .9s linear;}
   function loop(now){
     var dr=Math.min(0.25,(now-last)/1000); last=now; acc+=dr;
     while(acc>=DT){
-      physStep(DT);
-      slowStep(DT*S.accel);
-      trips();
-      recTick();
+      // ligne de temps unifiée : à ×N on exécute N pas de physique COMPLÈTE
+      // (thermohydraulique, protections, enregistreur) — plus de double vitesse
+      for(var k=0;k<S.accel;k++){
+        physStep(DT);
+        slowStep(DT);
+        trips();
+        recTick();
+      }
       acc-=DT;
     }
     render();
