@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Synoptique REP 1300 MWe — Palier P4 · bêta 1.7-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.0-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -56,7 +56,10 @@ if('serviceWorker' in navigator){
   .accel button:last-child{border-right:0}
   .accel button.on{background:#26313b;color:var(--amber)}
 
+  html,body{overflow-x:hidden;max-width:100vw}
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
+  .main,.side,.card{min-width:0}
+  .al{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
   .mimic{border:1px solid var(--edge);background:var(--panel);border-radius:6px;padding:8px}
   .mimic svg{width:100%;height:auto;display:block}
   .side{display:grid;gap:10px;align-content:start}
@@ -89,9 +92,9 @@ if('serviceWorker' in navigator){
     font-size:13px;padding:8px 10px;border-radius:4px;cursor:pointer;flex:1}
 
   .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
-  .p{background:#0b0f13;border:1px solid var(--edge);border-radius:4px;padding:7px 9px}
-  .p .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
-  .p .v{font-family:var(--mono);font-size:16px;color:var(--green);margin-top:3px;white-space:nowrap}
+  .p{background:#0b0f13;border:1px solid var(--edge);border-radius:4px;padding:7px 9px;min-width:0;overflow:hidden}
+  .p .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p .v{font-family:var(--mono);font-size:15px;color:var(--green);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .p .v.a{color:var(--amber)} .p .v.r{color:var(--red)}
 
   .bilan{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
@@ -114,7 +117,7 @@ if('serviceWorker' in navigator){
   .msg{border:1px solid var(--edge);border-left:3px solid var(--amber);background:#151b21;
     border-radius:4px;padding:9px 12px;font-size:13.5px;line-height:1.45;color:#dbe4e8;min-height:44px}
 
-  .log{font-family:var(--mono);font-size:11.5px;line-height:1.55;max-height:200px;overflow-y:auto;
+  .log{font-family:var(--mono);font-size:11.5px;line-height:1.55;height:200px;overflow-y:auto;
     background:#0b0f13;border:1px solid var(--edge);border-radius:4px;padding:6px 9px;
     scrollbar-width:thin;scrollbar-color:#26313b transparent}
   .log::-webkit-scrollbar{width:8px}
@@ -136,12 +139,12 @@ if('serviceWorker' in navigator){
       scrollbar-width:thin;scrollbar-color:#26313b transparent}
     .side::-webkit-scrollbar{width:8px}
     .side::-webkit-scrollbar-thumb{background:#26313b;border-radius:4px}
-    .params{grid-template-columns:repeat(7,1fr)}
-    .alarms{grid-template-columns:repeat(5,1fr)}
+    .params{grid-template-columns:repeat(7,minmax(0,1fr))}
+    .alarms{grid-template-columns:repeat(5,minmax(0,1fr))}
   }
   @media (max-width:1099px){
-    .params{grid-template-columns:repeat(3,1fr)}
-    .alarms{grid-template-columns:repeat(3,1fr)}
+    .params{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .alarms{grid-template-columns:repeat(2,minmax(0,1fr))}
   }
 
   /* SVG */
@@ -186,7 +189,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">bêta 1.7-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.0-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -202,57 +205,57 @@ body.shake{animation:quake .9s linear;}
   <div class="main">
     <div class="mimic anim" id="mimic">
       <svg viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" aria-label="Synoptique">
-        <text class="lblS" x="150" y="28">CIRCUIT PRIMAIRE · 155 bar</text>
+        <text class="lblS" x="40" y="16">CIRCUIT PRIMAIRE · 155 bar</text>
         <text class="lblS" x="620" y="28">CIRCUIT SECONDAIRE · 71 bar</text>
 
         <!-- enceinte de confinement -->
         <rect x="28" y="34" width="330" height="433" rx="26" fill="none" stroke="#46564e" stroke-width="2.5"/>
-        <text class="lblS" x="354" y="463" text-anchor="end" font-size="9">ENCEINTE</text>
+        <text class="lblS" x="352" y="444" text-anchor="end" font-size="9">ENCEINTE</text>
         <!-- aspersion EAS -->
         <g id="easSpray" opacity="0" stroke="#57b8d8" stroke-width="2" fill="none">
           <path d="M110 44 q8 10 16 0 M134 44 q8 10 16 0 M158 44 q8 10 16 0 M218 44 q8 10 16 0 M242 44 q8 10 16 0"/>
         </g>
         <!-- P enceinte -->
         <g class="sens">
-          <rect x="36" y="44" width="58" height="26" rx="3"/>
+          <rect x="36" y="44" width="44" height="26" rx="3"/>
           <text class="sl" x="40" y="54">P ENC</text>
-          <text class="sv" x="40" y="66" id="sPenc">1.00 bar</text>
+          <text class="sv" x="40" y="66" id="sPenc" font-size="10.5">1.00 bar</text>
         </g>
 
         <!-- ============ PRIMAIRE ============ -->
         <!-- branche chaude : cuve -> boîte à eau GV (entrée basse, côté chaud) -->
-        <path class="flowhot" d="M150 215 H210 V430 H286 V414"/>
-        <path class="flowdash fdash" id="fHot" d="M150 215 H210 V430 H286 V414"/>
+        <path class="flowhot" d="M150 215 H210 V430 H286 V404"/>
+        <path class="flowdash fdash" id="fHot" d="M150 215 H210 V430 H286 V404"/>
         <!-- branche froide : sortie basse boîte à eau -> GMPP -> cuve -->
-        <path class="flowcold" d="M314 414 V450 H185 V290 H150"/>
-        <path class="flowdash fdash" id="fCold" d="M314 414 V450 H185 V290 H150"/>
+        <path class="flowcold" d="M314 404 V450 H185 V290 H150"/>
+        <path class="flowdash fdash" id="fCold" d="M314 404 V450 H185 V290 H150"/>
 
-        <!-- cuve : couvercle + mécanismes (déposés primaire ouvert), piscine BR, assemblages -->
-        <rect id="gPool" x="54" y="106" width="104" height="48" fill="#1f4258" opacity="0"/>
+        <!-- cuve : générée — fond et couvercle hémisphériques, bride boulonnée,
+             CRDM en peigne, eau primaire visible (niveau cuve post-accidentel) -->
+        <rect id="gPool" x="54" y="100" width="104" height="56" fill="#1f4258" opacity="0"/>
         <g id="gHead">
-          <path d="M64 152 Q64 120 106 120 Q148 120 148 152 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
-          <path d="M84 122 V106 M95 121 V102 M106 120 V100 M117 121 V102 M128 122 V106" stroke="#5a6a74" stroke-width="3.5"/>
+          <path d="M62 150 A44 44 0 0 1 150 150 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+          <rect x="58" y="144" width="96" height="7" fill="#222d36" stroke="#3b4a54" stroke-width="1.5"/>
+          <path d="M84.5 112 V76 M96.5 112 V76 M108.5 112 V76 M120.5 112 V76 M132.5 112 V76" stroke="#5a6a74" stroke-width="2.6"/>
+          <rect x="81.1" y="66" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="93.1" y="66" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="105.1" y="66" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="117.1" y="66" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="129.1" y="66" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="90.6" y="62" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="102.6" y="62" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="114.6" y="62" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="126.6" y="62" width="6.8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="83.9" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="93.3" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="102.6" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="111.9" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="121.2" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="130.6" y="58" width="6.8" height="12" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1"/>
+          <line x1="70" y1="112" x2="142" y2="112" stroke="#3b4a54" stroke-width="2"/>
         </g>
-        <rect class="vessel" x="62" y="150" width="88" height="240" rx="16"/>
-        <rect x="70" y="158" width="72" height="224" rx="10" fill="#131b22"/>
-        <line x1="62" y1="157" x2="150" y2="157" stroke="#3b4a54" stroke-width="2.5"/>
-        <!-- cloisonnement + assemblages combustible -->
-        <rect x="78" y="240" width="56" height="126" fill="none" stroke="#3a4a54" stroke-width="1.5"/>
-        <g id="gFuel">
-          <rect x="81"  y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="88.6" y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="96.2" y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="103.8" y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="111.4" y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="119"  y="244" width="6" height="118" fill="#3a2416"/>
-          <rect x="126.6" y="244" width="6" height="118" fill="#3a2416"/>
-        </g>
-        <g id="rods">
-          <rect x="86"  y="165" width="7" height="112" fill="#8a97a0"/>
-          <rect x="97"  y="165" width="7" height="112" fill="#8a97a0"/>
-          <rect x="108" y="165" width="7" height="112" fill="#8a97a0"/>
-          <rect x="119" y="165" width="7" height="112" fill="#8a97a0"/>
-        </g>
+        <path d="M62 158 V346 A44 44 0 0 0 150 346 V158 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+        <clipPath id="cuveClip"><path d="M70 152 A36 36 0 0 1 142 152 V346 A36 36 0 0 1 70 346 Z"/></clipPath>
+        <path d="M70 164 V346 A36 36 0 0 0 142 346 V164 Z" fill="#131b22"/>
+        <rect id="vesselWater" x="70" y="158" width="72" height="224" fill="#1c3a4e" clip-path="url(#cuveClip)"/>
+        <rect x="58" y="151" width="96" height="7" fill="#222d36" stroke="#3b4a54" stroke-width="1.5"/>
+        <path d="M66 146 v12 M80 146 v12 M94 146 v12 M108 146 v12 M122 146 v12 M136 146 v12 M150 146 v12" stroke="#4a5a64" stroke-width="2"/>
+        <!-- tubulures primaires -->
+        <rect x="146" y="209" width="12" height="12" rx="2" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
+        <rect x="146" y="284" width="12" height="12" rx="2" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
+        <!-- cloisonnement + assemblages -->
+        <rect x="78" y="240" width="56" height="126" fill="none" stroke="#3a4a54" stroke-width="1.5" clip-path="url(#cuveClip)"/>
+        <line x1="78" y1="240" x2="134" y2="240" stroke="#4a5a64" stroke-width="2.5"/>
+        <line x1="78" y1="366" x2="134" y2="366" stroke="#4a5a64" stroke-width="2.5"/>
+        <g id="gFuel"><rect x="80.0" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="80.0" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="80.0" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="86.3" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="86.3" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="86.3" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="92.6" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="92.6" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="92.6" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="98.9" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="98.9" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="98.9" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="105.2" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="105.2" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="105.2" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="111.5" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="111.5" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="111.5" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="117.8" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="117.8" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="117.8" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="124.1" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="124.1" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="124.1" y="357" width="4.6" height="3" fill="#7a8a94"/><rect x="130.4" y="246" width="4.6" height="114" fill="#4a2e1a"/><rect x="130.4" y="246" width="4.6" height="3" fill="#7a8a94"/><rect x="130.4" y="357" width="4.6" height="3" fill="#7a8a94"/></g>
+        <path d="M84.5 166 V240 M96.5 166 V240 M108.5 166 V240 M120.5 166 V240 M132.5 166 V240" stroke="#26323c" stroke-width="5.5"/>
+        <g id="rods"><rect x="82.8" y="165" width="3.4" height="112" fill="#8a97a0"/><rect x="94.8" y="165" width="3.4" height="112" fill="#8a97a0"/><rect x="106.8" y="165" width="3.4" height="112" fill="#8a97a0"/><rect x="118.8" y="165" width="3.4" height="112" fill="#8a97a0"/><rect x="130.8" y="165" width="3.4" height="112" fill="#8a97a0"/></g>
         <text class="lbl" x="106" y="408" text-anchor="middle">CUVE</text>
         <text class="lblS" x="106" y="422" text-anchor="middle" id="rodTxt">Grappes 95 %</text>
         <!-- RRA : refroidissement du réacteur à l'arrêt -->
@@ -261,15 +264,49 @@ body.shake{animation:quake .9s linear;}
           <text class="sl" x="66" y="442">RRA</text>
           <text class="sv" x="66" y="454" id="rraTxt">isolé</text>
         </g>
+        <!-- puisards au fond de l'enceinte -->
+        <rect id="puisFill" x="40" y="459" width="0" height="6" rx="2" fill="#1f4258" opacity="0"/>
+        <text class="lblS" x="140" y="465" font-size="7.5">PUISARDS</text>
 
-        <!-- pressuriseur sur branche chaude -->
-        <path class="flowhot" d="M178 215 V125" stroke-width="5"/>
-        <rect class="vessel" x="158" y="48" width="40" height="80" rx="14"/>
-        <rect x="163" y="86" width="30" height="37" fill="#274257" id="pzrWater"/>
-        <circle cx="178" cy="118" r="4" fill="#e8a33d" opacity="0" id="pzrHeat"/>
-        <path d="M168 58 q10 8 20 0" stroke="#57b8d8" stroke-width="2" fill="none" opacity="0" id="pzrSpray"/>
-        <text class="lblS" x="178" y="40" text-anchor="middle">PRESSU</text>
-        <text class="digitsG" x="204" y="74" font-size="13" id="pzrTxt">155.0 b</text>
+        <!-- pressuriseur : capsule générée, chaufferettes en peigne, aspersion,
+             SEBIM au sommet raccordée au réservoir de décharge RDP -->
+        <path class="flowhot" d="M178 215 V131" stroke-width="5"/>
+        <path d="M156 68 A22 22 0 0 1 200 68 V110 A22 22 0 0 1 156 110 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+        <clipPath id="pzrClip"><path d="M162 68 A16 16 0 0 1 194 68 V110 A16 16 0 0 1 162 110 Z"/></clipPath>
+        <path d="M162 68 A16 16 0 0 1 194 68 V110 A16 16 0 0 1 162 110 Z" fill="#131b22"/>
+        <rect x="162" y="86" width="32" height="37" fill="#274257" id="pzrWater" clip-path="url(#pzrClip)"/>
+        <g id="pzrHeat" opacity="0">
+          <path d="M167.0 124 v-9 M172.5 124 v-9 M178.0 124 v-9 M183.5 124 v-9 M189.0 124 v-9 M194.5 124 v-9" stroke="#e8a33d" stroke-width="2.2"/>
+        </g>
+        <g id="pzrSpray" opacity="0">
+          <path d="M178 52 v5 M172 57 q6 8 12 0" stroke="#57b8d8" stroke-width="2" fill="none"/>
+        </g>
+        <!-- SEBIM -> RDP -->
+        <rect x="174" y="36" width="8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1.2"/>
+        <path class="steamline" d="M178 36 V30 H210 V58" opacity="0.35"/>
+        <path class="flowdash fdash" id="fSebim" d="M178 36 V30 H210 V58" opacity="0"/>
+        <text class="lblS" x="150" y="38" text-anchor="end">PRESSU</text>
+        <text class="lblS" x="172" y="27" text-anchor="end" font-size="8">SEBIM</text>
+        <text class="digitsG" x="150" y="53" text-anchor="end" font-size="12" id="pzrTxt">155.0 b</text>
+        <!-- RDP : réservoir de décharge pressuriseur, disque de rupture -->
+        <rect x="204" y="58" width="44" height="22" rx="7" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
+        <rect id="rdpFill" x="207" y="77" width="38" height="0" rx="3" fill="#274257"/>
+        <path id="rdpDisc" d="M244 80 l6 7 M250 80 l-4 8 M247 84 l7 3" stroke="#e6483d" stroke-width="1.6" opacity="0"/>
+        <text class="lblS" x="226" y="72" text-anchor="middle" font-size="8">RDP</text>
+
+        <!-- bâche PTR (eau borée, 3000 m³) : injection RIS vers la branche froide,
+             recirculation sur les puisards quand la bâche est épuisée -->
+        <path class="watersmall" d="M310 450 V504"/>
+        <path class="flowdash fdash" id="fInj" d="M310 504 V450" opacity="0"/>
+        <rect x="305" y="463" width="10" height="8" fill="#26313b" stroke="#46564e" stroke-width="1.2"/>
+        <path id="recircPipe" d="M334 466 V488 H318" stroke="#57b8d8" stroke-width="2.5" fill="none" stroke-dasharray="5 4" opacity="0.12"/>
+        <circle cx="310" cy="512" r="8" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
+        <path d="M310 506 L314 512 L310 518 L306 512 Z" fill="#57b8d8"/>
+        <text class="lblS" x="310" y="551" text-anchor="middle" font-size="8">ISHP/ISBP</text>
+        <rect class="vessel" x="314" y="500" width="88" height="34" rx="5"/>
+        <rect id="ptrFill" x="318" y="506" width="80" height="24" rx="3" fill="#1f4258"/>
+        <text class="lblS" x="358" y="520" text-anchor="middle" fill="#9fb6c2">BÂCHE PTR</text>
+        <text class="lblS" x="358" y="546" text-anchor="middle" font-size="8" id="ptrTxt">100 %</text>
 
         <!-- GMPP sur branche froide -->
         <circle cx="245" cy="450" r="16" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
@@ -447,10 +484,10 @@ body.shake{animation:quake .9s linear;}
         </g>
         <!-- T branche froide -->
         <g class="sens">
-          <line x1="332" y1="446" x2="314" y2="450"/>
-          <rect x="332" y="428" width="56" height="26" rx="3"/>
-          <text class="sl" x="336" y="438">T BF</text>
-          <text class="sv" x="336" y="450" id="sTcold">296.0 °C</text>
+          <line x1="360" y1="430" x2="314" y2="448"/>
+          <rect x="360" y="412" width="56" height="26" rx="3"/>
+          <text class="sl" x="364" y="422">T BF</text>
+          <text class="sv" x="364" y="434" id="sTcold">296.0 °C</text>
         </g>
         <!-- P dôme GV -->
         <g class="sens">
@@ -588,10 +625,28 @@ body.shake{animation:quake .9s linear;}
 
     <div class="card">
       <h2 style="display:flex;align-items:center;gap:8px">Journal des événements
-        <button class="logclear" id="coreOpen" style="margin-left:auto">cœur</button>
-        <button class="logclear" id="recOpen" style="margin-left:0">capteurs</button>
+        <button id="coreOpen" style="margin-left:auto;background:#12222e;border:1px solid var(--cyan);color:var(--cyan);border-radius:7px;padding:7px 16px;font-size:13px;font-weight:700;letter-spacing:.06em;cursor:pointer;font-family:inherit">⬢ CARTE DU CŒUR</button>
         <button class="logclear" id="logClear" style="margin-left:0">effacer</button></h2>
       <div class="log" id="log"></div>
+    </div>
+
+    <div class="card">
+      <h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Enregistreur
+        <select id="recPas" class="logclear" style="margin-left:auto;background:#141c24;color:#cfd8dd;border:1px solid #2a3844;border-radius:5px;padding:2px 6px">
+          <option value="1">pas 1 s</option>
+          <option value="10" selected>pas 10 s</option>
+          <option value="60">pas 1 min</option>
+        </select>
+        <button class="logclear" id="recRun" style="margin-left:0">⏸ arrêt</button>
+        <button class="logclear" id="recCopy" style="margin-left:0">copier</button>
+        <button class="logclear" id="recClear" style="margin-left:0">effacer</button>
+        <span class="val" id="recCount" style="font-size:11px">0 lignes</span></h2>
+      <div id="recSel" style="display:flex;flex-wrap:wrap;gap:2px 10px;margin:4px 0 6px"></div>
+      <div id="recWrap" style="overflow:auto;height:280px;resize:vertical;border:1px solid #22303a;border-radius:6px;background:#0a1016">
+        <pre id="recHead" style="position:sticky;top:0;margin:0;padding:6px 8px 2px;background:#0d151c;color:#8fa3ad;font-size:11px;line-height:1.35;border-bottom:1px solid #22303a"></pre>
+        <pre id="recTxt" style="margin:0;padding:2px 8px 6px;color:#c7d3d9;font-size:11px;line-height:1.35"></pre>
+      </div>
+      <div class="row"><span class="note">Échantillonnage à pas fixe en temps tranche — une ligne complète par pas, toutes voies. Les événements (AU, alarmes) s'insèrent dans le flux. Poignée en bas du cadre pour redimensionner.</span></div>
     </div>
   </div>
 
@@ -878,23 +933,9 @@ body.shake{animation:quake .9s linear;}
   </div>
 </div>
 
-<div id="recModal" style="display:none;position:fixed;inset:0;background:rgba(4,7,9,.82);z-index:50;padding:16px;overflow:auto">
-  <div class="card" style="max-width:640px;margin:4vh auto">
-    <h2 style="display:flex;align-items:center;gap:8px">Enregistreur capteurs — pas 0,5 s
-      <button class="logclear" id="recCopy" style="margin-left:auto">copier</button>
-      <button class="logclear" id="recClear" style="margin-left:0">effacer</button>
-      <button class="logclear" id="recClose" style="margin-left:0">fermer</button></h2>
-    <div class="row">
-      <div id="recSel" style="flex:1;display:flex;flex-wrap:wrap"></div>
-      <span class="val" id="recCount">0 pts</span>
-    </div>
-    <div class="row"><span class="note">Un point n'est conservé que si la valeur a changé (sinon un point de vie toutes les 3 min). À ×60/×300, la résolution effective suit le pas accéléré.</span></div>
-    <pre id="recTxt" class="log" style="max-height:52vh;font-size:11px"></pre>
-  </div>
-</div>
 <div id="boomFx"></div>
 <div id="coreModal" style="display:none;position:fixed;inset:0;background:rgba(4,7,9,.85);z-index:50;padding:12px;overflow:auto">
-  <div class="card" style="max-width:560px;margin:3vh auto">
+  <div class="card" style="max-width:min(760px,96vw);margin:3vh auto">
     <h2 style="display:flex;align-items:center;gap:8px">Carte du cœur — 193 assemblages
       <button class="logclear" id="coreClose" style="margin-left:auto">fermer</button></h2>
     <div class="row" id="coreModes" style="gap:5px">
@@ -904,7 +945,7 @@ body.shake{animation:quake .9s linear;}
       <button class="sw" data-m="F">Prod. fission</button>
       <button class="sw" data-m="G">Gaine</button>
     </div>
-    <div id="coreGrid" style="display:grid;grid-template-columns:repeat(15,1fr);gap:2px;max-width:480px;margin:8px auto"></div>
+    <div id="coreGrid" style="display:grid;grid-template-columns:repeat(15,1fr);gap:3px;max-width:min(660px,92vw);margin:10px auto"></div>
     <div class="msg" id="coreDetail" style="min-height:56px;font-size:12.5px">Toucher un assemblage pour le détail. Gestion par tiers : ⅓ neuf, ⅓ mi-vie, ⅓ en fin de cycle.</div>
   </div>
 </div>
@@ -999,6 +1040,7 @@ body.shake{animation:quake .9s linear;}
     return 'T+'+(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
   }
   function log(txt,cls){
+    try{if(typeof recRows!=='undefined'&&(cls==='red'||cls==='amber'))recEvt(txt);}catch(e){}
     var d=document.createElement('div');
     d.className='e'+(cls?' '+cls:'');
     d.textContent=tstamp()+'  '+txt;
@@ -1009,98 +1051,102 @@ body.shake{animation:quake .9s linear;}
 
   // ---- enregistreur capteurs (pas 0,5 s simulé, stockage sur changement) ----
   var REC_CH=[
-    {id:'thot', lbl:'T branche chaude', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg+dTgm();}},
-    {id:'tcold',lbl:'T branche froide', u:'°C',  d:1, eps:0.3, get:function(){return S.Tavg-dTgm();}},
-    {id:'ppzr', lbl:'P pressuriseur',   u:'bar', d:1, eps:0.3, get:function(){return S.Ppzr;}},
-    {id:'pgv',  lbl:'P vapeur GV',      u:'bar', d:1, eps:0.3, get:function(){return S.Psteam;}},
-    {id:'ngv',  lbl:'Niveau GV',        u:'%',   d:1, eps:0.5, get:function(){return S.gv;}},
-    {id:'tvap', lbl:'T vapeur GV (sat)',u:'°C',  d:0, eps:0.5, get:function(){return tsat(S.Psteam);}},
-    {id:'padm', lbl:'P admission HP',   u:'bar', d:1, eps:0.4, get:function(){return S.Padm;}},
-    {id:'pcond',lbl:'P condenseur',     u:'mbar',d:0, eps:3,   get:function(){return S.Pcond*1000;}},
-    {id:'tare', lbl:'T eau alimentaire',u:'°C',  d:0, eps:1,   get:function(){return S.Tare;}},
-    {id:'penc', lbl:'P enceinte',       u:'bar', d:2, eps:0.02,get:function(){return S.Penc;}},
-    {id:'inv',  lbl:'Inventaire RCP',   u:'%',   d:1, eps:0.5, get:function(){return S.inv;}},
-    {id:'pth',  lbl:'P thermique',      u:'MWth',d:0, eps:15,  get:function(){return S.Ptot*3800;}},
-    {id:'pe',   lbl:'P électrique',     u:'MWe', d:0, eps:10,  get:function(){return S.Pelec;}},
-    {id:'krtv', lbl:'KRT VVP dose vapeur',u:'mGy/h',d:2,eps:0.05,get:function(){return Math.min(5e4,0.01*Math.pow(10,Math.min(S.actGV,6.7)));}},
-    {id:'krte', lbl:'KRT EBA dose enceinte',u:'mGy/h',d:2,eps:0.5,get:function(){return Math.min(2e5,0.5*Math.pow(10,Math.min(Math.log10(1+S.actEnc*30),5.6)));}},
-    {id:'lvl',  lbl:'Niveau cuve',      u:'%',   d:0, eps:1,   get:function(){return S.lvlCuve;}},
-    {id:'h2',   lbl:'H2 enceinte',      u:'%',   d:1, eps:0.2, get:function(){return S.h2;}}
+    {id:'thot', sh:'T BC',  lbl:'T branche chaude',  u:'°C',   d:1, get:function(){return S.Tavg+dTgm();}},
+    {id:'tcold',sh:'T BF',  lbl:'T branche froide',  u:'°C',   d:1, get:function(){return S.Tavg-dTgm();}},
+    {id:'ppzr', sh:'P PZR', lbl:'P pressuriseur',    u:'bar',  d:1, get:function(){return S.Ppzr;}},
+    {id:'pgv',  sh:'P GV',  lbl:'P vapeur GV',       u:'bar',  d:1, get:function(){return S.Psteam;}},
+    {id:'ngv',  sh:'N GV',  lbl:'Niveau GV',         u:'%',    d:1, get:function(){return S.gv;}},
+    {id:'tvap', sh:'T VAP', lbl:'T vapeur (sat)',    u:'°C',   d:0, get:function(){return tsat(S.Psteam);}},
+    {id:'padm', sh:'P ADM', lbl:'P admission HP',    u:'bar',  d:1, get:function(){return S.Padm;}},
+    {id:'pcond',sh:'PCOND', lbl:'P condenseur',      u:'mbar', d:0, get:function(){return S.Pcond*1000;}},
+    {id:'tare', sh:'T ARE', lbl:'T eau alim.',       u:'°C',   d:0, get:function(){return S.Tare;}},
+    {id:'penc', sh:'P ENC', lbl:'P enceinte',        u:'bar',  d:2, get:function(){return S.Penc;}},
+    {id:'inv',  sh:'INV',   lbl:'Inventaire RCP',    u:'%',    d:1, get:function(){return S.inv;}},
+    {id:'pth',  sh:'P TH',  lbl:'P thermique',       u:'MWth', d:0, get:function(){return S.Ptot*3800;}},
+    {id:'pe',   sh:'P EL',  lbl:'P électrique',      u:'MWe',  d:0, get:function(){return S.Pelec;}},
+    {id:'krtv', sh:'VVP',   lbl:'KRT VVP fuite',     u:'L/h',  d:1, get:function(){return S.fuiteGV<=0?2.4:S.fuiteGV*(S.fuiteGV>=3?Math.max(0.15,Math.min(1,(S.Ppzr-Math.max(S.Psteam*0.5,S.Penc))/140)):Math.max(0,Math.min(1,(S.Ppzr-S.Psteam)/140)))*(S.fuiteGV>=3?9000:220);}},
+    {id:'krte', sh:'EBA',   lbl:'KRT EBA enceinte',  u:'mGy/h',d:2, get:function(){return Math.min(2e5,0.5*Math.pow(10,Math.min(Math.log10(1+S.actEnc*30),5.6)));}},
+    {id:'lvl',  sh:'N CUV', lbl:'Niveau cuve',       u:'%',    d:0, get:function(){return S.lvlCuve;}},
+    {id:'h2',   sh:'H2',    lbl:'H2 enceinte',       u:'%vol', d:1, get:function(){return S.h2;}}
   ];
-  var recData={}, recLastV={}, recLastT={}, recLast=-1;
-  REC_CH.forEach(function(c){recData[c.id]=[];});
+
+  // enregistreur à pas fixe : une ligne complète (toutes voies) par pas de temps
+  // tranche ; les événements du journal (rouge/ambre) s'insèrent dans le flux.
+  var recRows=[], recRun=true, recPas=10, recNext=0;
   function recTick(){
-    if(S.t-recLast<0.5)return;
-    recLast=S.t;
-    REC_CH.forEach(function(c){
-      var v=c.get();
-      var lv=recLastV[c.id];
-      if(lv===undefined||Math.abs(v-lv)>c.eps||S.t-recLastT[c.id]>=180){
-        var a=recData[c.id];
-        a.push([S.t,v]);
-        if(a.length>6000)a.splice(0,1500); // purge amortie, borne mémoire stricte
-        recLastV[c.id]=v;recLastT[c.id]=S.t;
-      }
-    });
+    if(!recRun)return;
+    if(S.t>=recNext){
+      recNext=(S.t-recNext<recPas*2)?recNext+recPas:S.t+recPas; // pas régulier, recale si trou
+      recRows.push({t:S.t,v:REC_CH.map(function(c){var x=c.get();return isFinite(x)?x:0;})});
+      if(recRows.length>3600)recRows.splice(0,600);
+    }
+  }
+  function recEvt(txt){
+    if(!recRun)return; // acquisition à l'arrêt : rien ne s'écrit, événements compris
+    recRows.push({t:S.t,evt:txt});
+    if(recRows.length>3600)recRows.splice(0,600);
   }
   function tfmt(t){
     var tt=Math.floor(t),h=Math.floor(tt/3600),m=Math.floor((tt%3600)/60),s=tt%60;
     return 'T+'+(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s+'.'+Math.floor((t%1)*10);
   }
-  var recBox=el('recSel'), recSelSet={thot:true,pgv:true};
+  var recBox=el('recSel'), recSelSet={thot:true,ppzr:true,pgv:true,ngv:true,pth:true,pe:true};
   REC_CH.forEach(function(c){
     var lb=document.createElement('label');
-    lb.style.cssText='display:inline-flex;align-items:center;gap:4px;margin:2px 8px 2px 0;font-size:12px;color:var(--ink);cursor:pointer';
+    lb.style.cssText='display:inline-flex;align-items:center;gap:3px;font-size:10.5px;color:#93a7b1;cursor:pointer';
     var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!recSelSet[c.id];
-    cb.addEventListener('change',function(){recSelSet[c.id]=cb.checked;recRender();});
-    lb.appendChild(cb);
-    lb.appendChild(document.createTextNode(c.lbl));
+    cb.addEventListener('change',function(){recSelSet[c.id]=cb.checked;recRender(true);});
+    lb.appendChild(cb);lb.appendChild(document.createTextNode(c.sh));
+    lb.title=c.lbl+' ('+c.u+')';
     recBox.appendChild(lb);
   });
   function pad(s,w){s=String(s);while(s.length<w)s=' '+s;return s;}
-  function recRender(){
+  function colW(c){return Math.max(c.sh.length,c.u.length+2,7)+2;}
+  function recRender(force){
     var chs=REC_CH.filter(function(c){return recSelSet[c.id];});
-    if(!chs.length){el('recTxt').textContent='(sélectionner au moins un capteur)';el('recCount').textContent='0 pts';return;}
-    // base de temps : union des horodatages sur une fenêtre glissante
-    // (601 derniers points par voie — le rendu affiche au plus 400 lignes)
-    var win={};
-    chs.forEach(function(c){win[c.id]=recData[c.id].slice(-601);});
-    var tset={};
-    chs.forEach(function(c){win[c.id].forEach(function(p){tset[p[0].toFixed(1)]=+p[0].toFixed(1);});});
-    var times=Object.keys(tset).map(Number).sort(function(a,b){return a-b;});
-    var start=Math.max(0,times.length-400);
-    el('recCount').textContent=times.length+' pts';
-    var head='HORODATAGE   '+chs.map(function(c){return pad(c.lbl.slice(0,14),15);}).join('');
-    var unit='             '+chs.map(function(c){return pad('('+c.u+')',15);}).join('');
-    var lines=[head,unit];
-    if(start>0)lines.push('… ('+start+' lignes plus anciennes non affichées)');
-    var ptr=chs.map(function(){return 0;});
-    // valeur en vigueur à chaque horodatage (fonction en escalier)
-    for(var i=0;i<times.length;i++){
-      var t=times[i], row=tfmt(t)+'  ';
+    var head=el('recHead'),box=el('recTxt');
+    if(!chs.length){head.textContent='';box.textContent='(sélectionner au moins une voie)';el('recCount').textContent=recRows.length+' lignes';return;}
+    head.textContent=pad('HORODATAGE',12)+chs.map(function(c){return pad(c.sh,colW(c));}).join('')+'\n'
+                    +pad('',12)+chs.map(function(c){return pad('('+c.u+')',colW(c));}).join('');
+    var start=Math.max(0,recRows.length-500), lines=[];
+    if(start>0)lines.push('… '+start+' lignes plus anciennes (copier pour tout exporter)');
+    for(var i=start;i<recRows.length;i++){
+      var r=recRows[i];
+      if(r.evt){lines.push('*** '+tfmt(r.t)+'  '+r.evt);continue;}
+      var row=pad(tfmt(r.t),12);
       for(var k=0;k<chs.length;k++){
-        var a=win[chs[k].id];
-        while(ptr[k]+1<a.length&&a[ptr[k]+1][0]<=t+1e-6)ptr[k]++;
-        var v=(a.length&&a[ptr[k]][0]<=t+1e-6)?a[ptr[k]][1].toFixed(chs[k].d):'—';
-        row+=pad(v,15);
+        var ci=REC_CH.indexOf(chs[k]);
+        row+=pad(r.v[ci].toFixed(chs[k].d),colW(chs[k]));
       }
-      if(i>=start)lines.push(row);
+      lines.push(row);
     }
-    var box=el('recTxt');
-    // autoscroll seulement si l'utilisateur suivait déjà le bas du tableau
-    var atBottom=(box.scrollHeight-box.scrollTop-(box.clientHeight||0))<48;
+    el('recCount').textContent=recRows.length+' lignes';
+    var wrap=el('recWrap');
+    var atBottom=(wrap.scrollHeight-wrap.scrollTop-(wrap.clientHeight||0))<48;
     box.textContent=lines.join('\n');
-    if(atBottom)box.scrollTop=box.scrollHeight;
+    if(atBottom||force)wrap.scrollTop=wrap.scrollHeight;
   }
-  el('recOpen').onclick=function(){el('recModal').style.display='block';recRender();el('recTxt').scrollTop=el('recTxt').scrollHeight;};
-  el('recClose').onclick=function(){el('recModal').style.display='none';};
-  el('recClear').onclick=function(){
-    REC_CH.forEach(function(c){recData[c.id]=[];delete recLastV[c.id];delete recLastT[c.id];});
-    recRender();log('Enregistreur capteurs remis à zéro','dim');
+  el('recRun').onclick=function(){
+    recRun=!recRun;
+    el('recRun').textContent=recRun?'⏸ arrêt':'▶ marche';
+    log(recRun?'Enregistreur : acquisition en MARCHE':'Enregistreur : acquisition à l\u2019ARRÊT (affichage figé, mémoire conservée)','dim');
+    if(recRun)recNext=S.t;
   };
+  el('recPas').addEventListener('change',function(){
+    recPas=+this.value;recNext=S.t;
+    log('Enregistreur : pas d\u2019échantillonnage réglé à '+(recPas>=60?(recPas/60)+' min':recPas+' s'),'dim');
+  });
+  el('recClear').onclick=function(){recRows=[];recNext=S.t;recRender(true);log('Enregistreur remis à zéro','dim');};
   el('recCopy').onclick=function(){
-    var t=el('recTxt').textContent;
-    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t);
+    var chs=REC_CH.filter(function(c){return recSelSet[c.id];});
+    var out=[el('recHead').textContent];
+    recRows.forEach(function(r){
+      if(r.evt){out.push('*** '+tfmt(r.t)+'  '+r.evt);return;}
+      var row=pad(tfmt(r.t),12);
+      chs.forEach(function(c){row+=pad(r.v[REC_CH.indexOf(c)].toFixed(c.d),colW(c));});
+      out.push(row);
+    });
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(out.join('\n'));
   };
 
   // ---- carte du cœur : 193 assemblages, gestion par tiers ----
@@ -1501,7 +1547,7 @@ body.shake{animation:quake .9s linear;}
       var injEff=S.recircHot?0:inj; // recirc chaude : l'eau à saturation n'inonde plus le cœur
       S.inv=clamp(S.inv+(injEff+app-fB-fS-boil-fG)*dt,0,100);
       // l'eau qui s'échappe (brèche + SEBIM + ébullition) s'accumule dans les puisards
-      S.puisard=clamp(S.puisard+(fB+fS+boil)*0.6*dt-(S.recirc?injWant*0.5*dt:0),0,1.5);
+      S.puisard=clamp(S.puisard+(fB+fS+boil)*0.6*dt-(S.recirc?injWant*0.32*dt:0),0,1.5); // en recirc l'eau tourne en boucle : niveau d'équilibre visible
       // effet pression : décharge/brèche dépressurisent, l'injection soutient
       S.Ppzr+=(-(fB*8+fS*6)+inj*4)*dt;
       S.Ppzr=clamp(S.Ppzr,Math.max(1,S.Penc),190);
@@ -2230,7 +2276,7 @@ body.shake{animation:quake .9s linear;}
     el('fHot').style.opacity=el('fCold').style.opacity=S.gmpp?0.55:0.06;
     var py=clamp(90-(S.Ppzr-155)*1.2,72,115);
     el('pzrWater').setAttribute('y',py);
-    el('pzrWater').setAttribute('height',123-py);
+    el('pzrWater').setAttribute('height',127-py);
     el('pzrTxt').textContent=fmt(S.Ppzr,1)+' b';
     el('pzrHeat').setAttribute('opacity',S.heat?1:0);
     el('pzrSpray').setAttribute('opacity',S.spray?1:0);
@@ -2320,6 +2366,23 @@ body.shake{animation:quake .9s linear;}
     var headOn=!(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
     el('gHead').style.opacity=headOn?1:0;
     el('gPool').setAttribute('opacity',(S.etat==='APIO'||S.etat==='APR')?0.85:0);
+    var lvw=(S.etat==='RCD')?0:S.lvlCuve/100;
+    var topW=headOn?116:158; // couvercle posé : l'eau emplit aussi le dôme
+    el('vesselWater').setAttribute('y',(382-lvw*(382-topW)).toFixed(1));
+    el('vesselWater').setAttribute('height',(lvw*(382-topW)).toFixed(1));
+    el('ptrFill').setAttribute('y',(530-24*S.ptr).toFixed(1));
+    el('ptrFill').setAttribute('height',(24*S.ptr).toFixed(1));
+    el('ptrTxt').textContent=Math.round(S.ptr*100)+' %'+(S.recirc?' · recirc':'');
+    el('puisFill').setAttribute('width',(306*Math.min(1,S.puisard)).toFixed(0));
+    el('puisFill').setAttribute('opacity',S.puisard>0.01?0.9:0);
+    var rdpH=16*Math.min(1,S.rdp);
+    el('rdpFill').setAttribute('y',(77-rdpH).toFixed(1));
+    el('rdpFill').setAttribute('height',rdpH.toFixed(1));
+    el('rdpDisc').setAttribute('opacity',S.rdpBurst?1:0);
+    el('fSebim').setAttribute('opacity',S.sebim?1:0);
+    el('fInj').setAttribute('opacity',(S.inj||0)>0.02?1:0);
+    el('recircPipe').setAttribute('opacity',S.recirc?1:0.12);
+    el('recircPipe').setAttribute('stroke',S.recircHot?'#e6483d':'#57b8d8');
     el('rods').style.opacity=(headOn&&S.etat!=='RCD')?1:0;
     var fuelOn=(S.etat!=='RCD');
     el('gFuel').style.opacity=fuelOn?1:0;
@@ -2394,7 +2457,7 @@ body.shake{animation:quake .9s linear;}
     el('bSprayM').classList.toggle('on',!S.pzrAuto&&S.sprayM);
     if(coreOpen&&(renderTick++%8===0))coreRender();
     recRT++;
-    if(recRT%30===0&&el('recModal').style.display==='block')recRender();
+    if(recRT%30===0)recRender();
 
     // afficheur principal
     el('digMain').textContent=S.digSel==='th'?String(Math.round(S.Ptot*3800)):String(Math.round(S.Pelec));
