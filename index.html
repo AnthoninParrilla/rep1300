@@ -60,6 +60,9 @@ if('serviceWorker' in navigator){
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
   .main,.side,.card{min-width:0}
   select{min-width:0;max-width:100%}
+  #synWrap{overflow:hidden;position:relative;touch-action:pan-y}
+  #synop{transform-origin:0 0;display:block;touch-action:pan-y}
+  #synZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#0e2431ee;border:1px solid #2a5666;color:#6fc6e0;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#0c141bf2;border-top:1px solid #2a5666;box-shadow:0 -5px 16px #000a;z-index:60;backdrop-filter:blur(8px)}
   #mnav button{flex:1;background:#0e2431;border:1px solid #2a5666;color:#6fc6e0;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
   @media(max-width:1099px){#mnav{display:flex}body{padding-bottom:70px}}
@@ -208,6 +211,7 @@ body.shake{animation:quake .9s linear;}
 <div class="layout">
   <div class="main">
     <div class="mimic anim" id="mimic">
+      <div id="synWrap"><button id="synZr" title="Réinitialiser le zoom">⤢ 1:1</button>
       <svg id="synop" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" aria-label="Synoptique">
         <text class="lblS" x="40" y="16">CIRCUIT PRIMAIRE</text>
         <text class="lblS" x="620" y="28">CIRCUIT SECONDAIRE · 71 bar</text>
@@ -230,7 +234,6 @@ body.shake{animation:quake .9s linear;}
 
         <!-- cuve trapue (r52) : plan de tubulures unique y=210, MCG connecté par
              adaptateurs de couvercle, RIC par le fond — ordre de peinture propre -->
-        <rect id="gPool" x="44" y="88" width="116" height="70" fill="#1f4258" opacity="0"/>
         <g id="gHeadB"><path d="M58 152 A44 44 0 0 1 146 152 Z" fill="#131b22"/></g>
         <path d="M50 158 V318 A52 52 0 0 0 154 318 V158 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
         <clipPath id="cuveClip"><path d="M58 152 A44 44 0 0 1 146 152 V318 A44 44 0 0 1 58 318 Z"/></clipPath>
@@ -505,6 +508,15 @@ body.shake{animation:quake .9s linear;}
           <text class="sl" x="364" y="422">T BF</text>
           <text class="sv" x="364" y="434" id="sTcold">296.0 °C</text>
         </g>
+        <!-- cheminée DVN (palier P4) : fût à diamètre constant, escalier hélicoïdal -->
+        <rect x="4" y="456" width="20" height="6" rx="1.5" fill="#222d36" stroke="#3b4a54" stroke-width="1"/>
+        <rect x="8" y="172" width="12" height="286" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
+        <path d="M14.0 458.0 L16.7 454.4 L18.9 450.9 L20.5 447.3 L21.0 443.7 L20.5 440.1 L18.9 436.6 L16.7 433.0 L14.0 429.4 L11.3 425.8 L9.1 422.2 L7.5 418.7 L7.0 415.1 L7.5 411.5 L9.1 407.9 L11.3 404.4 L14.0 400.8 L16.7 397.2 L18.9 393.6 L20.5 390.1 L21.0 386.5 L20.5 382.9 L18.9 379.4 L16.7 375.8 L14.0 372.2 L11.3 368.6 L9.1 365.1 L7.5 361.5 L7.0 357.9 L7.5 354.3 L9.1 350.8 L11.3 347.2 L14.0 343.6 L16.7 340.0 L18.9 336.4 L20.5 332.9 L21.0 329.3 L20.5 325.7 L18.9 322.1 L16.7 318.6 L14.0 315.0 L11.3 311.4 L9.1 307.9 L7.5 304.3 L7.0 300.7 L7.5 297.1 L9.1 293.6 L11.3 290.0 L14.0 286.4 L16.7 282.8 L18.9 279.2 L20.5 275.7 L21.0 272.1 L20.5 268.5 L18.9 264.9 L16.7 261.4 L14.0 257.8 L11.3 254.2 L9.1 250.7 L7.5 247.1 L7.0 243.5 L7.5 239.9 L9.1 236.3 L11.3 232.8 L14.0 229.2 L16.7 225.6 L18.9 222.1 L20.5 218.5 L21.0 214.9 L20.5 211.3 L18.9 207.8 L16.7 204.2 L14.0 200.6 L11.3 197.0 L9.1 193.4 L7.5 189.9 L7.0 186.3 L7.5 182.7 L9.1 179.1 L11.3 175.6 L14.0 172.0" stroke="#5a6a74" stroke-width="1.1" fill="none" opacity="0.85"/>
+        <line x1="8" y1="175" x2="20" y2="175" stroke="#3b4a54" stroke-width="1.2"/>
+        <g id="fDvn" opacity="0">
+          <path d="M9 168 v-9 M14 170 v-12 M19 168 v-9" stroke="#8fb8c8" stroke-width="1.6" stroke-dasharray="3 3"/>
+        </g>
+        <text class="lblS" x="4" y="166" font-size="7">DVN</text>
         <!-- P dôme GV -->
         <g class="sens">
           <line x1="246" y1="163" x2="252" y2="163"/>
@@ -554,6 +566,7 @@ body.shake{animation:quake .9s linear;}
         <text class="digits" id="digMain" x="147" y="526" text-anchor="middle" font-size="30">3800</text>
         <text class="lblS" x="147" y="538" text-anchor="middle" id="lblMain">PUISSANCE RÉACTEUR · MWth</text>
       </svg>
+      </div>
     </div>
 
     <div class="msg" id="msg">Régime établi.</div>
@@ -841,6 +854,7 @@ body.shake{animation:quake .9s linear;}
       <div class="row"><label>VVP 15→18 MA — débit de dose</label><span class="val" id="krtV">— Gy/h</span></div>
       <div class="row"><label>CVI 6 MA — incondensables</label><span class="val" id="krtC">— Bq/L</span></div>
       <div class="row"><label>EBA 34-35 MA — dose enceinte</label><span class="val" id="krtE">— Gy/h</span></div>
+      <div class="row"><label>DVN — rejets cheminée</label><span class="val" id="krtD">—</span></div>
       <div class="row"><span class="note">Activité volumique en Bq/L, débit de dose en Gy/h. Isolement VVP automatique sur très haute activité des lignes vapeur (fuite/rupture tube GV).</span></div>
     </div>
 
@@ -1003,7 +1017,7 @@ body.shake{animation:quake .9s linear;}
     Penc:1.0, inv:100, accu:100, breche:0, sebim:false,
     rdp:0, rdpBurst:false, // réservoir de décharge pressuriseur (SEBIM) + disque de rupture
     ishp:false, isbp:false, eas:false,
-    sigIS:false, easLatch:false, isoEnc:false, ebaSweep:false, turbSet:100,
+    sigIS:false, easLatch:false, isoEnc:false, ebaSweep:false, turbSet:100, actDvn:800, rejCum:0,
     aarInhib:false, lastInhib:-999,
     gctSet:74, gctTgt:74, isBlk:false,
     reseau:true, diesel:false, ilote:false, runbk:false, gctB:0, rodDrop:0, effl:0, rodLowMsg:false,
@@ -1090,7 +1104,16 @@ body.shake{animation:quake .9s linear;}
     {id:'krtv', sh:'VVP',   lbl:'KRT VVP fuite',     u:'L/h',  d:1, get:function(){return S.fuiteGV<=0?2.4:S.fuiteGV*(S.fuiteGV>=3?Math.max(0.15,Math.min(1,(S.Ppzr-Math.max(S.Psteam*0.5,S.Penc))/140)):Math.max(0,Math.min(1,(S.Ppzr-S.Psteam)/140)))*(S.fuiteGV>=3?9000:220);}},
     {id:'krte', sh:'EBA',   lbl:'KRT EBA enceinte',  u:'mGy/h',d:2, get:function(){return Math.min(2e5,0.5*Math.pow(10,Math.min(Math.log10(1+S.actEnc*30),5.6)));}},
     {id:'lvl',  sh:'N CUV', lbl:'Niveau cuve',       u:'%',    d:0, get:function(){return S.lvlCuve;}},
-    {id:'h2',   sh:'H2',    lbl:'H2 enceinte',       u:'%vol', d:1, get:function(){return S.h2;}}
+    {id:'h2',   sh:'H2',    lbl:'H2 enceinte',       u:'%vol', d:1, get:function(){return S.h2;}},
+    {id:'rod',  sh:'GRAPP', lbl:'Position groupe R', u:'%',    d:1, get:function(){return S.rod;}},
+    {id:'cb',   sh:'BORE',  lbl:'Concentration bore',u:'ppm',  d:0, get:function(){return S.Cb;}},
+    {id:'xe',   sh:'XE',    lbl:'Xénon (éq. pleine puiss.)',u:'%',d:0, get:function(){return S.Xe*100;}},
+    {id:'adm',  sh:'ADM',   lbl:'Admission turbine', u:'%',    d:1, get:function(){return S.turb;}},
+    {id:'ptr',  sh:'PTR',   lbl:'Bâche PTR',         u:'%',    d:1, get:function(){return S.ptr*100;}},
+    {id:'basg', sh:'ASG',   lbl:'Bâche ASG',         u:'%',    d:1, get:function(){return S.bacheASG*100;}},
+    {id:'accu', sh:'ACCU',  lbl:'Accumulateurs RIS', u:'%',    d:0, get:function(){return S.accu;}},
+    {id:'dvn',  sh:'DVN',   lbl:'KRT cheminée DVN',  u:'Bq/m³',d:0, get:function(){return S.actDvn;}},
+    {id:'tep',  sh:'TEP',   lbl:'Effluents vers TEP',u:'m³',   d:1, get:function(){return S.effl||0;}}
   ];
 
   // enregistreur à pas fixe : une ligne complète (toutes voies) par pas de temps
@@ -1689,8 +1712,17 @@ body.shake{animation:quake .9s linear;}
     S.I+=LAM_I*(S.Pn-S.I)*dts;
     S.Xe+=(K1*S.I+K2*S.Pn-(LAM_XE+SIG*S.Pn)*S.Xe)*dts;
     var cpOuvert=(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
-    if(S.ebaSweep){S.Xe=Math.max(0,S.Xe-0.0019*dts);if(S.Xe<=0.02){S.ebaSweep=false;log('Balayage EBA : teneur en gaz de fission résorbée — la ventilation reste en service tant que le circuit est ouvert (reprise du xénon produit par l\u2019iode résiduel).','cyan');}}
-    else if(cpOuvert&&S.Xe>0.03){S.Xe=Math.max(0,S.Xe-0.0019*dts);}
+    var balDvn=0; // taux de balayage effectif (fraction Xe/s) -> rejet cheminée
+    if(S.ebaSweep){balDvn=Math.min(0.0019,S.Xe/Math.max(dts,0.001));S.Xe=Math.max(0,S.Xe-0.0019*dts);
+      if(S.Xe<=0.02){S.ebaSweep=false;log('Balayage EBA : teneur en gaz de fission résorbée — la ventilation reste en service tant que le circuit est ouvert. Rejet cumulé à la cheminée : '+S.rejCum.toFixed(1)+' GBq (gaz rares).','cyan');}}
+    else if(cpOuvert&&S.Xe>0.03){balDvn=0.0019;S.Xe=Math.max(0,S.Xe-0.0019*dts);}
+    // chaîne KRT cheminée DVN : concentration instantanée + cumul rejeté ;
+    // le xénon relâché transite par l'enceinte -> le KRT EBA monte aussi
+    // EBA en service permanent tranche ouverte : fond cheminée relevé
+    var dvnTgt=(cpOuvert?1400:800)+balDvn*3.5e9;    // ~6.7 MBq/m³ au pic de balayage
+    S.actDvn+=(dvnTgt-S.actDvn)*(1-Math.exp(-dts/30));
+    S.rejCum+=balDvn*42*dts;                        // ~14 GBq pour une poche à 35 %
+    if(balDvn>0)S.actEnc=Math.min(S.actEnc+balDvn*1400*dts,6);
     S.Xe=Math.max(0,S.Xe);
     // puissance résiduelle : deux composantes (produits de fission courts / longs)
     S.Pr1+=((0.05*S.Pn-S.Pr1)/((0.05*S.Pn>S.Pr1)?300:1200))*dts;
@@ -1849,6 +1881,51 @@ body.shake{animation:quake .9s linear;}
   rod.addEventListener('change',function(){if(!S.auto&&!S.scram)log('OPÉRATEUR : grappes à '+rod.value+' % d\u2019extraction','cyan');});
 
   turb.addEventListener('input',function(){S.turbSet=+turb.value;});
+  // zoom pinch dédié à la synoptique : 2 doigts = zoom, 1 doigt = pan si zoomé
+  (function(){
+    var w=el('synWrap'),sv=el('synop'),zr=el('synZr');if(!w||!sv)return;
+    var z={s:1,x:0,y:0},pts={};
+    function apply(){
+      var r=w.getBoundingClientRect();
+      z.s=Math.max(1,Math.min(4,z.s));
+      z.x=Math.min(0,Math.max(r.width*(1-z.s),z.x));
+      z.y=Math.min(0,Math.max(r.height*(1-z.s),z.y));
+      if(z.s<=1.02){z.s=1;z.x=0;z.y=0;}
+      sv.style.transform='translate('+z.x+'px,'+z.y+'px) scale('+z.s+')';
+      var ta=(z.s>1)?'none':'pan-y';
+      w.style.touchAction=ta;sv.style.touchAction=ta; // touch-action se lit sur la CIBLE (le svg)
+
+      zr.style.display=(z.s>1)?'block':'none';
+    }
+    zr.onclick=function(){z={s:1,x:0,y:0};apply();};
+    w.addEventListener('pointerdown',function(e){pts[e.pointerId]=[e.clientX,e.clientY];if(w.setPointerCapture)try{w.setPointerCapture(e.pointerId);}catch(_){}});
+    w.addEventListener('pointermove',function(e){
+      if(!pts[e.pointerId])return;
+      var ks=Object.keys(pts);
+      if(ks.length===2){
+        var o=pts[ks[0]],o2=pts[ks[1]];
+        var d0=Math.hypot(o[0]-o2[0],o[1]-o2[1]);
+        pts[e.pointerId]=[e.clientX,e.clientY];
+        var n=pts[ks[0]],n2=pts[ks[1]];
+        var d1=Math.hypot(n[0]-n2[0],n[1]-n2[1]);
+        if(d0>10){
+          var r=w.getBoundingClientRect();
+          var mx=(n[0]+n2[0])/2-r.left,my=(n[1]+n2[1])/2-r.top;
+          var f=d1/d0,s0=z.s;
+          z.s=s0*f;z.s=Math.max(1,Math.min(4,z.s));f=z.s/s0;
+          z.x=mx-(mx-z.x)*f;z.y=my-(my-z.y)*f;apply();
+        }
+      }else if(ks.length===1&&z.s>1){
+        var p=pts[e.pointerId];
+        z.x+=e.clientX-p[0];z.y+=e.clientY-p[1];
+        pts[e.pointerId]=[e.clientX,e.clientY];apply();
+      }
+    });
+    function up(e){delete pts[e.pointerId];}
+    w.addEventListener('pointerup',up);w.addEventListener('pointercancel',up);w.addEventListener('pointerleave',up);
+    // ceinture iOS : bloquer le scroll de page pendant les gestes sur la synoptique zoomée
+    w.addEventListener('touchmove',function(e){if(z.s>1)e.preventDefault();},{passive:false});
+  })();
   // verrou anti-décalage horizontal (iOS) : la page reste calée à gauche
   window.addEventListener('scroll',function(){
     if(window.scrollX!==0)window.scrollTo(0,window.scrollY);
@@ -2466,7 +2543,6 @@ body.shake{animation:quake .9s linear;}
     var headOn=!(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
     el('gHead').style.opacity=headOn?1:0;
     el('gHeadB').style.opacity=headOn?1:0;
-    el('gPool').setAttribute('opacity',(S.etat==='APIO'||S.etat==='APR')?0.85:0);
     var lvw=(S.etat==='RCD')?0:S.lvlCuve/100;
     var topW=headOn?106:158; // couvercle posé : l'eau emplit aussi le dôme
     el('vesselWater').setAttribute('y',(362-lvw*(362-topW)).toFixed(1));
@@ -2481,6 +2557,8 @@ body.shake{animation:quake .9s linear;}
     el('rdpFill').setAttribute('height',rdpH.toFixed(1));
     el('rdpDisc').setAttribute('opacity',S.rdpBurst?1:0);
     el('efflVal').textContent=(S.effl||0).toFixed(1)+' m³';
+    el('krtD').textContent=eng(S.actDvn,'Bq/m³')+' · '+(S.rejCum||0).toFixed(1)+' GBq';
+    el('fDvn').setAttribute('opacity',S.actDvn>5e3?0.9:0);
     var accH=21*Math.max(0,Math.min(1,S.accu/100));
     el('accuFill').setAttribute('y',(381-accH).toFixed(1));
     el('accuFill').setAttribute('height',accH.toFixed(1));
