@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Synoptique REP 1300 MWe — Palier P4 · version 2.1-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -56,7 +56,7 @@ if('serviceWorker' in navigator){
   .accel button:last-child{border-right:0}
   .accel button.on{background:#26313b;color:var(--amber)}
 
-  html,body{overflow-x:hidden;max-width:100vw}
+  html,body{overflow-x:hidden;overflow-x:clip;max-width:100vw;touch-action:manipulation}
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
   .main,.side,.card{min-width:0}
   select{min-width:0;max-width:100%}
@@ -1270,11 +1270,12 @@ body.shake{animation:quake .9s linear;}
     if(e==='RCD'){S.Pr1=0;S.Pr2=0;S.Pres=0;}
     if(e==='RP'){
       // calage critique au bore selon l'empoisonnement xénon courant
-      S.Cb=clamp(-280*(S.Xe-1),-CB0,1500);
+      S.Cb=clamp(-W_XE*(S.Xe-1)/W_BORE,-CB0,1500);
       log('Calage critique au bore : '+Math.round(CB0+S.Cb)+' ppm (xénon '+Math.round(S.Xe*100)+' % éq.)','dim');
     }else if(p.Cb!==undefined){
-      S.Cb=Math.max(S.Cb,p.Cb);
+      if(p.Cb!=null)S.Cb=Math.max(S.Cb,p.Cb); // preset sans Cb (RP) : garder le calage critique, pas de NaN
     }
+    S.turbSet=S.turb; // les presets fixent la turbine : la consigne suit (pas de remontée fantôme)
     S.etat=e;
     S.scram=false;S.tripMsg="";S.note="";
     S.areAvail=true;S.asgLatch=false;
@@ -1286,6 +1287,7 @@ body.shake{animation:quake .9s linear;}
     S.ishp=false;S.isbp=false;S.eas=false;S.sigIS=false;S.easLatch=false;S.isoEnc=false;S.isBlk=false;
     S.gctSet=74;S.gctTgt=74;el('gctSp').value=74;
     S.reseau=true;S.diesel=false;S.ilote=false;S.runbk=false;S.gctB=0;S.rodDrop=0;
+    S.scram=false;S.tripMsg='';
     S.viv=true;S.svf=0;S.h3=false;S.lls=false;
     S.crf=true;S.sec=true;S.secOk=true;S.PcondX=0;S.fuiteGV=0;S.bacheASG=1;S.asgManualStop=false;
     S.ptr=1;S.puisard=0;S.recirc=false;S.recircHot=false;
@@ -1422,9 +1424,12 @@ body.shake{animation:quake .9s linear;}
     }else if(S.auto&&S.etat==='RP'){
       var err=S.Tavg-tprog(Math.min(1,D));
       var rate=clamp(-err*0.12-S.rho*0.0006,-0.35,0.35);
-      // butée basse d'exploitation : la régulation n'insère jamais au fond —
-      // au-delà, la compensation se fait à l'acide borique (réglage fin)
-      S.rod=clamp(S.rod+rate*dt,28,100);
+      // butée basse d'exploitation : la régulation s'ARRÊTE à 28 % en descendant
+      // (jamais les grappes au fond en fonctionnement) ; sous 28 (post-AAR),
+      // la remontée reste libre et progressive — pas de saut
+      var rodNew=clamp(S.rod+rate*dt,0,100);
+      if(rate<0&&rodNew<28&&S.rod>=28)rodNew=28;
+      S.rod=rodNew;
       if(rate<-0.02&&S.rod<=28.4&&!S.rodLowMsg){
         S.rodLowMsg=true;
         log('EXPLOITATION : groupe R en butée basse d\u2019insertion — poursuivre la compensation par borication (réglage fin) pour remonter les grappes.','amber');
@@ -1844,6 +1849,35 @@ body.shake{animation:quake .9s linear;}
   rod.addEventListener('change',function(){if(!S.auto&&!S.scram)log('OPÉRATEUR : grappes à '+rod.value+' % d\u2019extraction','cyan');});
 
   turb.addEventListener('input',function(){S.turbSet=+turb.value;});
+  // verrou anti-décalage horizontal (iOS) : la page reste calée à gauche
+  window.addEventListener('scroll',function(){
+    if(window.scrollX!==0)window.scrollTo(0,window.scrollY);
+  },{passive:true});
+  // mouchard de débordement : si un élément pousse la page au-delà du viewport,
+  // il est nommé au journal (une fois) — diagnostic embarqué du décalage mobile
+  var uiDiagSeen={};
+  setInterval(function(){
+    try{
+      var de=document.documentElement;
+      var vw=de.clientWidth;
+      if(de.scrollWidth<=vw+2)return;
+      var all=document.body.getElementsByTagName('*');
+      var found=0;
+      for(var i=0;i<all.length&&found<3;i++){
+        var el2=all[i];
+        if(el2.offsetParent===null&&el2.tagName!=='svg')continue;
+        var r=el2.getBoundingClientRect();
+        if(r.right>vw+2&&r.width<=de.scrollWidth){
+          var sig=el2.tagName.toLowerCase()+(el2.id?'#'+el2.id:'')+(el2.className&&el2.className.baseVal===undefined?'.'+String(el2.className).split(' ')[0]:'');
+          if(el2.querySelector&&el2.querySelector('*')&&el2.getElementsByTagName('*').length>8)continue; // viser les feuilles, pas les conteneurs
+          if(!uiDiagSeen[sig]){
+            uiDiagSeen[sig]=true;found++;
+            log('DIAG UI : débordement horizontal — '+sig+' dépasse de '+Math.round(r.right-vw)+' px (largeur '+Math.round(r.width)+')','dim');
+          }
+        }
+      }
+    }catch(e){}
+  },2000);
   [['mnv1','synop'],['mnv2','secInc'],['mnv3','secInh'],['mnv4','secTurb']].forEach(function(p){
     var b=el(p[0]);if(b)b.onclick=function(){var t=el(p[1]);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});};
   });
