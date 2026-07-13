@@ -1479,7 +1479,7 @@ body.shake{animation:quake .9s linear;}
       // soupapes de sûreté GV (VVP) : dernier rempart, décharge à l'atmosphère
       S.svf=clamp((S.Psteam-90)*0.25,0,1);
       // soutirage vapeur des turbopompes ASG : chaque TPS en pompage tire sur les GV
-      var tpsDraw=((S.tpsA?1:0)+(S.tpsB?1:0))*(S.Psteam>8?0.03:0)*clamp((62-S.gv)/8,0,1);
+      var tpsDraw=((S.tpsA?1:0)+(S.tpsB?1:0))*0.03*clamp((S.Psteam-6)/6,0,1)*clamp((62-S.gv)/8,0,1);
       D=(S.viv?(S.turb/100):0)+S.gct*0.85+S.gctA*0.4+S.svf*0.7+tpsDraw;
     }else{
       S.gct=0;S.gctA=0;S.svf=0;
@@ -1572,7 +1572,7 @@ body.shake{animation:quake .9s linear;}
       // (maintien du ΔP aux vannes réglantes) : la vitesse suit la demande.
       var tpaCap=clamp((S.Psteam-12)/25,0,1);
       // la TPA échappe au condenseur : sans vide, pas de TPA — et son barillet est en aval des VIV
-      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv&&(S.turb>2||S.Ptot>0.06);
+      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv&&(S.turb>2||S.Ptot>(S.tpaRun?0.05:0.07)); // hystérésis : pas d'oscillateur à la traversée de la résiduelle
       // tranche à l'arrêt : l'alimentation des GV est assurée par l'ASG, TPA à l'arrêt
       // ARE : régulation trois éléments ou manuel — bornée par la capacité TPA
       var areReg=S.areAvail
@@ -1583,11 +1583,10 @@ body.shake{animation:quake .9s linear;}
       S.tpaN+=(tpaTgt-S.tpaN)*(1-Math.exp(-dt/5));
 
       // ASG : la TPS a besoin de vapeur GV (> 8 bar), la MPS d'électricité
-      var tpsOk=S.tps&&S.Psteam>8;
-      S.tpsOk=tpsOk;
+      // (dispo TPS : calculée en zone commune sur la pression vapeur seule)
       // capacité brute des pompes en service (chaque pompe ≈ 2,5 % débit nominal)
       var asgCap=((S.mpsA?0.025:0)+(S.mpsB?0.025:0))*(elecOk?1:0)
-                +((S.tpsA?0.025:0)+(S.tpsB?0.025:0))*(S.Psteam>8?1:0);
+                +((S.tpsA?0.025:0)+(S.tpsB?0.025:0))*clamp((S.Psteam-6)/6,0,1); // capacité continue : pas d'oscillateur de relaxation
       // régulation de niveau : plein débit sous 50 %, se ferme en approchant 58 %
       // (jamais un « maintien à 62 % » qui masquerait un déficit d'alimentation)
       var asgDemande=asgCap*clamp((58-S.gv)/8,0,1);
@@ -1755,7 +1754,7 @@ body.shake{animation:quake .9s linear;}
       // GV à l'arrêt : pression = saturation à Tmoy
       var pt=clamp(Math.pow(S.Tavg/100.9,1/0.245),1,120);
       S.Psteam+=(pt-S.Psteam)*(1-Math.exp(-dtc/30));
-      S.areOut=0;S.asg=0;S.tpsOk=false;S.tpaRun=false;S.tpaN=Math.max(0,S.tpaN-dtc);
+      S.areOut=0;S.asg=0;S.tpaRun=false;S.tpaN=Math.max(0,S.tpaN-dtc);
       // pression primaire tenue à la consigne d'état (RCV / bulle / atmosphère)
       S.Ppzr+=(S.pzrSet-S.Ppzr)*(1-Math.exp(-dtc/20));
       S.heat=false;S.spray=false;
@@ -1802,6 +1801,12 @@ body.shake{animation:quake .9s linear;}
     S.Pr1+=((0.05*S.Pn-S.Pr1)/((0.05*S.Pn>S.Pr1)?300:1200))*dts;
     S.Pr2+=((0.015*S.Pn-S.Pr2)/((0.015*S.Pn>S.Pr2)?3000:28800))*dts;
     S.Pres=S.Pr1+S.Pr2;
+    // dispo TPS : pression vapeur seule, hystérésis physique (accroche >10 bar,
+    // décrochage <7 bar) — indépendante des branches chaud/froid du modèle
+    S.tpsOk=S.tps&&(S.tpsOk?S.Psteam>7:S.Psteam>10);
+    // anti-clignotement : la dispo TPS AFFICHÉE ne change qu'après 3 s de stabilité
+    if(S.tpsOk!==S._tpsOkL){S._tpsOkT=S.t;S._tpsOkL=S.tpsOk;}
+    if(S.tpsOkV===undefined||S.t-(S._tpsOkT||0)>3)S.tpsOkV=S.tpsOk;
     if(S.bori) S.Cb+=0.15*dts;
     if(S.dilu) S.Cb-=0.15*dts;
     if(S.diluI){S.Cb-=Math.max(0,CB0+S.Cb)*2.5e-5*dts; // ~27 m³/h dans 300 m³ : dilution proportionnelle (~3 ppm/min initial)
@@ -2622,10 +2627,10 @@ body.shake{animation:quake .9s linear;}
     // icônes pompes = ÉTAT (en service), pas le débit instantané — le débit
     // s'exprime par le pointillé du refoulement (lissé) : plus de clignotement
     el('iMps').setAttribute('opacity',((S.mpsA||S.mpsB)&&eOk)?1:0.25);
-    el('iTps').setAttribute('opacity',((S.tpsA||S.tpsB)&&S.Psteam>8)?1:0.25);
+    el('iTps').setAttribute('opacity',((S.tpsA||S.tpsB)&&S.tpsOkV)?1:0.25);
     el('cMps').setAttribute('stroke',mpsRun?'#4fc57a':'#3b4a54');
-    el('cTps').setAttribute('stroke',S.tpsOk?'#4fc57a':(S.tps?'#8c6d1e':'#3b4a54'));
-    el('tpsSteam').setAttribute('opacity',S.tpsOk?0.7:0.25);
+    el('cTps').setAttribute('stroke',S.tpsOkV?'#4fc57a':(S.tps?'#8c6d1e':'#3b4a54'));
+    el('tpsSteam').setAttribute('opacity',S.tpsOkV?0.7:0.25);
     el('asgTxt').textContent=Math.round(S.asg*100)+' %';
 
     // instrumentation
@@ -2791,16 +2796,17 @@ body.shake{animation:quake .9s linear;}
     el('bMpsB').classList.toggle('on',S.mpsB&&eOk);
     el('bMpsA').classList.toggle('warn',S.mpsA&&!eOk);
     el('bMpsB').classList.toggle('warn',S.mpsB&&!eOk);
-    el('bTpsA').classList.toggle('on',S.tpsA&&S.tpsOk);
-    el('bTpsB').classList.toggle('on',S.tpsB&&S.tpsOk);
-    el('bTpsA').classList.toggle('warn',S.tpsA&&!S.tpsOk);
-    el('bTpsB').classList.toggle('warn',S.tpsB&&!S.tpsOk);
+    el('bTpsA').classList.toggle('on',S.tpsA&&S.tpsOkV);
+    el('bTpsB').classList.toggle('on',S.tpsB&&S.tpsOkV);
+    el('bTpsA').classList.toggle('warn',S.tpsA&&!S.tpsOkV);
+    el('bTpsB').classList.toggle('warn',S.tpsB&&!S.tpsOkV);
     // SVA : vapeur auxiliaire des chaudières XCA — mise en condition des
     // turbopompes quand les GV ne fournissent pas (états froids, démarrage)
-    el('svaVal').textContent=(S.Psteam<12||!isHot())?'EN SERVICE (conditionnement TPS/TPA)':'en attente';
+    S.svaOn=S.svaOn?(S.Psteam<14):(S.Psteam<11); // hystérésis : pas de battement autour du seuil
+    el('svaVal').textContent=S.svaOn?'EN SERVICE (conditionnement TPS/TPA)':'en attente';
     var nM=(S.mpsA?1:0)+(S.mpsB?1:0), nT=(S.tpsA?1:0)+(S.tpsB?1:0);
     el('mpsVal').textContent=nM?(eOk?(nM*2.5).toFixed(1)+' %':'NON ALIMENTÉES'):'arrêt';
-    el('tpsVal').textContent=nT?(S.Psteam>8?(nT*2.5).toFixed(1)+' %':'P vap < 8 b'):'arrêt';
+    el('tpsVal').textContent=nT?(S.tpsOkV?(nT*2.5*Math.max(0,Math.min(1,(S.Psteam-6)/6))).toFixed(1)+' %':'P vap insuffisante'):'arrêt';
     var bp=S.bacheASG*100;
     el('bacheVal').textContent=bp.toFixed(0)+' %'+(bp<=0?' — VIDE':'');
     el('bacheVal').style.color=bp<=0?'var(--red)':(bp<20?'var(--amber)':'var(--green)');
