@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.1-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.2-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -116,6 +116,7 @@ if('serviceWorker' in navigator){
   button.sw:active{transform:translateY(1px)}
   button.sw.on{background:#22402c;border-color:#3c6e4c;color:var(--green)}
   button.sw.warn{background:#3d2f16;border-color:#6e5a2c;color:var(--amber)}
+  button.hold.holding{background:#4a3a12!important;border-color:#e8a33d!important;color:#ffd27a!important}
   button.hold{background:#1b232b;border:1px solid var(--edge);color:var(--cyan);
     font-family:var(--cond);font-size:13px;padding:8px 12px;border-radius:4px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
   button.hold:active{background:#203038}
@@ -226,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.1-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.2-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -317,6 +318,7 @@ body.shake{animation:quake .9s linear;}
         <path class="flowdash fdash" id="fSebim" d="M182 40 H210 V58" opacity="0"/>
         <text class="lblS" x="172" y="28" text-anchor="end">PRESSU</text>
         <text class="digitsG" x="172" y="41" text-anchor="end" font-size="12" id="pzrTxt">155.0 b</text>
+        <g id="pzrTdH" opacity="0"><circle cx="196" cy="118" r="3.6" fill="#05090c" stroke="#5a6a74" stroke-width="1.4"/><rect x="200" y="112" width="7" height="4" rx="1" fill="#26323c" stroke="#4a5a64" stroke-width="1" transform="rotate(35 200 114)"/></g>
         <rect x="204" y="58" width="44" height="22" rx="7" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
         <rect id="rdpFill" x="207" y="77" width="38" height="0" rx="3" fill="#274257"/>
         <path id="rdpDisc" d="M244 80 l6 7 M250 80 l-4 8 M247 84 l7 3" stroke="#e6483d" stroke-width="1.6" opacity="0"/>
@@ -663,6 +665,7 @@ body.shake{animation:quake .9s linear;}
         <div class="al" id="aMan">Grappes manu</div>
         <div class="al" id="aGmpp">Perte GMPP</div>
         <div class="al" id="aRri">Perte RRI</div>
+        <div class="al" id="aDilu">Dilution</div>
         <div class="al" id="aAu">Arrêt d'urgence</div>
         <div class="al" id="aXe">Antiréactivité Xe</div>
         <div class="al" id="aPenc">P enceinte haute</div>
@@ -966,6 +969,7 @@ body.shake{animation:quake .9s linear;}
         <button class="inc" id="iTrip">Déclenchement turbine</button>
         <button class="inc" id="iGmpp1">Perte 1 GMPP</button>
         <button class="inc" id="iRri">Perte RRI</button>
+        <button class="inc" id="iDiluI">Dilution intempestive</button>
         <button class="inc" id="iMyst" style="border-color:#7a5fb8;color:#b39ae0">🎲 Panne mystère</button>
         <button class="inc" id="iGmpp">Perte GMPP</button>
       </div>
@@ -1063,7 +1067,7 @@ body.shake{animation:quake .9s linear;}
     sigIS:false, easLatch:false, isoEnc:false, ebaSweep:false, turbSet:100, actDvn:800, rejCum:0,
     aarInhib:false, lastInhib:-999,
     gctSet:74, gctTgt:74, isBlk:false,
-    reseau:true, diesel:false, ilote:false, runbk:false, gctB:0, rodDrop:0, effl:0, rodLowMsg:false, rri:true, rriT:0, rriMsg:0, myst:'',
+    reseau:true, diesel:false, ilote:false, runbk:false, gctB:0, rodDrop:0, effl:0, rodLowMsg:false, rri:true, rriT:0, coMsg:false, rriMsg:0, myst:'', diluI:false, diluCb0:0, diluMsg:false,
     tpaN:100, tpaRun:true,
     viv:true, svf:0, h3:false, lls:false,
     srcType:'mer', saison:'mi', Tsrc:12, crf:true, sec:true, PcondX:0,
@@ -1363,7 +1367,7 @@ body.shake{animation:quake .9s linear;}
     S.ptr=1;S.puisard=0;S.recirc=false;S.recircHot=false;
     S.actGV=0.001;S.actCvi=0.001;S.actEnc=0.005;
     S.h2=0;S.h2boom=false;S.encFail=false;
-    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';S.rraF=false;el('iRra').textContent='Perte RRA';S.rri=true;S.rriT=0;S.rriMsg=0;el('iRri').textContent='Perte RRI';el('iRri').classList.remove('on');S.myst='';el('iMyst').textContent='🎲 Panne mystère';
+    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';S.rraF=false;el('iRra').textContent='Perte RRA';S.rri=true;S.rriT=0;S.rriMsg=0;el('iRri').textContent='Perte RRI';el('iRri').classList.remove('on');S.myst='';el('iMyst').textContent='🎲 Panne mystère';S.diluI=false;S.diluMsg=false;el('iDiluI').textContent='Dilution intempestive';el('iDiluI').classList.remove('on');
     if(e==='APR'||e==='RCD'){
       if(S.gaine>0.001||S.dmg>0.001)log('Rechargement : assemblages défaillants déchargés — gaines saines','dim');
       S.gaine=0;S.dmg=0;S.actP=0.02;
@@ -1492,6 +1496,20 @@ body.shake{animation:quake .9s linear;}
     var rAu=S.scram?-6000:0;
     S.rho=rRod+rBore+rXe+rPow+rMod+rVoid+rAu;
     S.bal=[rRod,rBore,rXe,rPow,rMod,rVoid,rAu];
+    // divergence hors production : si la criticité est atteinte à l'arrêt
+    // (dilution...), le flux monte depuis le niveau source -> AU haut flux
+    if(S.etat!=='RP'&&S.rho>0&&!S.scram){
+      S.Pn=Math.max(S.Pn,1e-6)*Math.pow(4,dt);
+      var sansAU=(S.etat==='APR'||S.etat==='RCD'); // couvercle déposé : plus de grappes mobilisables
+      if(!sansAU&&S.Pn>0.03)scramReq('AU automatique : HAUT FLUX AU NIVEAU SOURCE — excursion de criticité à l\u2019arrêt (dilution non maîtrisée ?).');
+      if(sansAU){S.Pn=Math.min(S.Pn,0.04); // bouilloire auto-limitée par les contre-réactions
+        if(S.Pn>0.02&&!S.coMsg){S.coMsg=true;log('CRITICITÉ CŒUR OUVERT — aucune grappe mobilisable (couvercle déposé) : BORIQUER EN URGENCE (ISBP / eau PTR). Le cœur bout, l\u2019eau de protection s\u2019évapore.','red');}}
+    }
+    if((S.etat==='APR'||S.etat==='RCD')&&S.Pn>0.015){
+      S.Tavg=Math.min(102,S.Tavg+S.Pn*3800/2500*dt);
+      if(S.Tavg>=99){S.inv=Math.max(0,S.inv-S.Pn*0.85*dt); // ébullition : l'inventaire s'évapore (~150 MW)
+        if(S.inv<60)S.dmg=Math.min(1,S.dmg+0.0005*dt);}
+    }
 
     // grappes
     if(S.scram){
@@ -1581,6 +1599,7 @@ body.shake{animation:quake .9s linear;}
       if(S.sec&&S.secOk&&S.bacheASG<1)S.bacheASG=Math.min(1,S.bacheASG+0.0018*dt);
       // bâche vide → plus une goutte, quel que soit l'ordre pompe
       S.asg=S.bacheASG>0?asgDemande:0;
+      S.asgVis=Math.max(S.asg>0.0005?1:0,(S.asgVis||0)-dt/4); // rémanence visuelle du débit
 
       // niveau GV : (eau alimentaire ARE + ASG) − évaporation (∝ P totale)
       // évaporation : pleine vers la turbine/GCT si VVP ouvertes ; GV isolé,
@@ -1724,7 +1743,7 @@ body.shake{animation:quake .9s linear;}
       var dtc=dt; // ligne de temps unifiée : la boucle porte l'accélération
       // bilan chauffage résiduel / refroidissement RRA — la source froide du RRA
       // est le RRI, refroidi par SEC : perte SEC = perte du refroidissement RRA
-      S.Tavg+=((S.Pres*3800/2500)-((S.rra&&S.sec&&S.rri&&!S.rraF)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc;
+      S.Tavg+=((S.Pres*3800/2500)-((S.rra&&S.sec&&S.rri&&!S.rraF&&S.Pn<0.025)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc;
       S.relEnc=0;
       S.Tavg=clamp(S.Tavg,15,350);
       // dépressurisation de fin de refroidissement : la CONSIGNE pressuriseur descend
@@ -1785,7 +1804,9 @@ body.shake{animation:quake .9s linear;}
     S.Pres=S.Pr1+S.Pr2;
     if(S.bori) S.Cb+=0.15*dts;
     if(S.dilu) S.Cb-=0.15*dts;
-    if(S.bori||S.dilu) S.effl=(S.effl||0)+0.0075*dts; // eau déplacée vers TEP
+    if(S.diluI){S.Cb-=Math.max(0,CB0+S.Cb)*2.5e-5*dts; // ~27 m³/h dans 300 m³ : dilution proportionnelle (~3 ppm/min initial)
+      if(S.diluCb0-S.Cb>150&&!S.diluMsg){S.diluMsg=true;log('ALARME KIT : bilan bore incohérent (écart > 150 ppm) — dilution non commandée suspectée. ISOLER l\u2019appoint REA puis boriquer.','red');}}
+    if(S.bori||S.dilu||S.diluI) S.effl=(S.effl||0)+0.0075*dts; // eau déplacée vers TEP
     S.Cb=clamp(S.Cb,-CB0,1500);
     // activités (chaînes KRT) — unités arbitraires, seuils : ambre 0,2 / rouge 1,0
     S.actP+=((0.02+S.gaine*60)-S.actP)/180*dts;
@@ -2060,8 +2081,8 @@ body.shake{animation:quake .9s linear;}
   bindAsg('bTpsB','tpsB','turbopompe ASG voie B','demandée');
 
   function bindHold(btn,key,lbl){
-    var on=function(e){e.preventDefault();if(!S[key])log('OPÉRATEUR : '+lbl+' engagée','cyan');S[key]=true;};
-    var off=function(){S[key]=false;};
+    var on=function(e){e.preventDefault();if(!S[key])log('OPÉRATEUR : '+lbl+' engagée','cyan');S[key]=true;btn.classList.add('holding');};
+    var off=function(){S[key]=false;btn.classList.remove('holding');};
     btn.addEventListener('pointerdown',on);
     btn.addEventListener('pointerup',off);
     btn.addEventListener('pointerleave',off);
@@ -2237,12 +2258,13 @@ body.shake{animation:quake .9s linear;}
     gmpp1:{lib:'perte d\u2019un GMPP',                     on:function(){S.gmppN=3;},    off:function(){S.gmppN=4;}},
     brech:{lib:'petite brèche primaire',                    on:function(){S.breche=0.35;},off:function(){S.breche=0;}},
     rri:  {lib:'perte RRI',                                 on:function(){S.rri=false;},  off:function(){S.rri=true;S.rriT=0;S.rriMsg=0;}},
+    dilu: {lib:'dilution intempestive (appoint non boré)',  on:function(){S.diluI=true;S.diluCb0=S.Cb;}, off:function(){S.diluI=false;S.diluMsg=false;}},
     sec:  {lib:'perte SEC (source froide auxiliaires)',     on:function(){S.sec=false;S.secOk=false;}, off:function(){S.sec=true;S.secOk=true;}},
     rraf: {lib:'perte RRA',                                 on:function(){S.rraF=true;},  off:function(){S.rraF=false;}}
   };
   el('iMyst').onclick=function(){
     if(!S.myst){
-      var pool=isHot()?['cvi','crf','fuite','gmpp1','brech','rri']:['sec','rri','rraf'];
+      var pool=isHot()?['cvi','crf','fuite','gmpp1','brech','rri','dilu']:['sec','rri','rraf','dilu'];
       var k=(Date.now()+Math.floor(S.t))%pool.length;
       if(pool[k]===S.mystLast)k=(k+1)%pool.length;
       S.myst=pool[k];S.mystLast=S.myst;
@@ -2254,6 +2276,15 @@ body.shake{animation:quake .9s linear;}
       log('Panne mystère : '+MYST[S.myst].lib+' — cause réparée, ramener la tranche aux conditions normales.','cyan');
       S.myst='';el('iMyst').textContent='🎲 Panne mystère';
     }
+  };
+  el('iDiluI').onclick=function(){
+    S.diluI=!S.diluI;
+    el('iDiluI').textContent=S.diluI?'Isoler l\u2019appoint (REA)':'Dilution intempestive';
+    el('iDiluI').classList.toggle('on',S.diluI);
+    if(S.diluI){S.diluCb0=S.Cb;
+      log('INCIDENT injecté : DILUTION INTEMPESTIVE — appoint d\u2019eau claire non borée au primaire (~3 ppm/min). Aucune alarme immédiate : surveiller le comptage source (RPN) et le bilan de bore.','red');}
+    else{S.diluMsg=false;
+      log('Appoint REA isolé — dilution stoppée. Reconstituer la marge d\u2019antiréactivité par borication.','cyan');}
   };
   el('iRri').onclick=function(){
     S.rri=!S.rri;
@@ -2586,10 +2617,12 @@ body.shake{animation:quake .9s linear;}
 
     // synoptique — ASG
     el('asgpipe').setAttribute('opacity',S.asg>0?1:0.25);
-    el('fAsg').setAttribute('opacity',S.asg>0?0.55:0);
+    el('fAsg').setAttribute('opacity',(0.9*(S.asgVis||0)).toFixed(2));
     var mpsRun=S.mps&&(S.reseau||S.diesel)&&isHot();
-    el('iMps').setAttribute('opacity',mpsRun?1:0.25);
-    el('iTps').setAttribute('opacity',(S.tpsOk&&isHot())?1:0.25);
+    // icônes pompes = ÉTAT (en service), pas le débit instantané — le débit
+    // s'exprime par le pointillé du refoulement (lissé) : plus de clignotement
+    el('iMps').setAttribute('opacity',((S.mpsA||S.mpsB)&&eOk)?1:0.25);
+    el('iTps').setAttribute('opacity',((S.tpsA||S.tpsB)&&S.Psteam>8)?1:0.25);
     el('cMps').setAttribute('stroke',mpsRun?'#4fc57a':'#3b4a54');
     el('cTps').setAttribute('stroke',S.tpsOk?'#4fc57a':(S.tps?'#8c6d1e':'#3b4a54'));
     el('tpsSteam').setAttribute('opacity',S.tpsOk?0.7:0.25);
@@ -2637,7 +2670,7 @@ body.shake{animation:quake .9s linear;}
     el('pTsrc').textContent=S.Tsrc.toFixed(1)+' °C';
 
     // cuve : couvercle / piscine / combustible selon l'état
-    var headOn=!(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
+    var headOn=(S.etat!=='APR'&&S.etat!=='RCD'); // API ouvert : couvercle boulonné, ouverture au trou d'homme pressu
     el('gHead').style.opacity=headOn?1:0;
     el('gHeadB').style.opacity=headOn?1:0;
     // RCD : la cuve reste en eau — protection biologique des internes activés
@@ -2658,6 +2691,8 @@ body.shake{animation:quake .9s linear;}
     el('krtD').textContent=eng(S.actDvn,'Bq/m³')+' · '+(S.rejCum||0).toFixed(1)+' GBq';
     el('fDvn').setAttribute('opacity',S.actDvn>5e3?0.9:0);
     el('aRri').classList.toggle('on',!S.rri);
+    el('aDilu').classList.toggle('on',!!(S.diluI&&(S.diluCb0-S.Cb>150)));
+    el('pzrTdH').setAttribute('opacity',(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD')?1:0);
     var accH=21*Math.max(0,Math.min(1,S.accu/100));
     el('accuFill').setAttribute('y',(381-accH).toFixed(1));
     el('accuFill').setAttribute('height',accH.toFixed(1));
@@ -2774,7 +2809,8 @@ body.shake{animation:quake .9s linear;}
     el('gctSpVal').textContent=Math.abs(S.gctSet-S.gctTgt)>0.05
       ?S.gctSet.toFixed(1)+' → '+S.gctTgt.toFixed(1)+' bar'
       :S.gctSet.toFixed(1)+' bar';
-    el('cbVal').textContent=Math.round(CB0+S.Cb)+' ppm';
+    if(S.bori||S.dilu){el('cbVal').textContent=(CB0+S.Cb).toFixed(1)+' ppm '+(S.bori?'▲':'▼');el('cbVal').style.color='#ffd27a';}
+    else{el('cbVal').textContent=Math.round(CB0+S.Cb)+' ppm';el('cbVal').style.color='';}
     el('pzrH').textContent=S.heat?'EN SERVICE':'arrêt';
     el('pzrH').style.color=S.heat?'var(--amber)':'var(--dim)';
     el('pzrS').textContent=S.spray?'OUVERTE':'fermée';
