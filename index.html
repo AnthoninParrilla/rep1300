@@ -61,6 +61,36 @@ if('serviceWorker' in navigator){
   .main,.side,.card{min-width:0}
   select{min-width:0;max-width:100%}
   #synWrap{overflow:hidden;position:relative;touch-action:pan-y}
+  @keyframes puffRise{
+    0%  {transform:translate(930px,283px) scale(0.95);opacity:0;}
+    6%  {opacity:0.95;}
+    30% {transform:translate(933px,236px) scale(1.6);opacity:0.9;}
+    60% {transform:translate(945px,180px) scale(2.6);opacity:0.65;}
+    85% {transform:translate(964px,130px) scale(3.5);opacity:0.32;}
+    100%{transform:translate(982px,96px) scale(4.2);opacity:0;}
+  }
+  @keyframes puffRiseB{
+    0%  {transform:translate(930px,283px) scale(1.0);opacity:0;}
+    6%  {opacity:0.95;}
+    30% {transform:translate(935px,238px) scale(1.5);opacity:0.9;}
+    60% {transform:translate(949px,184px) scale(2.75);opacity:0.65;}
+    85% {transform:translate(969px,134px) scale(3.35);opacity:0.32;}
+    100%{transform:translate(988px,100px) scale(4.05);opacity:0;}
+  }
+  #gPanache .puff{animation:puffRise 9.4s linear infinite;will-change:transform,opacity}
+  #gPanache .puff:nth-child(even){animation-name:puffRiseB}
+  #gPanache .puff:nth-child(1){animation-delay:-0.00s}
+  #gPanache .puff:nth-child(2){animation-delay:-0.78s}
+  #gPanache .puff:nth-child(3){animation-delay:-1.57s}
+  #gPanache .puff:nth-child(4){animation-delay:-2.35s}
+  #gPanache .puff:nth-child(5){animation-delay:-3.13s}
+  #gPanache .puff:nth-child(6){animation-delay:-3.92s}
+  #gPanache .puff:nth-child(7){animation-delay:-4.70s}
+  #gPanache .puff:nth-child(8){animation-delay:-5.48s}
+  #gPanache .puff:nth-child(9){animation-delay:-6.27s}
+  #gPanache .puff:nth-child(10){animation-delay:-7.05s}
+  #gPanache .puff:nth-child(11){animation-delay:-7.83s}
+  #gPanache .puff:nth-child(12){animation-delay:-8.62s}
   #synop{transform-origin:0 0;display:block;touch-action:pan-y}
   #synZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#0e2431ee;border:1px solid #2a5666;color:#6fc6e0;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#0c141bf2;border-top:1px solid #2a5666;box-shadow:0 -5px 16px #000a;z-index:60;backdrop-filter:blur(8px)}
@@ -419,13 +449,9 @@ body.shake{animation:quake .9s linear;}
           <!-- tour aéroréfrigérante : silhouette hyperbolique GÉNÉRÉE
                R(y)=R_col·sqrt(1+((y-y_col)/b)²) — col à 75 % de hauteur,
                embouchure rx=23.7 raccordée par construction. -->
-          <g id="gPanache" opacity="0.5">
-            <ellipse cx="930" cy="276" rx="25" ry="10" fill="#aebcc4" opacity="0.32"/>
-            <ellipse cx="939" cy="258" rx="33" ry="15" fill="#aebcc4" opacity="0.24"/>
-            <ellipse cx="925" cy="238" rx="41" ry="20" fill="#aebcc4" opacity="0.16"/>
-            <ellipse cx="941" cy="216" rx="49" ry="24" fill="#aebcc4" opacity="0.10"/>
-            <ellipse cx="927" cy="192" rx="55" ry="27" fill="#aebcc4" opacity="0.05"/>
-          </g>
+          <filter id="fCloud" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="3.4"/>
+          </filter>
           <path d="M 906.3 288.0 L 907.2 296.0 L 907.9 304.0 L 908.3 312.0 L 908.5 320.0 L 908.4 328.0 L 908.1 336.0 L 907.6 344.0 L 906.8 352.0 L 905.8 360.0 L 904.6 368.0 L 903.3 376.0 L 901.9 384.0 L 900.3 392.0 L 898.6 400.0 L 896.9 408.0 L 895.1 416.0 L 964.9 416.0 L 963.1 408.0 L 961.4 400.0 L 959.7 392.0 L 958.1 384.0 L 956.7 376.0 L 955.4 368.0 L 954.2 360.0 L 953.2 352.0 L 952.4 344.0 L 951.9 336.0 L 951.6 328.0 L 951.5 320.0 L 951.7 312.0 L 952.1 304.0 L 952.8 296.0 L 953.7 288.0 Z" fill="#141e28" stroke="#5a6a74" stroke-width="2.5" stroke-linejoin="round"/>
           <path d="M 917.0 288.0 L 917.5 296.0 L 917.8 304.0 L 918.1 312.0 L 918.2 320.0 L 918.1 328.0 L 918.0 336.0 L 917.7 344.0 L 917.2 352.0 L 916.7 360.0 L 916.0 368.0 L 915.3 376.0 L 914.5 384.0 L 913.7 392.0 L 912.7 400.0 L 911.8 408.0 L 910.8 416.0 M 930.0 288.0 L 930.0 296.0 L 930.0 304.0 L 930.0 312.0 L 930.0 320.0 L 930.0 328.0 L 930.0 336.0 L 930.0 344.0 L 930.0 352.0 L 930.0 360.0 L 930.0 368.0 L 930.0 376.0 L 930.0 384.0 L 930.0 392.0 L 930.0 400.0 L 930.0 408.0 L 930.0 416.0 M 943.0 288.0 L 942.5 296.0 L 942.2 304.0 L 941.9 312.0 L 941.8 320.0 L 941.9 328.0 L 942.0 336.0 L 942.3 344.0 L 942.8 352.0 L 943.3 360.0 L 944.0 368.0 L 944.7 376.0 L 945.5 384.0 L 946.3 392.0 L 947.3 400.0 L 948.2 408.0 L 949.2 416.0" stroke="#283842" stroke-width="1" fill="none" opacity="0.55"/>
           <ellipse cx="930" cy="288" rx="23.7" ry="5" fill="#0d151c" stroke="#5a6a74" stroke-width="2"/>
@@ -514,9 +540,9 @@ body.shake{animation:quake .9s linear;}
         <path d="M14.0 458.0 L16.7 454.4 L18.9 450.9 L20.5 447.3 L21.0 443.7 L20.5 440.1 L18.9 436.6 L16.7 433.0 L14.0 429.4 L11.3 425.8 L9.1 422.2 L7.5 418.7 L7.0 415.1 L7.5 411.5 L9.1 407.9 L11.3 404.4 L14.0 400.8 L16.7 397.2 L18.9 393.6 L20.5 390.1 L21.0 386.5 L20.5 382.9 L18.9 379.4 L16.7 375.8 L14.0 372.2 L11.3 368.6 L9.1 365.1 L7.5 361.5 L7.0 357.9 L7.5 354.3 L9.1 350.8 L11.3 347.2 L14.0 343.6 L16.7 340.0 L18.9 336.4 L20.5 332.9 L21.0 329.3 L20.5 325.7 L18.9 322.1 L16.7 318.6 L14.0 315.0 L11.3 311.4 L9.1 307.9 L7.5 304.3 L7.0 300.7 L7.5 297.1 L9.1 293.6 L11.3 290.0 L14.0 286.4 L16.7 282.8 L18.9 279.2 L20.5 275.7 L21.0 272.1 L20.5 268.5 L18.9 264.9 L16.7 261.4 L14.0 257.8 L11.3 254.2 L9.1 250.7 L7.5 247.1 L7.0 243.5 L7.5 239.9 L9.1 236.3 L11.3 232.8 L14.0 229.2 L16.7 225.6 L18.9 222.1 L20.5 218.5 L21.0 214.9 L20.5 211.3 L18.9 207.8 L16.7 204.2 L14.0 200.6 L11.3 197.0 L9.1 193.4 L7.5 189.9 L7.0 186.3 L7.5 182.7 L9.1 179.1 L11.3 175.6 L14.0 172.0" stroke="#5a6a74" stroke-width="1.1" fill="none" opacity="0.85"/>
         <line x1="8" y1="175" x2="20" y2="175" stroke="#3b4a54" stroke-width="1.2"/>
         <g id="fDvn" opacity="0">
-          <path d="M9 168 v-9 M14 170 v-12 M19 168 v-9" stroke="#8fb8c8" stroke-width="1.6" stroke-dasharray="3 3"/>
+          <path d="M8 167 q3 -2.5 6 0 q3 2.5 6 0 M6.5 160 q3.7 -3 7.5 0 q3.7 3 7.5 0 M5 153 q4.5 -3.5 9 0 q4.5 3.5 9 0" stroke="#8fb8c8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
         </g>
-        <text class="lblS" x="4" y="166" font-size="7">DVN</text>
+        <text class="lblS" x="14" y="472" text-anchor="middle" font-size="7">DVN</text>
         <!-- P dôme GV -->
         <g class="sens">
           <line x1="246" y1="163" x2="252" y2="163"/>
@@ -565,6 +591,20 @@ body.shake{animation:quake .9s linear;}
         <rect x="40" y="490" width="214" height="52" rx="6" fill="#000" stroke="#2a343c" stroke-width="1.5"/>
         <text class="digits" id="digMain" x="147" y="526" text-anchor="middle" font-size="30">3800</text>
         <text class="lblS" x="147" y="538" text-anchor="middle" id="lblMain">PUISSANCE RÉACTEUR · MWth</text>
+                <g id="gPanache" opacity="0.5" filter="url(#fCloud)">
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+          </g>
       </svg>
       </div>
     </div>
@@ -1067,7 +1107,7 @@ body.shake{animation:quake .9s linear;}
     APIF: {Pn:0.0002,Tavg:60, Ppzr:3,  pzrSet:3,  turb:0,  rod:0, Cb:800, gmpp:false,rra:true},
     APIO: {Pn:0.0002,Tavg:50, Ppzr:1,  pzrSet:1,  turb:0,  rod:0, Cb:1000,gmpp:false,rra:true},
     APR:  {Pn:0.0002,Tavg:45, Ppzr:1,  pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true},
-    RCD:  {Pn:0,Pres:0,Tavg:30,Ppzr:1, pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true}
+    RCD:  {Xe:0, Pn:0,Pres:0,Tavg:30,Ppzr:1, pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true}
   };
   function isHot(){return S.etat==='RP'||S.etat==='ANGV';}
   // demi-écart branches chaude/froide : ΔT triplé en thermosiphon (débit effondré)
@@ -1291,6 +1331,7 @@ body.shake{animation:quake .9s linear;}
   }
 
   function applyEtat(e){
+    var pOld=S.Ppzr;
     var p=PRESET[e];
     for(var k in p){if(k!=='Cb')S[k]=p[k];}
     if(e==='RCD'){S.Pr1=0;S.Pr2=0;S.Pres=0;}
@@ -1302,6 +1343,9 @@ body.shake{animation:quake .9s linear;}
       if(p.Cb!=null)S.Cb=Math.max(S.Cb,p.Cb); // preset sans Cb (RP) : garder le calage critique, pas de NaN
     }
     S.turbSet=S.turb; // les presets fixent la turbine : la consigne suit (pas de remontée fantôme)
+    // repressurisation adoucie : hors retour direct en RP, la pression monte par
+    // la dynamique du pressuriseur (chaufferettes), pas par téléportation
+    if(e!=='RP'&&S.Ppzr>pOld+25)S.Ppzr=pOld+25;
     S.etat=e;
     S.scram=false;S.tripMsg="";S.note="";
     S.areAvail=true;S.asgLatch=false;
@@ -1352,6 +1396,11 @@ body.shake{animation:quake .9s linear;}
     }
     // traversée séquentielle : on enchaîne les états intermédiaires tant que
     // les conditions physiques de chaque transition sont réunies
+    var iRCD=ORDER.indexOf('RCD');
+    if(iC>=iRCD&&i1<iRCD&&S.Pres<0.0018){
+      S.Pr2=Math.max(S.Pr2||0,0.0018); // groupe lent : assemblages irradiés rechargés
+      log('RECHARGEMENT : 193 assemblages en cuve (cœur neuf + irradiés) — puissance résiduelle ~7 MWth à évacuer.','cyan');
+    }
     var iAPIO=ORDER.indexOf('APIO');
     if(i1>=iAPIO&&iC<iAPIO&&S.Xe>0.10){
       S.ebaSweep=true;
@@ -1505,7 +1554,8 @@ body.shake{animation:quake .9s linear;}
       // (maintien du ΔP aux vannes réglantes) : la vitesse suit la demande.
       var tpaCap=clamp((S.Psteam-12)/25,0,1);
       // la TPA échappe au condenseur : sans vide, pas de TPA — et son barillet est en aval des VIV
-      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv;
+      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv&&(S.turb>2||S.Ptot>0.06);
+      // tranche à l'arrêt : l'alimentation des GV est assurée par l'ASG, TPA à l'arrêt
       // ARE : régulation trois éléments ou manuel — bornée par la capacité TPA
       var areReg=S.areAvail
         ?(S.areAuto?clamp(S.Ptot*100+(50-S.gv)*2,0,110):S.areM)
@@ -1715,6 +1765,7 @@ body.shake{animation:quake .9s linear;}
     S.I+=LAM_I*(S.Pn-S.I)*dts;
     S.Xe+=(K1*S.I+K2*S.Pn-(LAM_XE+SIG*S.Pn)*S.Xe)*dts;
     var cpOuvert=(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
+    if(S.etat==='RCD')S.Xe=Math.max(0,S.Xe-0.004*dts); // cœur en piscine BK : plus de terme source en cuve
     var balDvn=0; // taux de balayage effectif (fraction Xe/s) -> rejet cheminée
     if(S.ebaSweep){balDvn=Math.min(0.0019,S.Xe/Math.max(dts,0.001));S.Xe=Math.max(0,S.Xe-0.0019*dts);
       if(S.Xe<=0.02){S.ebaSweep=false;log('Balayage EBA : teneur en gaz de fission résorbée — la ventilation reste en service tant que le circuit est ouvert. Rejet cumulé à la cheminée : '+S.rejCum.toFixed(1)+' GBq (gaz rares).','cyan');}}
@@ -1725,7 +1776,8 @@ body.shake{animation:quake .9s linear;}
     var dvnTgt=(cpOuvert?1400:800)+balDvn*3.5e9;    // ~6.7 MBq/m³ au pic de balayage
     S.actDvn+=(dvnTgt-S.actDvn)*(1-Math.exp(-dts/30));
     S.rejCum+=balDvn*42*dts;                        // ~14 GBq pour une poche à 35 %
-    if(balDvn>0)S.actEnc=Math.min(S.actEnc+balDvn*1400*dts,6);
+    if(S.ebaSweep&&balDvn>0)S.actEnc=Math.min(S.actEnc+balDvn*1400*dts,6);
+    else if(cpOuvert&&S.actEnc>0.01)S.actEnc=Math.max(0.005,S.actEnc-0.0009*dts); // ventilation d'entretien : l'enceinte est assainie
     S.Xe=Math.max(0,S.Xe);
     // puissance résiduelle : deux composantes (produits de fission courts / longs)
     S.Pr1+=((0.05*S.Pn-S.Pr1)/((0.05*S.Pn>S.Pr1)?300:1200))*dts;
@@ -2571,7 +2623,13 @@ body.shake{animation:quake .9s linear;}
     var csrc=SRC[S.srcType];
     el('crfTxt').textContent=S.crf?('CRF · '+csrc.lbl.split(' ')[0].toLowerCase()+' '+S.Tsrc.toFixed(0)+' °C'):'CRF · PERDU';
     el('gAero').setAttribute('opacity',csrc.aero?1:0);
-    if(csrc.aero){var pan=el('gPanache');if(pan)pan.setAttribute('opacity',(0.15+0.6*(S.turb/100)).toFixed(2));}
+    var pan=el('gPanache');
+    if(pan){var uP=S.turb/100;
+      // la charge module la QUANTITÉ : hauteur et largeur du panache (ancré au col),
+      // l'opacité ne bouge que légèrement — à l'arrêt, petit panache résiduel (GCTc)
+      pan.setAttribute('opacity',csrc.aero?(0.5+0.3*uP).toFixed(2):0);
+      pan.setAttribute('transform','translate(930,288) scale('+(0.55+0.45*uP).toFixed(3)+','+(0.3+0.7*uP).toFixed(3)+') translate(-930,-288)');
+    }
     el('crfIn').style.opacity=el('crfOut').style.opacity=S.crf?0.75:0.15;
     el('secTxt').textContent=S.sec?'en service':'PERDU';
     el('secTxt').setAttribute('fill',S.sec?'#4fc57a':'#e6483d');
@@ -2582,7 +2640,8 @@ body.shake{animation:quake .9s linear;}
     var headOn=!(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD');
     el('gHead').style.opacity=headOn?1:0;
     el('gHeadB').style.opacity=headOn?1:0;
-    var lvw=(S.etat==='RCD')?0:S.lvlCuve/100;
+    // RCD : la cuve reste en eau — protection biologique des internes activés
+    var lvw=S.lvlCuve/100;
     var topW=headOn?106:158; // couvercle posé : l'eau emplit aussi le dôme
     el('vesselWater').setAttribute('y',(362-lvw*(362-topW)).toFixed(1));
     el('vesselWater').setAttribute('height',(lvw*(362-topW)).toFixed(1));
