@@ -1347,6 +1347,7 @@ body.shake{animation:quake .9s linear;}
       if(p.Cb!=null)S.Cb=Math.max(S.Cb,p.Cb); // preset sans Cb (RP) : garder le calage critique, pas de NaN
     }
     S.turbSet=S.turb; // les presets fixent la turbine : la consigne suit (pas de remontée fantôme)
+    if(e==='RP'||e==='ANGV'){S.gctSet=74;S.gctTgt=74;} // consigne GCT au standard de l'état (évite un GCT muet sur consigne héritée)
     // repressurisation adoucie : hors retour direct en RP, la pression monte par
     // la dynamique du pressuriseur (chaufferettes), pas par téléportation
     if(e!=='RP'&&S.Ppzr>pOld+25)S.Ppzr=pOld+25;
