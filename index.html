@@ -1480,7 +1480,7 @@ body.shake{animation:quake .9s linear;}
       // soupapes de sûreté GV (VVP) : dernier rempart, décharge à l'atmosphère
       S.svf=clamp((S.Psteam-90)*0.25,0,1);
       // soutirage vapeur des turbopompes ASG : chaque TPS en pompage tire sur les GV
-      var tpsDraw=((S.tpsA?1:0)+(S.tpsB?1:0))*0.03*clamp((S.Psteam-6)/6,0,1)*clamp((62-S.gv)/8,0,1);
+      var tpsDraw=((S.tpsA?1:0)+(S.tpsB?1:0))*(0.001+0.25*(S.asg||0))*clamp((S.Psteam-6)/6,0,1); // conso vapeur ∝ débit pompé + marche à vide
       D=(S.viv?(S.turb/100):0)+S.gct*0.85+S.gctA*0.4+S.svf*0.7+tpsDraw;
     }else{
       S.gct=0;S.gctA=0;S.svf=0;
@@ -1517,7 +1517,10 @@ body.shake{animation:quake .9s linear;}
       S.rod=Math.max(0,S.rod-8*dt);
     }else if(S.auto&&S.etat==='RP'){
       var err=S.Tavg-tprog(Math.min(1,D));
-      var rate=clamp(-err*0.12-S.rho*0.0006,-0.35,0.35);
+      // gain scheduling : à basse charge, l appel de vapeur n amortit plus la boucle
+      // grappes-température -> on réduit l autorité du régulateur (pleine à 100 %)
+      var gSch=clamp(0.25+0.75*(S.turb/100),0.25,1);
+      var rate=clamp((-err*0.12-S.rho*0.0006)*gSch,-0.35*gSch,0.35*gSch);
       // butée basse d'exploitation : la régulation s'ARRÊTE à 28 % en descendant
       // (jamais les grappes au fond en fonctionnement) ; sous 28 (post-AAR),
       // la remontée reste libre et progressive — pas de saut
@@ -1944,6 +1947,7 @@ body.shake{animation:quake .9s linear;}
 
   function doScram(m){
     S.scram=true;S.tripMsg=m;
+    if(S.turb>1||S.turbSet>1){S.turb=0;S.turbSet=0;log('Déclenchement turbine sur AAR — groupe découplé, l\u2019évacuation de la puissance passe au GCT.','amber');}
     log('ARRÊT D\u2019URGENCE'+(m?' — '+m.replace(/^AU automatique : /,''):' (manuel)'),'red');
     if(S.turb>1) log('AUTO : fermeture vannes admission turbine sur AU','amber');
     S.turb=0;S.turbSet=0;el('turb').value=0; // déclenchement turbine sur AU
