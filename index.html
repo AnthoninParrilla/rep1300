@@ -666,6 +666,7 @@ body.shake{animation:quake .9s linear;}
         <div class="al" id="aGmpp">Perte GMPP</div>
         <div class="al" id="aRri">Perte RRI</div>
         <div class="al" id="aDilu">Dilution</div>
+        <div class="al" id="aRejA">Rejets atmosph.</div>
         <div class="al" id="aAu">Arrêt d'urgence</div>
         <div class="al" id="aXe">Antiréactivité Xe</div>
         <div class="al" id="aPenc">P enceinte haute</div>
@@ -899,6 +900,7 @@ body.shake{animation:quake .9s linear;}
       <div class="row"><label>CVI 6 MA — incondensables</label><span class="val" id="krtC">— Bq/L</span></div>
       <div class="row"><label>EBA 34-35 MA — dose enceinte</label><span class="val" id="krtE">— Gy/h</span></div>
       <div class="row"><label>DVN — rejets cheminée</label><span class="val" id="krtD">—</span></div>
+      <div class="row"><label>GCTa/VVP — rejets accidentels</label><span class="val" id="krtA">0.0 GBq</span></div>
       <div class="row"><span class="note">Activité volumique en Bq/L, débit de dose en Gy/h. Isolement VVP automatique sur très haute activité des lignes vapeur (fuite/rupture tube GV).</span></div>
     </div>
 
@@ -1369,7 +1371,7 @@ body.shake{animation:quake .9s linear;}
     S.ptr=1;S.puisard=0;S.recirc=false;S.recircHot=false;
     S.actGV=0.001;S.actCvi=0.001;S.actEnc=0.005;
     S.h2=0;S.h2boom=false;S.encFail=false;
-    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';S.rraF=false;el('iRra').textContent='Perte RRA';S.rri=true;S.rriT=0;S.rriMsg=0;el('iRri').textContent='Perte RRI';el('iRri').classList.remove('on');S.myst='';el('iMyst').textContent='🎲 Panne mystère';S.diluI=false;S.diluMsg=false;el('iDiluI').textContent='Dilution intempestive';el('iDiluI').classList.remove('on');S.rtv=0;S._rtvIso=false;S._rtvAl=false;el('iRtv').textContent='Rupture tuyauterie vapeur (RTV)';el('iRtv').classList.remove('on');
+    S.sebimM=false;S.pzrAuto=true;S.gctMode='auto';S.gctaMode='auto';S.rraF=false;el('iRra').textContent='Perte RRA';S.rri=true;S.rriT=0;S.rriMsg=0;el('iRri').textContent='Perte RRI';el('iRri').classList.remove('on');S.myst='';el('iMyst').textContent='🎲 Panne mystère';S.diluI=false;S.diluMsg=false;el('iDiluI').textContent='Dilution intempestive';el('iDiluI').classList.remove('on');S.rtv=0;S._rtvIso=false;S._rtvAl=false;S.rejAtmMsg=false;el('iRtv').textContent='Rupture tuyauterie vapeur (RTV)';el('iRtv').classList.remove('on');
     if(e==='APR'||e==='RCD'){
       if(S.gaine>0.001||S.dmg>0.001)log('Rechargement : assemblages défaillants déchargés — gaines saines','dim');
       S.gaine=0;S.dmg=0;S.actP=0.02;
@@ -1842,6 +1844,14 @@ body.shake{animation:quake .9s linear;}
     var dpX=clamp((S.Ppzr-S.Psteam)/140,0,1);
     var actTgt=S.fuiteGV*dpX*(S.Pn*0.40+S.actP*0.30);
     S.actGV=Math.max(0.001,S.actGV+(actTgt-S.actGV)*(1-Math.exp(-dts/10)));
+    // rejets accidentels : toute décharge atmosphérique (GCTa/soupapes VVP) d'un
+    // GV actif est comptée — la conduite RTGV vise à les annuler (égalisation P)
+    var dchgA=S.gctA*0.4+S.svf*0.7;
+    if(dchgA>0.001&&S.actGV>0.05){
+      S.rejAtm=(S.rejAtm||0)+dchgA*S.actGV*2.5*dts;
+      if(!S.rejAtmMsg){S.rejAtmMsg=true;
+        log('REJETS CONTAMINÉS À L\u2019ATMOSPHÈRE — la décharge GCTa/soupapes porte la vapeur d\u2019un GV actif. Conduite : équilibrer la pression primaire avec le GV isolé pour annuler la fuite, ne pas décharger le GV affecté.','red');}
+    }
     S.actCvi=Math.max(0.001,S.actCvi+(S.actGV*0.008-S.actCvi*0.008)*dts);
     S.actEnc=Math.max(0.005,S.actEnc+((S.relEnc||0)-(S.actEnc-0.005)*(S.encFail?0.01:0.0004))*dts);
     // niveau cuve (mesure post-accidentelle) : dérivé de l'inventaire RCP
@@ -1909,6 +1919,7 @@ body.shake{animation:quake .9s linear;}
         S.viv=false;
         if(S.turb>1){S.turb=0;S.turbSet=0;el('turb').value=0;}
         log('AUTO : ISOLEMENT VAPEUR (VVP) — fermeture des vannes d\u2019isolement vapeur. GCT-condenseur indisponible ; GCTa, soupapes GV et TPS ASG restent en amont des VIV.','red');
+      log('CONDUITE RTGV : le GV isolé sert de récipient — ramener la pression primaire à celle du GV pour ANNULER la fuite (aspersion/refroidissement) ; ne décharger le GV affecté sous aucun prétexte (rejets non filtrés).','amber');
       }else if(S.viv&&S.inhIsoV){logInhib('isov','isolement vapeur (fermeture VIV)');}
       }
     }
@@ -2759,9 +2770,11 @@ body.shake{animation:quake .9s linear;}
     el('rdpDisc').setAttribute('opacity',S.rdpBurst?1:0);
     el('efflVal').textContent=(S.effl||0).toFixed(1)+' m³';
     el('krtD').textContent=eng(S.actDvn,'Bq/m³')+' · '+(S.rejCum||0).toFixed(1)+' GBq';
+    el('krtA').textContent=(S.rejAtm||0).toFixed(1)+' GBq';
     el('fDvn').setAttribute('opacity',S.actDvn>5e3?0.9:0);
     el('aRri').classList.toggle('on',!S.rri);
     el('aDilu').classList.toggle('on',!!(S.diluI&&(S.diluCb0-S.Cb>150)));
+    el('aRejA').classList.toggle('red',!!((S.gctA*0.4+S.svf*0.7)>0.001&&S.actGV>0.05));
     el('pzrTdH').setAttribute('opacity',(S.etat==='APIO'||S.etat==='APR'||S.etat==='RCD')?1:0);
     var accH=21*Math.max(0,Math.min(1,S.accu/100));
     el('accuFill').setAttribute('y',(381-accH).toFixed(1));
