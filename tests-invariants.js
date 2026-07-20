@@ -57,7 +57,7 @@ function checkEtat(m,tag,st){
     inv(tag,'GCT OUVERT et évacue la résiduelle',st.gct.mu>0.004&&Math.abs(st.gct.mu-S.Ptot)<0.02,'gct='+(st.gct.mu*100).toFixed(1)+'% Ptot='+(S.Ptot*100).toFixed(1)+'%');
     inv(tag,'Psteam 74±2 tenue',Math.abs(st.Psteam.mu-74)<2,st.Psteam.mu.toFixed(1));
     inv(tag,'Tavg ~297',Math.abs(S.Tavg-297)<6,S.Tavg.toFixed(0));
-    inv(tag,'TPA arrêtées',!S.tpaRun&&S.tpaN<3,'tpaN='+S.tpaN.toFixed(0));
+    inv(tag,'TPA arrêtées (minimum technique : l état établi se conduit à l ASG)',!S.tpaRun&&S.tpaN<3,'tpaN='+S.tpaN.toFixed(0));
     inv(tag,'ASG alimente (compense l évaporation)',st.asg.mu>0.002,'asg='+(st.asg.mu*100).toFixed(2)+'%');
     inv(tag,'grappes au fond',S.rod<2,'rod='+S.rod.toFixed(0));
     inv(tag,'dérive Tavg bornée (régime)',st.Tavg.pp<4,'pp='+st.Tavg.pp.toFixed(1));
@@ -108,6 +108,15 @@ function checkEtat(m,tag,st){
   if(lastTare!==null)tareMax=Math.max(tareMax,Math.abs(m.S.Tare-lastTare)/50);
   lastTare=m.S.Tare;}
  universal(m,'conservation');
+ // le creux de bascule (l aveuglement du 16/07) : GCT nul >2 min avec production
+ // chaude et vapeur disponible = FAIL ; et l ARE tient post-AU (TPA sur vapeur)
+ {const m2=fresh();const r2=R(m2);r2(20,1);m2.doScram('essai');
+  let gap=0,maxGap=0;let areMin=999;
+  for(let s=0;s<60;s++){r2(30,1);
+   if(m2.S.gct<0.001&&m2.S.Ptot>0.01&&m2.S.Psteam>60&&m2.S.viv){gap+=30;maxGap=Math.max(maxGap,gap);}else gap=0;
+   if(m2.S.t>1560)areMin=Math.min(areMin,m2.S.areOut);}
+  inv('bascule','post-AU : le GCT ne ferme jamais >2 min (vapeur dispo)',maxGap<=120,'creux max='+maxGap+' s');
+  inv('bascule','post-AU : jamais d entre-deux affamé (TPA portent OU l ASG a repris)',(m2.S.tpaRun&&m2.S.gv>45)||(!m2.S.tpaRun&&m2.S.asg>0.003&&m2.S.gv>40),'tpaRun='+m2.S.tpaRun+' asg='+(m2.S.asg*100).toFixed(1)+'% gv='+m2.S.gv.toFixed(0));}
  inv('conservation','production chaude => un exutoire visible (GCT/GCTa/soupapes/ASG)',orphan<=2,'orphelins='+orphan);
  inv('conservation','gradient T ARE réaliste (inertie réchauffeurs)',tareMax<0.5,'max='+tareMax.toFixed(2)+' °C/s');
  inv('conservation','exutoire actif ET primaire tenu par les GMPP (5 h)',m.S.gct>0.001&&m.S.Tavg>288,'gct='+(m.S.gct*100).toFixed(1)+'% Tavg='+m.S.Tavg.toFixed(0));}
@@ -123,7 +132,7 @@ function checkEtat(m,tag,st){
  inv('AAR+CRF 1h','pas d oscillateur thermique',st.Psteam.pp<2.5&&st.flips<=2,'pp='+st.Psteam.pp.toFixed(1)+' flips='+st.flips);
  inv('AAR+CRF 1h','refroidissement monotone ou plateau',st.Tavg.pp<8,'ppT='+st.Tavg.pp.toFixed(1));}
 // post-îlotage établi
-{const m=fresh();const r=R(m);r(30,1);m.S.reseau=false;m.S.ilote=true;m.S.runbk=true;m.S.gctB=9;m.S.rodDrop=10;r(300,60);
+{const m=fresh();const r=R(m);r(30,1);m.S.reseau=false;m.S.ilote=true;m.S.runbk=true;m.S.gctB=9;m.S.rodDrop=10;r(60,60);for(let k=0;k<42;k++){m.S.dilu=(m.S.Pn<0.06&&!m.S.scram);r(10,1);} // conduite : dilution ASSERVIE contre la montée xénon (7 h)
  const st=regime(m,4);universal(m,'îloté');
  inv('îloté','Pn de maison ~5-12 %',m.S.Pn>0.04&&m.S.Pn<0.14,'Pn='+(m.S.Pn*100).toFixed(1));
  inv('îloté','régime stable : dérive xénon monotone, pas de zigzag',st.flips<=2&&st.Pn.invs<=2,'flips='+st.flips+' inversions='+st.Pn.invs+' ppPn='+(st.Pn.pp*100).toFixed(1)+'pts');}

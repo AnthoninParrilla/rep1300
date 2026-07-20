@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4f-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4f-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1051,13 +1051,13 @@ body.shake{animation:quake .9s linear;}
   var BETA=650, TAU=12;
   var W_ROD=20, W_BORE=-10, W_XE=-2800;
   var A_MOD=-30, DEF_PUI=-1700;
-  var LAM_I=2.87e-5, LAM_XE=2.09e-5, SIG=3.5e-5;
+  var LAM_I=2.87e-5, LAM_XE=2.09e-5, SIG=8.5e-5; // σφ nominal REP (~8e-5 s⁻¹) : fixe I/Xe=3,3 à l équilibre → pic post-trip ~2× vers 9-11 h
   var K1=0.95*(LAM_XE+SIG), K2=0.05*(LAM_XE+SIG);
   var CB0=1000;
   var F_FISS=0.935, F_RES=0.065; // partition fission / résiduelle à l'équilibre
 
   var S={
-    Pn:1.0, Pr1:0.05, Pr2:0.015, Pres:0.065, Ptot:1.0,
+    Pn:1.0, Pr1:0.026, Pr2:0.024, Pr3:0.009, Pres:0.059, Ptot:1.0,
     rod:95, Cb:0, I:1.0, Xe:1.0,
     Tavg:310, Psteam:71, gv:50, Pelec:1300, Ppzr:155,
     turb:100, auto:true, areAuto:true, areM:100, areAvail:true,
@@ -1346,7 +1346,7 @@ body.shake{animation:quake .9s linear;}
     var pOld=S.Ppzr;
     var p=PRESET[e];
     for(var k in p){if(k!=='Cb')S[k]=p[k];}
-    if(e==='RCD'){S.Pr1=0;S.Pr2=0;S.Pres=0;}
+    if(e==='RCD'){S.Pr1=0;S.Pr2=0;S.Pr3=0;S.Pres=0;}
     if(e==='RP'){
       // calage critique au bore selon l'empoisonnement xénon courant
       S.Cb=clamp(-W_XE*(S.Xe-1)/W_BORE,-CB0,1500);
@@ -1411,7 +1411,7 @@ body.shake{animation:quake .9s linear;}
     // les conditions physiques de chaque transition sont réunies
     var iRCD=ORDER.indexOf('RCD');
     if(iC>=iRCD&&i1<iRCD&&S.Pres<0.0018){
-      S.Pr2=Math.max(S.Pr2||0,0.0018); // groupe lent : assemblages irradiés rechargés
+      S.Pr3=Math.max(S.Pr3||0,0.0018); // groupe lent : assemblages irradiés rechargés
       log('RECHARGEMENT : 193 assemblages en cuve (cœur neuf + irradiés) — puissance résiduelle ~7 MWth à évacuer.','cyan');
     }
     var iAPIO=ORDER.indexOf('APIO');
@@ -1548,7 +1548,7 @@ body.shake{animation:quake .9s linear;}
     S.Pn=clamp(S.Pn,0.0002,1.25);
 
     // puissance totale = fission + résiduelle (résiduelle intégrée en dynamique lente)
-    if(S.etat==='RCD'){S.Pr1=0;S.Pr2=0;S.Pres=0;} // cœur déchargé : plus de source en cuve
+    if(S.etat==='RCD'){S.Pr1=0;S.Pr2=0;S.Pr3=0;S.Pres=0;} // cœur déchargé : plus de source en cuve
     S.Ptot=F_FISS*S.Pn+S.Pres;
 
     if(hot){
@@ -1577,7 +1577,7 @@ body.shake{animation:quake .9s linear;}
 
       // pression vapeur GV (ancrage 71 bar seulement turbine couplée ;
       // à l'arrêt, l'équilibre vient du bilan production / décharge GCT)
-      var prod=dry?0:S.Ptot;
+      var prod=dry?0:(S.Ptot+S.gmppN*0.0013*w); // + flux GMPP traversant (source primaire -> GV couplé -> vapeur -> GCT)
       S.Psteam+=((prod-D)*8-(S.Psteam-71)*0.2*(S.turb/100)-(dry?(S.Psteam-4)*0.05:0))*dt;
       S.Psteam=clamp(S.Psteam,1,120);
 
@@ -1586,13 +1586,14 @@ body.shake{animation:quake .9s linear;}
       // (maintien du ΔP aux vannes réglantes) : la vitesse suit la demande.
       var tpaCap=clamp((S.Psteam-12)/25,0,1);
       // la TPA échappe au condenseur : sans vide, pas de TPA — et son barillet est en aval des VIV
-      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv&&(S.turb>2||S.Ptot>(S.tpaRun?0.05:0.07)); // hystérésis : pas d'oscillateur à la traversée de la résiduelle
-      // tranche à l'arrêt : l'alimentation des GV est assurée par l'ASG, TPA à l'arrêt
       // ARE : régulation trois éléments ou manuel — bornée par la capacité TPA
       var areReg=S.areAvail
         ?(S.areAuto?clamp(S.Ptot*100+(50-S.gv)*2,0,110):S.areM)
         :0;
+      S.tpaRun=S.areAvail&&tpaCap>0&&!dry&&S.Pcond<0.20&&S.viv&&(areReg>(S.tpaRun?2.5:6)); // arrêt sur MINIMUM TECHNIQUE : les TPA portent le transitoire (îlotage inclus), s'arrêtent quand la demande s'étiole — l'AN/GV établi se conduit à l'ASG
+      // tranche à l'arrêt : l'alimentation des GV est assurée par l'ASG, TPA à l'arrêt
       S.areOut=(S.p14||(S.rtv>0&&S._rtvIso))?0:Math.min(areReg,S.tpaRun?115*tpaCap:0); // P14 / consigne RTV : isolement ARE
+      if(S.tpaRun)D+=0.004+0.009*(S.areOut/115); // vapeur des turbines TPA (sourcé : 2×5000 t/h, 80 bar, ADG 10 bar)
       var tpaTgt=S.tpaRun?clamp(22+0.8*S.areOut,0,100)*tpaCap:0;
       S.tpaN+=(tpaTgt-S.tpaN)*(1-Math.exp(-dt/5));
 
@@ -1603,7 +1604,13 @@ body.shake{animation:quake .9s linear;}
                 +((S.tpsA?0.025:0)+(S.tpsB?0.025:0))*clamp((S.Psteam-6)/6,0,1); // capacité continue : pas d'oscillateur de relaxation
       // régulation de niveau : plein débit sous 50 %, se ferme en approchant 58 %
       // (jamais un « maintien à 62 % » qui masquerait un déficit d'alimentation)
-      var asgDemande=asgCap*clamp((58-S.gv)/8,0,1);
+      // bascule d'alimentation AN/GV : à l'arrêt des TPA (minimum technique),
+      // les motopompes ASG prennent le relais du niveau (une seule fois, log conduite)
+      if(S.Tavg>200&&!S.rra&&!S.tpaRun&&S.areAvail&&S.gv<49.5&&!S.mpsA&&!S.mpsB&&(S.reseau||S.diesel)){
+        S.mpsA=true;S.mpsB=true;
+        log('AUTO : bascule de l\u2019alimentation GV sur ASG (motopompes) \u2014 TPA arr\u00eat\u00e9es au minimum technique.','cyan');
+      }
+      var asgDemande=Math.min(asgCap*clamp((58-S.gv)/8,0,1),(S.Ptot<0.03&&!S.breche)?0.035:1); // recharge résiduelle plafonnée ~une file ASG : le GCT doit continuer d'évacuer
       // la bâche se vide au débit des pompes EN SERVICE (consommation réelle,
       // pas le débit régulé vers le GV) : 4 pompes → autonomie ~12 h.
       if(asgCap>0&&S.bacheASG>0)S.bacheASG=Math.max(0,S.bacheASG-asgCap*0.00023*dt); // 4 pompes → ~12 h
@@ -1794,7 +1801,11 @@ body.shake{animation:quake .9s linear;}
     // T eau alimentaire : réchauffage par soutirages, fonction de la charge
     // température eau alimentaire : le poste d'eau (AHP/ABP) est chauffé par les
     // soutirages turbine — sans débit turbine (ou VIV fermées), l'eau arrive froide
-    S.Tare+=((45+185*turbf*(S.viv?1:0))-S.Tare)*(1-Math.exp(-dt/700)); // inertie réchauffeurs/bâche : ~12 min, pas 40 s
+    // Poste d'eau : cycle régénératif complet en charge (soutirages) ; turbine
+    // déclenchée, la bâche reste MAINTENUE en conditionnement par la vapeur du
+    // barillet VVP tant que les GV sont en pression (plancher ~140 °C).
+    var tCondit=(S.viv&&S.Psteam>18)?140:45;
+    S.Tare+=(Math.max(45+185*turbf*(S.viv?1:0),tCondit)-S.Tare)*(1-Math.exp(-dt/700));
   }
 
   function slowStep(dts){
@@ -1816,9 +1827,13 @@ body.shake{animation:quake .9s linear;}
     else if(cpOuvert&&S.actEnc>0.01)S.actEnc=Math.max(0.005,S.actEnc-0.0009*dts); // ventilation d'entretien : l'enceinte est assainie
     S.Xe=Math.max(0,S.Xe);
     // puissance résiduelle : deux composantes (produits de fission courts / longs)
-    S.Pr1+=((0.05*S.Pn-S.Pr1)/((0.05*S.Pn>S.Pr1)?300:1200))*dts;
-    S.Pr2+=((0.015*S.Pn-S.Pr2)/((0.015*S.Pn>S.Pr2)?3000:28800))*dts;
-    S.Pres=S.Pr1+S.Pr2;
+    // décroissance résiduelle à 3 groupes, calée sur la courbe ANS :
+    // 60 s: 4,4 % · 10 min: 2,6 % · 1 h: 1,45 % · 10 h: 0,72 % · 24 h: 0,55 %
+    S.Pr1+=((0.026*S.Pn-S.Pr1)/((0.026*S.Pn>S.Pr1)?300:300))*dts;
+    S.Pr2+=((0.024*S.Pn-S.Pr2)/((0.024*S.Pn>S.Pr2)?3000:2400))*dts;
+    S.Pr3=S.Pr3||0;
+    S.Pr3+=((0.009*S.Pn-S.Pr3)/((0.009*S.Pn>S.Pr3)?30000:130000))*dts;
+    S.Pres=S.Pr1+S.Pr2+S.Pr3;
     // RTV : la fuite vide le GV (l'évaporation part par la brèche, non compensée)
     if(S.rtv>0&&S.gv>0)S.gv=Math.max(0,S.gv-1.2*S.rtv*Math.max(0.25,S.Psteam/71)*dts); // rupture pleine section : ~75 t vidées en 60-90 s
     // AAR + isolement vapeur sur DÉCOUPLAGE pression/température : en conduite
@@ -2930,7 +2945,7 @@ body.shake{animation:quake .9s linear;}
     el('pPvap').textContent=fmt(S.Psteam)+' bar';
     el('pGv').textContent=fmt(S.gv)+' %';
     el('pGv').className='v'+(dry?' r':(S.gv<25?' a':''));
-    el('pGct').textContent=S.gct>0.02?Math.round(S.gct*100)+' %':'Fermé';
+    el('pGct').textContent=S.gct>0.001?((S.gct<0.1?(S.gct*100).toFixed(1):Math.round(S.gct*100))+' %'):'Fermé'; // un GCT qui évacue n'est jamais « Fermé »
     el('pGct').className='v'+(S.gct>0.02?' a':'');
     el('pAsg').textContent=S.asg>0?Math.round(S.asg*100)+' %':'Arrêt';
     el('pAsg').className='v'+(S.asg>0?' a':'');
