@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.3-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.3-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -661,6 +661,7 @@ body.shake{animation:quake .9s linear;}
         <div class="al" id="aTpa">Arrêt TPA</div>
         <div class="al" id="aAsg">ASG en service</div>
         <div class="al" id="aPzrHi">P pressu haute</div>
+        <div class="al" id="aBlkIS">Blocage IS</div>
         <div class="al" id="aPzrLo">P pressu basse</div>
         <div class="al" id="aMan">Grappes manu</div>
         <div class="al" id="aGmpp">Perte GMPP</div>
@@ -756,6 +757,10 @@ body.shake{animation:quake .9s linear;}
       <div class="row">
         <label for="turb">Vannes admission HP</label>
         <input type="range" id="turb" min="0" max="100" value="100" step="1">
+        <div class="row" style="margin-top:6px"><label>Pente de charge</label>
+          <button class="sw" id="tr02" style="min-width:64px">0,2 %/s</button>
+          <button class="sw on" id="tr06" style="min-width:64px">0,6 %/s</button>
+          <button class="sw" id="tr12" style="min-width:64px">1,2 %/s</button></div>
         <span class="val" id="turbVal">100 %</span>
       </div>
       <div class="row">
@@ -1063,7 +1068,7 @@ body.shake{animation:quake .9s linear;}
     heat:false, spray:false, digSel:'th',
     Padm:69, Tare:230, Pcond:0.06,
     cvi:true, air:0, gctA:0,
-    etat:'RP', rra:false, pzrSet:155,
+    etat:'RP', rra:false, pzrSet:155, turbRate:0.6,
     Penc:1.0, inv:100, accu:100, breche:0, sebim:false,
     rdp:0, rdpBurst:false, // réservoir de décharge pressuriseur (SEBIM) + disque de rupture
     ishp:false, isbp:false, eas:false,
@@ -1443,7 +1448,7 @@ body.shake{animation:quake .9s linear;}
     // (montée ~0.6 %/s ≈ transitoire admissible ; descente plus rapide)
     if(S.turb!==S.turbSet){
       var dTu=S.turbSet-S.turb;
-      S.turb+=clamp(dTu,-3*dt,0.6*dt);
+      S.turb+=clamp(dTu,-S.turbRate*dt,S.turbRate*dt); // pente de charge sélectionnable (les trips court-circuitent la rampe)
       if(Math.abs(dTu)<0.05)S.turb=S.turbSet;
     }
     // agrégats recalculés à chaque pas, quels que soient l'état et la branche
@@ -1555,12 +1560,13 @@ body.shake{animation:quake .9s linear;}
       // (injection RIS + décharge SEBIM) refroidit la branche sèche.
       var w=clamp(S.gv/15,0,1);
       var heat=(S.gmpp?D:D*0.25);
-      var tgt=tsat(S.Psteam)+4+19*S.Ptot+(S.Ptot-heat)*40*(S.gmpp?1:2.5);
+      var Pth=S.Ptot+S.gmppN*0.0013; // + échauffement des GMPP (~5 MW/pompe) : source PRIMAIRE
+      var tgt=tsat(S.Psteam)+4+19*Pth+(Pth-heat)*40*(S.gmpp?1:2.5);
       // couplage GV effectif seulement si le cœur est couvert (inv > 40) :
       // sous ce seuil le cœur nu chauffe librement, découplé du secondaire
       var covered=clamp((S.inv-30)/15,0,1);
       var dWet=(tgt-S.Tavg)*(1-Math.exp(-dt/8))*covered;
-      var Pdry=Math.max(S.Pres,S.Pn*0.02)*3800;
+      var Pdry=Math.max(S.Pres+S.gmppN*0.0013,S.Pn*0.02)*3800; // GV secs : les pompes chauffent toujours
       // feed & bleed : le RIS ne refroidit que si (a) une décharge est ouverte pour
       // évacuer l'eau injectée ET (b) l'eau injectée est froide. En recirculation
       // sans SEC, l'eau des puisards revient chaude → aucun refroidissement.
@@ -1618,11 +1624,15 @@ body.shake{animation:quake .9s linear;}
       // pressuriseur : dérive physique (dilatation/contraction, expansion de la bulle
       // avec la perte d'inventaire) + régulation à autorité limitée
       var dryP=(1-w)*clamp((S.Tavg-310)*1.2,0,45);
-      var pnat=155+(S.Tavg-310)*0.8-(100-S.inv)*1.4+dryP;
+      // Le pressuriseur tient la CONSIGNE par ses chaufferettes, indépendamment de
+      // Tavg (l'eau du ballon est à sa propre saturation). Plancher physique :
+      // Psat des boucles + marge (pas de dépressurisation sous la saturation).
+      // La perte d'inventaire (brèche) effondre la tenue -> IS conservé.
+      var pnat=Math.max(S.pzrSet, psat(S.Tavg+14)+8) - (100-S.inv)*1.4 + dryP;
       var ctrl;
       if(S.pzrAuto){
-        ctrl=clamp((155-S.Ppzr)*0.45,-0.9,S.sebim?0.08:0.9); // chaufferettes bridées seulement contre une SEBIM ouverte
-        S.heat=S.Ppzr<154.5&&S.breche===0; S.spray=S.Ppzr>155.8;
+        ctrl=clamp((S.pzrSet-S.Ppzr)*0.45,-0.9,S.sebim?0.08:0.9); // chaufferettes bridées seulement contre une SEBIM ouverte
+        S.heat=S.Ppzr<S.pzrSet-0.5&&S.breche===0; S.spray=S.Ppzr>S.pzrSet+0.8;
       }else{
         S.heat=S.heatM; S.spray=S.sprayM;
         ctrl=(S.heat?(S.sebim?0.08:0.3):0)-(S.spray?0.45:0);
@@ -1784,7 +1794,7 @@ body.shake{animation:quake .9s linear;}
     // T eau alimentaire : réchauffage par soutirages, fonction de la charge
     // température eau alimentaire : le poste d'eau (AHP/ABP) est chauffé par les
     // soutirages turbine — sans débit turbine (ou VIV fermées), l'eau arrive froide
-    S.Tare+=((45+185*turbf*(S.viv?1:0))-S.Tare)*(1-Math.exp(-dt/40));
+    S.Tare+=((45+185*turbf*(S.viv?1:0))-S.Tare)*(1-Math.exp(-dt/700)); // inertie réchauffeurs/bâche : ~12 min, pas 40 s
   }
 
   function slowStep(dts){
@@ -1883,6 +1893,9 @@ body.shake{animation:quake .9s linear;}
   function trips(){
     if(!isHot())return; // protections GV/vapeur/pressuriseur : états à chaud uniquement
     // ---- automatismes de sauvegarde (jamais inhibés par l'AAR) ----
+    var blkDue=!S.isBlk&&!S.sigIS&&!S.scram&&S.Ppzr<145&&S.Ppzr>119;S._blkDue=blkDue;
+    if(blkDue&&!S._blkMsg){S._blkMsg=true;log('CONDUITE : la pression approche P11 (139 bar) — BLOQUER le signal IS avant de poursuivre la descente (sinon IS + isolement enceinte à 118 bar).','amber');}
+    if(!blkDue)S._blkMsg=false;
     if(S.isBlk&&S.Ppzr>=139){
       S.isBlk=false;
       log('AUTO : levée du blocage IS — pression au-dessus de la permissive P11','amber');
@@ -2437,10 +2450,16 @@ body.shake{animation:quake .9s linear;}
   };
 
   el('bAu').onclick=function(){doScram("");};
+  [['tr02',0.2],['tr06',0.6],['tr12',1.2]].forEach(function(p){
+    el(p[0]).onclick=function(){S.turbRate=p[1];
+      ['tr02','tr06','tr12'].forEach(function(i){el(i).classList.toggle('on',i===p[0]);});
+      log('OPÉRATEUR : pente de prise de charge '+String(p[1]).replace('.',',')+' %/s.','cyan');};
+  });
   el('bRearmIS').onclick=function(){
     if(!S.sigIS){log('Réarmement IS : aucun signal présent','dim');return;}
     if(S.Ppzr<122){S.note='Réarmement IS refusé : pression pressuriseur toujours sous le seuil (< 122 bar) — le signal se re-déclencherait aussitôt.';log('Réarmement IS refusé : P pressu '+S.Ppzr.toFixed(0)+' bar < 122','dim');return;}
     S.sigIS=false;S.ishp=false;S.isbp=false;
+    if(S.isoEnc&&S.Penc<1.15){S.isoEnc=false;log('Levée de l\u2019isolement enceinte phase A — pression enceinte normale.','cyan');}
     log('OPÉRATEUR : réarmement du signal IS — arrêt ISHP/ISBP, injection de sécurité disponible','cyan');
   };
   el('bRearm').onclick=function(){
@@ -2596,7 +2615,7 @@ body.shake{animation:quake .9s linear;}
     aGvLo:'Niveau GV bas',aGvHi:'Niveau GV haut',aDry:'GV asséché',
     aPvap:'Pression vapeur haute',
     aAre:'Perte ARE',aVide:'Vide condenseur dégradé',aCvi:'Perte CVI',
-    aPzrHi:'Pression pressuriseur haute',aPzrLo:'Pression pressuriseur basse',
+    aPzrHi:'Pression pressuriseur haute',aPzrLo:'Pression pressuriseur basse',aBlkIS:'Blocage IS à prévoir (P11)',
     aGmpp:'Perte GMPP',aXe:'Antiréactivité xénon élevée',
     aPenc:'Pression enceinte haute',
     aDecouv:'Découvrement du cœur',aIso:'Isolement enceinte',
@@ -2976,6 +2995,7 @@ body.shake{animation:quake .9s linear;}
     setAl('aAsg',S.asg>0?'amber':'');
     setAl('aPzrHi',!hot?'':S.Ppzr>160?'red':S.Ppzr>157.5?'amber':'');
     setAl('aPzrLo',(!hot||S.Ptot<0.1)?'':S.Ppzr<140?'red':S.Ppzr<148?'amber':'');
+    setAl('aBlkIS',S._blkDue?'amber':'');
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');
     setAl('aGmpp',(!S.gmpp&&(hot||S.etat==='ANRRA'))?'red':'');
     setAl('aAu',S.scram?'red':'');
