@@ -100,6 +100,30 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## FIGURE 4.1 — domaine P-T (2.4h, référence contractuelle d'Antony)
+Codé « à la lettre » : plancher chaud = Psat(Tmoy+30) [courbe Tsat−30] ;
+plafond = Psteam+110 [ΔP max plaques GV] avec dépressurisation AUTOMATIQUE
+pilotée par le domaine (log CONDUITE) + rattrapage prioritaire (−0,25 bar/s
+si P>plafond) ; alarme rouge « Domaine P-T » (aPT) sur toute sortie ;
+RTGV = procédure réelle (refroidir ~260 °C PUIS égaliser — validée, 2,4 GBq).
+Trajectoire mesurée : 155/292 → 141/224 → 130/190 : conforme au polygone.
+CHANTIER OUVERT : sous ~180 °C en ANGV (avant connexion RRA), la pression
+STAGNE (~125 bar) au lieu de suivre la consigne — la garde d'admission
+AN/RRA « P ≤ 31 bar » est DIFFÉRÉE (commentée dans guardDown) tant que ce
+défaut n'est pas résolu, sinon toute la traversée d'états casse en cascade.
+À investiguer : le bloc pressuriseur chaud semble sauté en fin de
+refroidissement (isHot=états RP/ANGV, donc pas la température — chercher
+une condition interne w/gv/Psteam). Le levier de refroidissement est
+gctTgt (gctSet est RAMPÉ vers gctTgt à 0,6 bar/min : ne jamais poser gctSet).
+
+## Pression primaire : trajectoire, jamais de saut (2.4g)
+La pression suit la courbe P-T : montée bornée ~2 bar/min (chaufferettes),
+descente ~4 bar/min (aspersion) dans LES DEUX branches (chaude et froide) ;
+seules les décharges accidentelles (SEBIM/brèche/perte d inventaire) vont
+vite. Les presets d état ne téléportent plus Ppzr : le clic pose la CONSIGNE
+et la pression fait ses ~30 min de descente (6 s à ×300). L admission AN/RRA
+peut être refusée par la résiduelle : la traversée s arrête, c est voulu.
+
 ## Données réelles injectées (campagne 17/07)
 Résiduelle : 3 groupes calés ANS (2,6 %/300 s + 2,4 %/40 min + 0,9 %/36 h),
 points 60 s:4,4 · 10 min:2,6 · 1 h:1,45 · 10 h:0,72 · 24 h:0,55 % (tous ±22 %).

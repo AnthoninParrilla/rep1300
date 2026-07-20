@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4f-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4h-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4f-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4h-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -662,6 +662,7 @@ body.shake{animation:quake .9s linear;}
         <div class="al" id="aAsg">ASG en service</div>
         <div class="al" id="aPzrHi">P pressu haute</div>
         <div class="al" id="aBlkIS">Blocage IS</div>
+        <div class="al" id="aPT">Domaine P-T</div>
         <div class="al" id="aPzrLo">P pressu basse</div>
         <div class="al" id="aMan">Grappes manu</div>
         <div class="al" id="aGmpp">Perte GMPP</div>
@@ -1115,7 +1116,7 @@ body.shake{animation:quake .9s linear;}
   var PRESET={
     RP:   {Pn:1.0,   Tavg:310,Ppzr:155,pzrSet:155,Psteam:71,gv:50,turb:100,rod:95,gmpp:true, rra:false},
     ANGV: {Pn:0.0002,Tavg:297,Ppzr:155,pzrSet:155,Psteam:81,gv:50,turb:0,  rod:0, Cb:200, gmpp:true, rra:false, asgOn:true},
-    ANRRA:{Pn:0.0002,Tavg:120,Ppzr:25, pzrSet:25, turb:0,  rod:0, Cb:500, gmpp:true, rra:true},
+    ANRRA:{Pn:0.0002,Tavg:120, pzrSet:25, turb:0,  rod:0, Cb:500, gmpp:true, rra:true}, // Ppzr N'EST PAS téléportée : elle descend à vitesse d'aspersion
     APIF: {Pn:0.0002,Tavg:60, Ppzr:3,  pzrSet:3,  turb:0,  rod:0, Cb:800, gmpp:false,rra:true},
     APIO: {Pn:0.0002,Tavg:50, Ppzr:1,  pzrSet:1,  turb:0,  rod:0, Cb:1000,gmpp:false,rra:true},
     APR:  {Pn:0.0002,Tavg:45, Ppzr:1,  pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true},
@@ -1326,6 +1327,7 @@ body.shake{animation:quake .9s linear;}
     if(to==='ANRRA'){
       if(S.Pres>0.025)return 'puissance résiduelle trop élevée ('+Math.round(S.Pres*3800)+' MWth > 95 MWth) — poursuivre le refroidissement sur GV (accélérer le temps)';
       if(S.Tavg>180)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 180 °C) — abaisser la consigne GCT pour refroidir sur les GV';
+      // TODO (fig. 4.1) : garde P≤31 bar à réactiver après résolution de la stagnation pression en ANGV profond (voir MAINTENANCE)
     }
     if(to==='APIF'&&S.Tavg>90)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 90 °C) — laisser le RRA refroidir vers l\u2019arrêt à froid';
     if(to==='APIO'){
@@ -1635,7 +1637,12 @@ body.shake{animation:quake .9s linear;}
       // Tavg (l'eau du ballon est à sa propre saturation). Plancher physique :
       // Psat des boucles + marge (pas de dépressurisation sous la saturation).
       // La perte d'inventaire (brèche) effondre la tenue -> IS conservé.
-      var pnat=Math.max(S.pzrSet, psat(S.Tavg+14)+8) - (100-S.inv)*1.4 + dryP;
+      // Domaine P-T (fig. 4.1) : plancher = courbe Tsat-30 (sous-saturation ≥ 30 °C),
+      // plafond = ΔP max sur plaques GV (P ≤ P_GV + 110 bar). La cible suit le domaine.
+      var pFloor=psat(S.Tavg+30)+1, pCeil=S.Psteam+110;
+      var pnat=Math.min(Math.max(S.pzrSet, pFloor), pCeil) - (100-S.inv)*1.4 + dryP;
+      if(pCeil<S.pzrSet-2&&!S._ptMsg){S._ptMsg=true;log('CONDUITE : suivi du domaine P-T \u2014 d\u00e9pressurisation pilot\u00e9e par le \u0394P max plaques GV (P \u2264 P GV + 110 bar).','cyan');}
+      if(pCeil>=S.pzrSet-2)S._ptMsg=false;
       var ctrl;
       if(S.pzrAuto){
         ctrl=clamp((S.pzrSet-S.Ppzr)*0.45,-0.9,S.sebim?0.08:0.9); // chaufferettes bridées seulement contre une SEBIM ouverte
@@ -1644,7 +1651,10 @@ body.shake{animation:quake .9s linear;}
         S.heat=S.heatM; S.spray=S.sprayM;
         ctrl=(S.heat?(S.sebim?0.08:0.3):0)-(S.spray?0.45:0);
       }
-      S.Ppzr+=((pnat-S.Ppzr)*0.12+ctrl)*dt;
+      var dPz=clamp((pnat-S.Ppzr)*0.12+ctrl,
+        (S.sebim||S.breche>0||S.inv<95)?-2.5:(S.Ppzr>pCeil+0.5?-0.25:-0.12),  // brèches rapides ; rattrapage PRIORITAIRE du domaine (ΔP plaques) ; sinon aspersion ~7 bar/min
+        0.035);                                       // chaufferettes : ~2 bar/min
+      S.Ppzr+=dPz*dt;
 
       // soupapes SEBIM du pressuriseur (ouverture 172 bar, refermeture 166 bar,
       // ou ouverture volontaire opérateur : gavé-ouvert)
@@ -1781,7 +1791,7 @@ body.shake{animation:quake .9s linear;}
       S.Psteam+=(pt-S.Psteam)*(1-Math.exp(-dtc/30));
       S.areOut=0;S.asg=0;S.tpaRun=false;S.tpaN=Math.max(0,S.tpaN-dtc);
       // pression primaire tenue à la consigne d'état (RCV / bulle / atmosphère)
-      S.Ppzr+=(S.pzrSet-S.Ppzr)*(1-Math.exp(-dtc/20));
+      S.Ppzr+=clamp((S.pzrSet-S.Ppzr)*(1-Math.exp(-dtc/20)),-0.07*dtc,0.035*dtc); // dépressurisation bornée (courbe P-T) même en branche froide
       S.heat=false;S.spray=false;
       S.sebim=false;S.inj=0;
       S.Penc+=(1-S.Penc)*(1-Math.exp(-dtc/60));
@@ -2630,7 +2640,7 @@ body.shake{animation:quake .9s linear;}
     aGvLo:'Niveau GV bas',aGvHi:'Niveau GV haut',aDry:'GV asséché',
     aPvap:'Pression vapeur haute',
     aAre:'Perte ARE',aVide:'Vide condenseur dégradé',aCvi:'Perte CVI',
-    aPzrHi:'Pression pressuriseur haute',aPzrLo:'Pression pressuriseur basse',aBlkIS:'Blocage IS à prévoir (P11)',
+    aPzrHi:'Pression pressuriseur haute',aPzrLo:'Pression pressuriseur basse',aBlkIS:'Blocage IS à prévoir (P11)',aPT:'Sortie du domaine P-T (fig. 4.1)',
     aGmpp:'Perte GMPP',aXe:'Antiréactivité xénon élevée',
     aPenc:'Pression enceinte haute',
     aDecouv:'Découvrement du cœur',aIso:'Isolement enceinte',
@@ -3011,6 +3021,8 @@ body.shake{animation:quake .9s linear;}
     setAl('aPzrHi',!hot?'':S.Ppzr>160?'red':S.Ppzr>157.5?'amber':'');
     setAl('aPzrLo',(!hot||S.Ptot<0.1)?'':S.Ppzr<140?'red':S.Ppzr<148?'amber':'');
     setAl('aBlkIS',S._blkDue?'amber':'');
+    var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.etat==='ANRRA'&&(S.Tavg>182||S.Ppzr>33));
+    setAl('aPT',ptBad?'red':'');
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');
     setAl('aGmpp',(!S.gmpp&&(hot||S.etat==='ANRRA'))?'red':'');
     setAl('aAu',S.scram?'red':'');
