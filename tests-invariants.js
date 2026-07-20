@@ -91,6 +91,26 @@ function checkEtat(m,tag,st){
  m.setEtat('APR');r(10,60);const st2=regime(m,2);checkEtat(m,'APR',st2);
  m.setEtat('RCD');r(20,60);const st3=regime(m,2);checkEtat(m,'RCD',st3);}
 // ============== PARCOURS 2 : régimes post-transitoires établis ==============
+// BILAN DE TRANCHE BOUT-EN-BOUT (le fil du MW, 16/07) : à toute charge,
+// rendement Pelec/Pth dans [31,37] % — sinon un maillon de la chaîne ment
+{const m=fresh();const r=R(m);r(30,1);
+ inv('bilan100','rendement de cycle à 100 %',m.S.Pelec/(m.S.Pn*3800)>0.31&&m.S.Pelec/(m.S.Pn*3800)<0.37,'η='+(100*m.S.Pelec/(m.S.Pn*3800)).toFixed(1)+'%');
+ m.S.turbSet=50;r(360,1);
+ inv('bilan50','rendement à mi-charge',m.S.Pelec/(m.S.Pn*3800)>0.30&&m.S.Pelec/(m.S.Pn*3800)<0.38,'η='+(100*m.S.Pelec/(m.S.Pn*3800)).toFixed(1)+'% Pn='+(m.S.Pn*100).toFixed(0));}
+// CONSERVATION (question d'Antony 15/07) : l'énergie vapeur VA quelque part de
+// visible — échantillonnage FIN pour attraper les transitoires de bascule ARE->ASG
+{const m=fresh();const r=R(m);r(20,1);m.doScram('essai banc : AAR');
+ let worstGap=0,orphan=0,tareMax=0,lastTare=null;
+ for(let s=0;s<360;s++){r(5,10); // toutes les 50 s sim pendant 5 h
+  const D=(m.S.viv?m.S.turb/100:0)+m.S.gct*0.85+m.S.gctA*0.4+m.S.svf*0.7;
+  const prod=m.S.Ptot+m.S.gmppN*0.0013;
+  if(m.S.Psteam>60&&prod>0.012&&D<0.002&&(m.S.asg<0.001))orphan++;
+  if(lastTare!==null)tareMax=Math.max(tareMax,Math.abs(m.S.Tare-lastTare)/50);
+  lastTare=m.S.Tare;}
+ universal(m,'conservation');
+ inv('conservation','production chaude => un exutoire visible (GCT/GCTa/soupapes/ASG)',orphan<=2,'orphelins='+orphan);
+ inv('conservation','gradient T ARE réaliste (inertie réchauffeurs)',tareMax<0.5,'max='+tareMax.toFixed(2)+' °C/s');
+ inv('conservation','exutoire actif ET primaire tenu par les GMPP (5 h)',m.S.gct>0.001&&m.S.Tavg>288,'gct='+(m.S.gct*100).toFixed(1)+'% Tavg='+m.S.Tavg.toFixed(0));}
 // post-AAR simple, 40 min après
 {const m=fresh();const r=R(m);r(30,1);m.doScram('essai banc : AAR');r(10,1);
  const st=regime(m,4);universal(m,'post-AAR');
@@ -111,6 +131,13 @@ function checkEtat(m,tag,st){
 {const m=fresh();const r=R(m);r(20,1);m.S.fuiteGV=6;r(200,60);r(0.1,1);
  const st=regime(m,3);universal(m,'post-RTGV');
  inv('post-RTGV','tranche à l arrêt refroidissable',m.S.scram&&m.S.dmg<0.01);}
+// question d'exploitant (13/07/2026) : VIV fermées, où va l'énergie ?
+// -> compression, puis GCTa (amont VIV) en gavé-vapeur ASG ; GCT-c muet
+{const m=fresh();const r=R(m);r(20,1);m.doScram('essai banc : AAR');m.S.viv=false;r(150,10);
+ universal(m,'VIV fermées');
+ inv('VIV fermées','GCT-c muet à travers l isolement',m.S.gct<0.005,'gct='+(m.S.gct*100).toFixed(1)+'%');
+ inv('VIV fermées','l énergie a un chemin : GCTa ou soupapes VVP',(m.S.gctA>0.003||m.S.svf>0.01),'gctA='+(m.S.gctA*100).toFixed(1)+'%');
+ inv('VIV fermées','Psteam bornée sous le tarage, Tavg tenue',m.S.Psteam<92&&Math.abs(m.S.Tavg-292)<12,'P='+m.S.Psteam.toFixed(0)+' T='+m.S.Tavg.toFixed(0));}
 // ANGV atteint depuis une remontée avec consignes héritées quelconques
 {const m=fresh();const r=R(m);r(30,1);m.S.gctSet=95;m.S.gctTgt=95;m.S.turbSet=37;m.setEtat('ANGV');r(30,60);
  const st=regime(m,3);universal(m,'ANGV(hérité)');
