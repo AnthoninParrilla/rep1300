@@ -100,6 +100,40 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## LES YEUX DU PILOTE (2.4k) — yeux.js
+Bibliothèque d auto-surveillance : ~20 règles de vraisemblance physique
+évaluées à CHAQUE échantillon d une grille de 15 scénarios (usage :
+`node yeux.js index.html`). Règles : bornes/NaN, ordre thermique, pincement
+GV jamais négatif, marge de sous-saturation, rendement 30-38,5 % en régime
+couplé, Tare ≤ Tsat(vapeur), MWe sans turbine, accus jamais re-remplis,
+gradients SOUTENUS fenêtrés 10 min (Tavg ≤ 62 °C/h, Ppzr ≤ 7,5 bar/min hors
+accident), résiduelle décroissante post-scram, bilan masse GV, matrice de
+sens de réponse des actionneurs. Trouvailles autonomes de la session :
+ΔT boucle corrigé 28→36 °C (dTgm 14→18, réf. 329/293) ; limiteur de
+gradient de refroidissement 28 °C/h ajouté sur la rampe gctSet (log
+CONDUITE). Leçon de calibration : vérifier les UNITÉS des détecteurs
+(les premiers yeux confondaient minutes et secondes, facteur 60).
+QUESTION DE DESIGN pour Antony : les presets d états téléportent encore
+Tavg (ex. ANRRA : 178→120 d un coup) — faut-il une trajectoire continue
+au RRA (~28 °C/h réels, soit ~24 s à ×300) comme on l a fait pour la
+pression ? Les yeux excluent les 12 min post-transition en attendant.
+PISTE OUVERTE (trouvée par les yeux, non traitée) : rendement apparent
+~40 % en régime à ~30 % de charge — le bouclage Pn/turb décroche de ~4
+points à basse charge (Pelec dérive de turb, Pn de la neutronique) ; à
+recaler une prochaine session. Gradient de la branche froide borné à
+30 °C/h (2.4k) : le RRA ne refroidit plus en téléport après l admission.
+Écart de jouabilité ASSUMÉ : pentes turbine 0,2-1,2 %/s vs ±5 %/min réels.
+
+## CHAUSSETTE (2.4j) — carte du domaine P-T
+Nouvel onglet « Chaussette » (5e bouton nav) : le diagramme fig. 4.1 tracé
+en SVG (polygones AN/GV + AN/RRA précalculés aux formules psat, courbes
+saturation / Tsat−30 / Tsat−110), le point (Tmoy, Ppzr) coloré vert/rouge
+selon le domaine, et la TRAÎNÉE d une heure (buffer S._sock, 240 pts × 15 s,
+préservé à travers les états pour voir toute la traversée). La limite
+Tsat−110 (sous-refroidissement MAX, choc froid) est désormais codée au
+plafond de cible : sous ~255 °C la dépressurisation auto suit min(ΔP plaques,
+Tsat−110) — à 180 °C le plafond vaut ~74 bar, conforme au coin de la figure.
+
 ## FIGURE 4.1 — domaine P-T (2.4h, référence contractuelle d'Antony)
 Codé « à la lettre » : plancher chaud = Psat(Tmoy+30) [courbe Tsat−30] ;
 plafond = Psteam+110 [ΔP max plaques GV] avec dépressurisation AUTOMATIQUE
@@ -107,14 +141,16 @@ pilotée par le domaine (log CONDUITE) + rattrapage prioritaire (−0,25 bar/s
 si P>plafond) ; alarme rouge « Domaine P-T » (aPT) sur toute sortie ;
 RTGV = procédure réelle (refroidir ~260 °C PUIS égaliser — validée, 2,4 GBq).
 Trajectoire mesurée : 155/292 → 141/224 → 130/190 : conforme au polygone.
-CHANTIER OUVERT : sous ~180 °C en ANGV (avant connexion RRA), la pression
-STAGNE (~125 bar) au lieu de suivre la consigne — la garde d'admission
-AN/RRA « P ≤ 31 bar » est DIFFÉRÉE (commentée dans guardDown) tant que ce
-défaut n'est pas résolu, sinon toute la traversée d'états casse en cascade.
-À investiguer : le bloc pressuriseur chaud semble sauté en fin de
-refroidissement (isHot=états RP/ANGV, donc pas la température — chercher
-une condition interne w/gv/Psteam). Le levier de refroidissement est
-gctTgt (gctSet est RAMPÉ vers gctTgt à 0,6 bar/min : ne jamais poser gctSet).
+CHANTIER FERMÉ (2.4i) : la « stagnation » à 42 bar était PHYSIQUE — les
+accumulateurs RIS (tarage 42 bar) se vidangeaient dans le primaire et
+clouaient la pression. Le manque était la CONDUITE : l'isolement des accus
+(bouton ISOLER dans la carte RIS, rappel amber + alarme « Isolement accus »
+vers 50 bar en descente, presets froids isolés, RP/ANGV alignés — l'APRP
+garde ses accus). La garde d'admission AN/RRA « P ≤ 31 bar » est ACTIVE ;
+la séquence complète de descente (fig. 4.1) : gctTgt bas (jamais gctSet :
+il est rampé vers gctTgt), blocage IS < P11, isolement accus < ~50 bar,
+consigne pressu 27, admission. Le banc joue cette conduite dans les
+parcours d'états (ANRRA et APIO/APR/RCD).
 
 ## Pression primaire : trajectoire, jamais de saut (2.4g)
 La pression suit la courbe P-T : montée bornée ~2 bar/min (chaufferettes),

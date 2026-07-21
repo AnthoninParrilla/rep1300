@@ -84,9 +84,16 @@ function checkEtat(m,tag,st){
  const st=regime(m,4);checkEtat(m,'RP',st);}
 {const m=fresh();const r=R(m);r(30,1);m.setEtat('ANGV');r(30,60);
  const st=regime(m,4);checkEtat(m,'ANGV',st);}
-{const m=fresh();const r=R(m);r(30,1);m.setEtat('ANGV');r(20,1);m.S.gctTgt=9;r(300,300);m.setEtat('ANRRA');r(150,300);
+{const m=fresh();const r=R(m);r(30,1);m.setEtat('ANGV');r(20,1);m.S.gctTgt=6;
+ // CONDUITE de descente (fig. 4.1) : refroidir, bloquer IS < P11, isoler accus < 52 bar
+ for(let k=0;k<90;k++){r(5,60);if(m.S.Ppzr<139)m.S.isBlk=true;if(m.S.Ppzr<52)m.S.accIso=true;if(m.S.Tavg<178)break;}
+ m.S.accIso=true;m.S.pzrSet=27;r(45,60);
+ m.setEtat('ANRRA');r(150,300);
  const st=regime(m,4);checkEtat(m,'ANRRA',st);}
-{const m=fresh();const r=R(m);r(30,1);m.setEtat('ANGV');r(20,1);m.S.gctTgt=9;r(300,300);m.setEtat('ANRRA');r(150,300);m.setEtat('APIO');r(90,300);
+{const m=fresh();const r=R(m);r(30,1);m.setEtat('ANGV');r(20,1);m.S.gctTgt=6;
+ for(let k=0;k<90;k++){r(5,60);if(m.S.Ppzr<139)m.S.isBlk=true;if(m.S.Ppzr<52)m.S.accIso=true;if(m.S.Tavg<178)break;}
+ m.S.accIso=true;m.S.pzrSet=27;r(45,60);
+ m.setEtat('ANRRA');r(150,300);m.setEtat('APIO');r(90,300);
  const st=regime(m,3);checkEtat(m,'APIO',st);
  m.setEtat('APR');r(10,60);const st2=regime(m,2);checkEtat(m,'APR',st2);
  m.setEtat('RCD');r(20,60);const st3=regime(m,2);checkEtat(m,'RCD',st3);}
