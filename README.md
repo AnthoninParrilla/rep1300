@@ -4,7 +4,7 @@ Un simulateur pédagogique d'une tranche REP 1300 MWe du palier P4, entièrement
 
 ## Jouer
 
-Ouvrir la page, c'est tout. La tranche démarre en **RP** (réacteur en production, 100 % Pn). Trois vitesses de simulation : ×1, ×60, ×300. Sur iPhone : « Ajouter à l'écran d'accueil » pour l'installer hors-ligne.
+Ouvrir la page, c'est tout. Perdu ? Le bouton **MODE FACILE** (en haut) active un guide pas-à-pas sans jargon, lexique compris. La tranche démarre en **RP** (réacteur en production, 100 % Pn). Trois vitesses de simulation : ×1, ×60, ×300. Sur iPhone : « Ajouter à l'écran d'accueil » pour l'installer hors-ligne.
 
 Premiers gestes : baisser la consigne turbine et regarder les grappes suivre ; déclencher un arrêt d'urgence et conduire le repli ; descendre la tranche jusqu'au cœur déchargé (RCD) en passant par tous les états intermédiaires — puis la remonter.
 
@@ -32,6 +32,12 @@ Les protections répondent comme sur le palier : AAR (flux, pressions, niveaux G
 - **Instrumentation** : enregistreur 26 voies, journal d'événements horodaté, ~40 tuiles d'alarme. Le fichier MAINTENANCE.md documente la méthode, les données sourcées et les pièges connus.
 
 ## Historique
+
+### 2.5.0 — le simulateur change de peau
+
+**Mode Facile** : un bouton dans le bandeau active le pupitre formation — un guide pas-à-pas qui explique en français courant ce qui se passe et quoi faire (blocage IS, isolement des accumulateurs, admission AN/RRA…), avec un lexique intégré qui traduit tout le jargon (RPE = Réacteur Puisards et Évents, GV = la « bouilloire »…). Le temps passe à ×60 par défaut : la physique reste exacte, l'attente disparaît. **Thème authentique SDC 1300** : adieu le mode sombre — panneaux beige, cadres marron, plaques gravées, boutons khaki, voyants lumineux, et des tuiles d'alarme qui s'allument comme des ampoules sous la dalle. Les écrans (synoptique, chaussette, journal) passent au vert d'automate vieillissant, tracés pixelisés compris. Quinze tests dédiés + les deux bancs au complet avant le numéro de version.
+
+**2.5.1-2.5.8 — les finitions du terrain.** Retours d'exploitation intégrés au fil de l'eau : le « 71 bar » fossile retiré de la synoptique, purge complète des derniers résidus du thème sombre (bouton carte du cœur, scrollbars, sélecteurs — celui de la source froide était devenu illisible), l'étiquette AN/RRA restaurée sur la chaussette, et les verrines d'alarme refaites d'après les vraies : dalle translucide sur caisson sombre, étiquette dans l'épaisseur, reflet de surface, rétroéclairage à l'allumage. Le mode Facile mûrit : le guide nomme les commandes exactement comme l'interface (« Vannes admission HP »), trente astuces « Le saviez-vous ? » tournent en temps réel (30 s de lecture quelle que soit la vitesse de simulation), plus d'accélération imposée, et le lexique passe à deux niveaux — dix-huit entrées gagnent un « en savoir plus » dépliable qui raconte le mécanisme complet : le vide du condenseur (l'effondrement 28 000:1, les 20-25 % de travail de la détente basse, les 30-40 MW du fleuve froid), la chaîne iode-xénon, la chaleur résiduelle, le pressuriseur et la sous-saturation, les trois barrières…
 
 ### Lignée 2.4 — fiabilisation
 

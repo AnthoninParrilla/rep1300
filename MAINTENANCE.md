@@ -100,6 +100,55 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## FINITIONS 2.5.1-2.5.8 (retours terrain PC)
+2.5.1 : « 71 bar » statique retiré du titre synoptique. 2.5.2 : purge des
+9 derniers résidus du thème sombre (bouton coreOpen inline, scrollbars
+log/side, 3 rects SVG, toggle MWth/MWe JS) — grep #26313b/#2a5666/#0e2431
+= 0. 2.5.3 : le guide nomme les commandes COMME L INTERFACE (« Vannes
+admission HP », pas « Consigne turbine ») ; lexique côté machine (vannes
+HP, HP/BP, condenseur, vide, source froide, aéroréfrigérant). 2.5.4 :
+verrines translucides (dalle rgba sur caisson #2a2620, étiquette dans
+l épaisseur, reflet ::after, rétroéclairage radial). 2.5.5 : PIÈGE — la
+rotation des astuces était calée sur S.t (temps SIMULÉ) : à ×60 une
+astuce toutes les 0,75 s réelles ; passée sur Date.now() (30 s réelles) ;
+l auto-×60 du toggle Facile RETIRÉ (on informe, on n impose pas) ; stock
+porté à 30 astuces sourcées. 2.5.6 : l étiquette AN/RRA de la chaussette
+avait été AVALÉE par le replace à ancre ternaire de la 2.4m (leçon :
+jamais d ancre conditionnelle courte type ">X</text>") — réinsérée,
+vérif des 5 étiquettes de zones. 2.5.7 : selects en styles inline
+sombres d époque (srcSel : fond #181f26 + var(--ink) devenue brune =
+INVISIBLE sur PC) — srcSel en crème panneau, recPas en vert écran.
+2.5.8 : lexique à DEUX NIVEAUX : entrées LEX en objets {d,p}, rendu
+<details><summary>en savoir plus</summary> NATIF (zéro JS, PWA-safe),
+18 développements mécanistes (vide 28 000:1 / 32-56-96 mbar / 30-40 MW,
+iode 135→xénon, résiduelle 230 MW, sous-saturation 155 bar, 3 barrières,
+RRA 180/31, accumulateurs passifs, Tmoy programme, TPS vapeur…).
+
+## CHANTIER 2.5.0 — MODE FACILE + THÈME SDC AUTHENTIQUE
+Palette SDC (réf. panneau ARE, IMG_3828) : panneaux beige #d8cfba/#c6bba1,
+cadres marron #8a765a/#7a6850, encre brune #2b2318, plaques gravées h2
+(#e9e1cc), boutons khaki dégradés, voyants ON vert radial lumineux, tuiles
+d alarme = AMPOULES : éteintes plaques crème embossées, actives
+radial-gradient + box-shadow glow 16px (ambre #f0a91c / rouge #e0392a).
+Afficheurs .val et .p.v = LED vertes #3ae065 sur fond noir inset. Les
+ÉCRANS restent sombres mais passent VERT-AUTOMATE (--scr #0a120c,
+--scrInk #8fe89a) : journal, .mimic (châssis moniteur bord 3px), chaussette
+(zones #183a20/#4ae06a, traînée ambre conservée). Pixelisation supervision :
+#synop *{shape-rendering:crispEdges} + textes en mono. PIÈGES payés :
+(1) mes émissions ont produit DEUX FOIS des caractères parasites
+cyrilliques/chinois dans les chaînes CSS — TOUJOURS scanner les non-ASCII
+après écriture (recette : set(style) filtré par codes) ; (2) apostrophes
+droites françaises DANS des chaînes JS simples-quotes = syntaxe cassée —
+utiliser l apostrophe typographique U+2019 dans tous les textes.
+MODE FACILE : bouton bEasy (topbar) -> S.easy + accel 60 ; pupitre
+formation #easyCard (jaune, pleine largeur au-dessus du layout) ;
+LEX ~30 sigles traduits (RPE inclus) + bouton LEXIQUE ; moteur easyMsg()
+~18 règles priorisées (dégâts > chaussette > IS > scram > jalons _blkDue/
+_accDue/_reaDue > GV bas > par-état), rafraîchi 1 s sim dans render via
+window.__easyMsg ; flags exposés : S._reaDue, S._ptBad. La physique est
+INTOUCHÉE (bancs identiques). Panoplie 2.5 : 15 tests thème+facile,
+TOUS verts avant le numéro de version — règle à conserver.
+
 ## AUDIT GLOBAL 2.4s (revue de code + bugs cachés)
 Statique : zéro el() orphelin, zéro doublon d id, zéro fonction morte,
 fantômes S.* tous en pattern (||0) sûr ; clé morte lastInhib purgée ;

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4s-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.5.8-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -21,15 +21,19 @@ if('serviceWorker' in navigator){
 </script>
 <style>
   :root{
-    --panel:#12171c;
-    --panel2:#0c1014;
-    --edge:#242e36;
-    --ink:#c8d4d8;
-    --dim:#5d6d75;
+    --panel:#d8cfba;          /* beige panneau */
+    --panel2:#c6bba1;         /* fond pupitre */
+    --edge:#8a765a;           /* marron cadre */
+    --ink:#2b2318;            /* encre brune */
+    --dim:#6f5f4b;
     --amber:#e8a33d;
-    --red:#e6483d;
-    --green:#4fc57a;
-    --cyan:#57b8d8;
+    --red:#c9271b;
+    --green:#17b33c;          /* vert voyant */
+    --cyan:#17656f;           /* bleu pétrole (lisible sur beige) */
+    --scr:#0a120c;            /* fond écran automate */
+    --scrEdge:#2c4a32;
+    --scrInk:#8fe89a;
+    --scrDim:#4a7a52;
     --steam:#e4ecef;
     --hot:#d95f4a;
     --cold:#4f8fc5;
@@ -38,23 +42,25 @@ if('serviceWorker' in navigator){
     --cond:"Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{background:var(--panel2);color:var(--ink);font-family:var(--cond);-webkit-text-size-adjust:100%}
+  html,body{background:linear-gradient(180deg,#cdc2a8,#bfb298 60%,#b5a78c);color:var(--ink);font-family:var(--cond);-webkit-text-size-adjust:100%}
   body{padding:10px;min-height:100vh}
 
   .topbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
-    border:1px solid var(--edge);background:linear-gradient(180deg,#161d23,#10151a);
+    border:2px solid #6e5c44;background:linear-gradient(180deg,#efe7d2,#ddd2b8);
+    box-shadow:0 2px 5px #0004, inset 0 1px 0 #fff8;
     padding:10px 14px;border-radius:6px;margin-bottom:10px}
   .topbar h1{font-weight:700;letter-spacing:.09em;text-transform:uppercase;
-    font-size:clamp(15px,2vw,21px);color:#e6edf0;line-height:1.1}
+    font-size:clamp(15px,2vw,21px);color:#2b2318;line-height:1.1}
   .topbar .sub{font-size:12px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase}
   .spacer{flex:1}
-  .clock{font-family:var(--mono);font-size:clamp(14px,1.6vw,18px);color:var(--amber);
-    background:#000;border:1px solid var(--edge);padding:4px 10px;border-radius:4px;white-space:nowrap}
+  .clock{font-family:var(--mono);font-size:clamp(14px,1.6vw,18px);color:#ffb03a;
+    background:#141008;border:2px solid #5c4c36;box-shadow:inset 0 0 8px #000c;
+    padding:4px 10px;border-radius:4px;white-space:nowrap}
   .accel{display:flex;gap:0;border:1px solid var(--edge);border-radius:4px;overflow:hidden}
-  .accel button{background:#181f26;color:var(--dim);border:0;border-right:1px solid var(--edge);
+  .accel button{background:#b6a988;color:#5c4c36;border:0;border-right:1px solid var(--edge);
     font-family:var(--mono);font-size:13px;padding:6px 12px;cursor:pointer}
   .accel button:last-child{border-right:0}
-  .accel button.on{background:#26313b;color:var(--amber)}
+  .accel button.on{background:#3d3021;color:#ffb03a;box-shadow:inset 0 0 6px #000a}
 
   html,body{overflow-x:hidden;overflow-x:clip;max-width:100vw;touch-action:manipulation}
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
@@ -92,47 +98,51 @@ if('serviceWorker' in navigator){
   #gPanache .puff:nth-child(11){animation-delay:-7.83s}
   #gPanache .puff:nth-child(12){animation-delay:-8.62s}
   #synop{transform-origin:0 0;display:block;touch-action:pan-y}
-  #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#0e2431ee;border:1px solid #2a5666;color:#6fc6e0;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
-  #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#0c141bf2;border-top:1px solid #2a5666;box-shadow:0 -5px 16px #000a;z-index:60;backdrop-filter:blur(8px)}
-  #mnav button{flex:1;background:#0e2431;border:1px solid #2a5666;color:#6fc6e0;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
+  #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#1a2a1cee;border:1px solid #3a6a42;color:#8fe89a;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+  #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#c2b494f2;border-top:2px solid #6e5c44;box-shadow:0 -5px 16px #0007;z-index:60;backdrop-filter:blur(8px)}
+  #mnav button{flex:1;background:linear-gradient(180deg,#ddd2b8,#c2b494);border:1px solid #6e5c44;color:#2b2318;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
   @media(max-width:1099px){#mnav{display:flex}body{padding-bottom:70px}}
   .al{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .mimic{border:1px solid var(--edge);background:var(--panel);border-radius:6px;padding:8px}
+  .mimic{border:3px solid #4a463c;background:var(--scr);border-radius:8px;padding:8px;box-shadow:inset 0 0 20px #000e, 0 2px 5px #0005}
   .mimic svg{width:100%;height:auto;display:block}
   .side{display:grid;gap:10px;align-content:start}
 
-  .card{border:1px solid var(--edge);background:var(--panel);border-radius:6px;padding:10px 12px}
-  .card h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);
-    border-bottom:1px solid var(--edge);padding-bottom:6px;margin-bottom:9px;font-weight:700}
+  .card{border:2px solid #7a6850;background:linear-gradient(180deg,#ddd4bf,#cfc5ac);border-radius:6px;padding:10px 12px;box-shadow:0 2px 4px #0003, inset 0 1px 0 #fff7}
+  .card h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#3a2f20;
+    background:#e9e1cc;border:1px solid #9a8664;border-radius:3px;box-shadow:inset 0 1px 0 #fff9;
+    padding:4px 8px;margin:-2px -2px 9px;font-weight:700}
   .row{display:flex;align-items:center;gap:10px;margin:7px 0;flex-wrap:wrap}
   .row label{font-size:13px;min-width:118px;color:var(--ink)}
-  .val{font-family:var(--mono);font-size:13px;color:var(--amber);margin-left:auto;white-space:nowrap}
+  .val{font-family:var(--mono);font-size:13px;color:#3ae065;background:#101208;border:1px solid #4a4432;border-radius:3px;padding:1px 7px;box-shadow:inset 0 0 6px #000c;margin-left:auto;white-space:nowrap}
   .note{font-size:11px;color:var(--dim)}
   input[type=range]{flex:1;min-width:110px;accent-color:var(--amber);height:22px}
   input[type=range]:disabled{accent-color:#3a444c;opacity:.5}
 
-  button.sw{background:#1b232b;border:1px solid var(--edge);color:var(--ink);
-    font-family:var(--cond);font-size:13px;padding:6px 12px;border-radius:4px;cursor:pointer;letter-spacing:.04em}
+  button.sw{background:linear-gradient(180deg,#c2b494,#a89a78);border:1px solid #6e5c44;color:#2b2318;
+    font-family:var(--cond);font-size:13px;padding:6px 12px;border-radius:4px;cursor:pointer;letter-spacing:.04em;
+    box-shadow:0 1px 2px #0004, inset 0 1px 0 #fff6}
   button.sw:active{transform:translateY(1px)}
-  button.sw.on{background:#22402c;border-color:#3c6e4c;color:var(--green)}
-  button.sw.warn{background:#3d2f16;border-color:#6e5a2c;color:var(--amber)}
+  button.sw.on{background:radial-gradient(ellipse at 50% 60%,#5fe87a,#1d9e3f);border-color:#0e7a2a;color:#04300e;
+    box-shadow:0 0 10px 2px #2fd85a66, inset 0 0 6px #fff5}
+  button.sw.warn{background:radial-gradient(ellipse at 50% 60%,#ffd97a,#e09a12);border-color:#a87608;color:#4a3000;
+    box-shadow:0 0 10px 2px #f0a91c66, inset 0 0 6px #fff5}
   button.hold.holding{background:#4a3a12!important;border-color:#e8a33d!important;color:#ffd27a!important}
-  button.hold{background:#1b232b;border:1px solid var(--edge);color:var(--cyan);
+  button.hold{background:linear-gradient(180deg,#c2b494,#a89a78);border:1px solid #6e5c44;color:#17656f;
     font-family:var(--cond);font-size:13px;padding:8px 12px;border-radius:4px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-  button.hold:active{background:#203038}
+  button.hold:active{background:#988a68}
   button.au{width:100%;background:radial-gradient(circle at 50% 35%,#7c1610,#4e0d09);
     border:2px solid #8c2a22;color:#ffd9d5;font-weight:700;letter-spacing:.12em;font-size:14px;
     padding:12px;border-radius:6px;cursor:pointer;text-transform:uppercase}
   button.au:active{transform:translateY(1px)}
-  button.inc{background:#241a10;border:1px solid #5c4420;color:var(--amber);
+  button.inc{background:linear-gradient(180deg,#8a5c3a,#6e4426);border:1px solid #4a2c14;color:#ffd9a0;
     font-size:13px;padding:8px 10px;border-radius:4px;cursor:pointer;flex:1;letter-spacing:.03em}
-  button.rearm{background:#14231a;border:1px solid #2f5a3d;color:var(--green);
+  button.rearm{background:linear-gradient(180deg,#3a7a4a,#256036);border:1px solid #14401e;color:#c8ffd4;
     font-size:13px;padding:8px 10px;border-radius:4px;cursor:pointer;flex:1}
 
   .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px}
-  .p{background:#0b0f13;border:1px solid var(--edge);border-radius:4px;padding:7px 9px;min-width:0;overflow:hidden}
-  .p .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .p .v{font-family:var(--mono);font-size:15px;color:var(--green);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p{background:#12140c;border:2px solid #6e5c44;border-radius:4px;padding:7px 9px;min-width:0;overflow:hidden;box-shadow:inset 0 0 8px #000b}
+  .p .k{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#8a9a6a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .p .v{font-family:var(--mono);font-size:15px;color:#3ae065;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .p .v.a{color:var(--amber)} .p .v.r{color:var(--red)}
 
   .bilan{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
@@ -142,29 +152,39 @@ if('serviceWorker' in navigator){
   .bilan tr.tot td:last-child{color:var(--green)}
 
   .alarms{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px}
-  .al{background:#10161b;border:1px solid var(--edge);border-radius:3px;
-    font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#42525b;
-    text-align:center;padding:8px 4px;line-height:1.25}
-  .al.amber{background:#3d2f10;border-color:#8c6d1e;color:#ffd469;
+  /* verrines d'alarme : dalle translucide sur caisson sombre, étiquette dans l'épaisseur */
+  .al{position:relative;
+    background:linear-gradient(180deg,rgba(238,230,206,.16),rgba(190,178,148,.08)),#2a2620;
+    border:1px solid #5c5244;border-radius:3px;
+    font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#8a7f66;
+    text-align:center;padding:8px 4px;line-height:1.25;
+    box-shadow:inset 0 0 7px #0009, 0 1px 1px #fff4;text-shadow:0 1px 1px #0007}
+  .al::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.20) 0%,rgba(255,255,255,.04) 36%,transparent 62%)}
+  .al.amber{background:radial-gradient(ellipse at 50% 55%,#ffdf7a 0%,#f0a91c 66%,#b87a08 100%);
+    border-color:#a87608;color:#241800;text-shadow:0 0 2px #fff9;
+    box-shadow:0 0 16px 3px #f0a91c88, inset 0 0 10px #ffffff55;
     animation:blink 1.1s steps(2,start) infinite}
-  .al.red{background:#4a100c;border-color:#a03028;color:#ffb3ac;
+  .al.red{background:radial-gradient(ellipse at 50% 55%,#ff9d86 0%,#e0392a 66%,#8c150c 100%);
+    border-color:#8c1a10;color:#2a0300;text-shadow:0 0 2px #fff7;
+    box-shadow:0 0 16px 3px #e0392a88, inset 0 0 10px #ffffff44;
     animation:blink .6s steps(2,start) infinite}
   @keyframes blink{50%{filter:brightness(.55)}}
   @media (prefers-reduced-motion:reduce){.al.amber,.al.red{animation:none}}
 
-  .msg{border:1px solid var(--edge);border-left:3px solid var(--amber);background:#151b21;
-    border-radius:4px;padding:9px 12px;font-size:13.5px;line-height:1.45;color:#dbe4e8;min-height:44px}
+  .msg{border:1px solid #9a8664;border-left:4px solid var(--amber);background:#efe8d4;
+    border-radius:4px;padding:9px 12px;font-size:13.5px;line-height:1.45;color:#2b2318;min-height:44px;box-shadow:inset 0 1px 0 #fff8}
 
   .log{font-family:var(--mono);font-size:11.5px;line-height:1.55;height:200px;overflow-y:auto;
-    background:#0b0f13;border:1px solid var(--edge);border-radius:4px;padding:6px 9px;
-    scrollbar-width:thin;scrollbar-color:#26313b transparent}
+    background:var(--scr);border:2px solid #3a3a34;border-radius:4px;padding:6px 9px;box-shadow:inset 0 0 12px #000d;
+    scrollbar-width:thin;scrollbar-color:#2c4a32 transparent}
   .log::-webkit-scrollbar{width:8px}
-  .log::-webkit-scrollbar-thumb{background:#26313b;border-radius:4px}
-  .log .e{color:#8ea0a8;white-space:pre-wrap}
+  .log::-webkit-scrollbar-thumb{background:#2c4a32;border-radius:4px}
+  .log .e{color:var(--scrInk);white-space:pre-wrap}
   .log .e.red{color:#ff8d84}
   .log .e.amber{color:#ffd469}
-  .log .e.cyan{color:#7fd0e8}
-  .log .e.dim{color:#4d5d65}
+  .log .e.cyan{color:#5fe0c8}
+  .log .e.dim{color:var(--scrDim)}
   .logclear{margin-left:auto;background:none;border:1px solid var(--edge);color:var(--dim);
     font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:3px;cursor:pointer}
 
@@ -174,9 +194,9 @@ if('serviceWorker' in navigator){
     .layout{grid-template-columns:minmax(0,1fr) 372px;align-items:start}
     .main{display:grid;gap:10px}
     .side{max-height:calc(100vh - 96px);overflow-y:auto;padding-right:2px;
-      scrollbar-width:thin;scrollbar-color:#26313b transparent}
+      scrollbar-width:thin;scrollbar-color:#8a765a transparent}
     .side::-webkit-scrollbar{width:8px}
-    .side::-webkit-scrollbar-thumb{background:#26313b;border-radius:4px}
+    .side::-webkit-scrollbar-thumb{background:#8a765a;border-radius:4px}
     .params{grid-template-columns:repeat(7,minmax(0,1fr))}
     .alarms{grid-template-columns:repeat(5,minmax(0,1fr))}
   }
@@ -186,8 +206,22 @@ if('serviceWorker' in navigator){
   }
 
   /* SVG */
-  .lbl{font-family:var(--cond);font-size:12px;fill:#93a4ac;letter-spacing:.06em}
-  .lblS{font-family:var(--cond);font-size:10.5px;fill:#6c7d85;letter-spacing:.05em}
+  .lbl{font-family:var(--mono);font-size:12px;fill:#8fd89a;letter-spacing:.02em}
+  .lblS{font-family:var(--mono);font-size:10.5px;fill:#5a9a62;letter-spacing:.02em}
+  /* écran de supervision : rendu pixel d'automate */
+  #synop *{shape-rendering:crispEdges}
+  #synop text{font-family:var(--mono)}
+  /* pupitre formation (mode facile) */
+  #easyCard{display:none;border:2px solid #c89a1a;background:linear-gradient(180deg,#fff3c8,#f5e4a4);
+    border-radius:6px;padding:10px 14px;box-shadow:0 2px 5px #0004, inset 0 1px 0 #fffa;margin-bottom:2px}
+  #easyCard.on{display:block}
+  #easyMsg{font-size:15px;line-height:1.5;color:#3a2c10;font-weight:600}
+  #easyLex{display:none;margin-top:8px;font-size:12.5px;line-height:1.55;color:#4a3a1a;column-width:270px;column-gap:22px}
+  #easyLex.on{display:block}
+  #easyLex b{color:#2b2318}
+  .lexD summary{cursor:pointer;color:#a8720a;font-weight:700;font-size:11.5px;margin-top:2px}
+  .lexD summary:hover{text-decoration:underline}
+  .lexP{margin:4px 0 6px;padding:6px 9px;background:#fffbe8;border-left:3px solid #c89a1a;border-radius:3px}
   .digits{font-family:var(--mono);font-weight:700;fill:var(--digit)}
   .digitsG{font-family:var(--mono);font-weight:700;fill:var(--green)}
   .flowhot{stroke:var(--hot);stroke-width:7;fill:none}
@@ -227,11 +261,11 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4s-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.5.8-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
-  <div class="accel" id="accel">
+  <button class="sw" id="bEasy" title="Guide pas-à-pas sans jargon">MODE FACILE</button><div class="accel" id="accel">
     <button data-a="1" class="on">×1</button>
     <button data-a="60">×60</button>
     <button data-a="300">×300</button>
@@ -239,13 +273,19 @@ body.shake{animation:quake .9s linear;}
   <div class="clock" id="clock">T+00:00:00</div>
 </div>
 
+<div id="easyCard"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+  <span style="font-size:11px;letter-spacing:.12em;font-weight:700;color:#8a6a10">PUPITRE FORMATION</span>
+  <button class="sw" id="bEasyLex" style="margin-left:auto">LEXIQUE</button></div>
+  <div id="easyMsg">Bienvenue ! Ici, je t’explique quoi faire, sans jargon. Astuce : les boutons ×60 et ×300 (en haut) accélèrent le temps quand il ne se passe rien.</div>
+  <div id="easyLex"></div>
+</div>
 <div class="layout">
   <div class="main">
     <div class="mimic anim" id="mimic">
       <div id="synWrap"><button id="synZr" title="Réinitialiser le zoom">⤢ 1:1</button>
       <svg id="synop" viewBox="0 0 1000 560" xmlns="http://www.w3.org/2000/svg" aria-label="Synoptique">
         <text class="lblS" x="40" y="16">CIRCUIT PRIMAIRE</text>
-        <text class="lblS" x="620" y="28">CIRCUIT SECONDAIRE · 71 bar</text>
+        <text class="lblS" x="620" y="28">CIRCUIT SECONDAIRE</text>
 
         <!-- enceinte de confinement -->
         <rect x="28" y="34" width="330" height="433" rx="26" fill="none" stroke="#46564e" stroke-width="2.5"/>
@@ -343,10 +383,10 @@ body.shake{animation:quake .9s linear;}
         <path class="watersmall" d="M314 520 H268"/>
         <path class="watersmall" d="M312 424 V504"/>
         <path class="flowdash fdash" id="fInj" d="M312 504 V424" opacity="0"/>
-        <rect x="307" y="463" width="10" height="8" fill="#26313b" stroke="#46564e" stroke-width="1.2"/>
+        <rect x="307" y="463" width="10" height="8" fill="#16241a" stroke="#3a5a42" stroke-width="1.2"/>
         <path class="watersmall" d="M268 504 V444 H245 V440"/>
         <path class="flowdash fdash" id="fRcv" d="M268 504 V444 H245 V440" opacity="0.85"/>
-        <rect x="263" y="463" width="10" height="8" fill="#26313b" stroke="#46564e" stroke-width="1.2"/>
+        <rect x="263" y="463" width="10" height="8" fill="#16241a" stroke="#3a5a42" stroke-width="1.2"/>
         <path id="recircPipe" d="M334 466 V488 H320" stroke="#57b8d8" stroke-width="2.5" fill="none" stroke-dasharray="5 4" opacity="0.12"/>
         <circle cx="312" cy="512" r="8" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
         <path d="M312 506 L316 512 L312 518 L308 512 Z" fill="#57b8d8"/>
@@ -583,7 +623,7 @@ body.shake{animation:quake .9s linear;}
 
         <!-- ============ afficheur puissance + sélecteur ============ -->
         <g class="tab" id="tabTh">
-          <rect x="46" y="468" width="62" height="18" rx="3" fill="#26313b" stroke="#5c6e2a" stroke-width="0"/>
+          <rect x="46" y="468" width="62" height="18" rx="3" fill="#16241a" stroke="#3a5a42" stroke-width="0"/>
           <text x="77" y="481" text-anchor="middle" font-size="11" fill="#e8a33d" font-family="Arial Narrow,sans-serif">MWth</text>
         </g>
         <g class="tab" id="tabE">
@@ -708,7 +748,7 @@ body.shake{animation:quake .9s linear;}
 
     <div class="card">
       <h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Enregistreur
-        <select id="recPas" class="logclear" style="margin-left:auto;background:#141c24;color:#cfd8dd;border:1px solid #2a3844;border-radius:5px;padding:2px 6px">
+        <select id="recPas" class="logclear" style="margin-left:auto;background:#0a120c;color:#8fe89a;border:1px solid #2c4a32;border-radius:5px;padding:2px 6px">
           <option value="1">pas 1 s</option>
           <option value="10" selected>pas 10 s</option>
           <option value="60">pas 1 min</option>
@@ -798,7 +838,7 @@ body.shake{animation:quake .9s linear;}
     <div class="card">
       <h2>Source froide — CRF / SEC</h2>
       <div class="row">
-        <select id="srcSel" style="flex:1;min-width:0;max-width:100%;background:#181f26;color:var(--ink);border:1px solid var(--edge);border-radius:4px;padding:6px;font-family:var(--cond);font-size:12.5px"></select>
+        <select id="srcSel" style="flex:1;min-width:0;max-width:100%;background:#f2ecd8;color:#2b2318;border:1px solid #6e5c44;border-radius:4px;padding:6px;font-family:var(--cond);font-size:12.5px"></select>
       </div>
       <div class="row" id="saisons" style="gap:6px">
         <button class="sw" data-s="hiver">Hiver</button>
@@ -890,7 +930,7 @@ body.shake{animation:quake .9s linear;}
 
     <div class="card">
       <h2>RPN / RIC — Neutronique</h2>
-      <div class="row" style="margin:6px 0 2px"><button id="coreOpen" style="flex:1;background:#12222e;border:1px solid var(--cyan);color:var(--cyan);border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;letter-spacing:.06em;cursor:pointer;font-family:inherit">⬢ CARTE DU CŒUR · 193 ASSEMBLAGES</button></div>
+      <div class="row" style="margin:6px 0 2px"><button id="coreOpen" style="flex:1;background:linear-gradient(180deg,#c2b494,#a89a78);border:1px solid #6e5c44;color:#2b2318;border-radius:8px;padding:10px 12px;font-size:13px;font-weight:700;letter-spacing:.06em;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px #0004, inset 0 1px 0 #fff6">⬢ CARTE DU CŒUR · 193 ASSEMBLAGES</button></div>
       <div class="row"><label>Chaîne puissance</label><span class="val" id="rpnP">100 %</span></div>
       <div class="row"><label>Chaîne intermédiaire</label><span class="val" id="rpnI">—</span></div>
       <div class="row"><label>Chaîne source</label><span class="val" id="rpnS">— c/s</span></div>
@@ -1043,9 +1083,9 @@ body.shake{animation:quake .9s linear;}
 <div class="card" id="secSock" style="padding-bottom:84px">
   <h2>Chaussette — domaine (P,T) des états standards <span style="font-weight:400;font-size:12px;color:#5c7d8c">le point doit rester dans le domaine</span></h2>
   <div id="sockWrap"><button id="sockZr" title="Réinitialiser le zoom">⤢ 1:1</button>
-  <svg id="sockSvg" viewBox="0 0 680 400" style="width:100%;height:auto;display:block;background:#0d151a;border-radius:6px">
-<style>.skLbl{fill:#4a6472;font-size:9px;font-family:monospace}.skZ{fill:#2a4a5c;fill-opacity:0.45;stroke:#57b4ff;stroke-width:1.2}.skC{fill:none;stroke:#3a5260;stroke-width:1;stroke-dasharray:4 3}.skT{fill:#7d9aa8;font-size:10px;font-family:monospace;letter-spacing:0.05em}</style>
-<line x1="118" y1="10" x2="118" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="195" y1="10" x2="195" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="272" y1="10" x2="272" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="350" y1="10" x2="350" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="428" y1="10" x2="428" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="505" y1="10" x2="505" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="582" y1="10" x2="582" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="660" y1="10" x2="660" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="328" x2="660" y2="328" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="264" x2="660" y2="264" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="201" x2="660" y2="201" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="137" x2="660" y2="137" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="74" x2="660" y2="74" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="10" x2="660" y2="10" stroke="#1c2b33" stroke-width="0.6"/><text x="118" y="384" text-anchor="middle" class="skLbl">50</text><text x="195" y="384" text-anchor="middle" class="skLbl">90</text><text x="272" y="384" text-anchor="middle" class="skLbl">130</text><text x="350" y="384" text-anchor="middle" class="skLbl">170</text><text x="428" y="384" text-anchor="middle" class="skLbl">210</text><text x="505" y="384" text-anchor="middle" class="skLbl">250</text><text x="582" y="384" text-anchor="middle" class="skLbl">290</text><text x="660" y="384" text-anchor="middle" class="skLbl">330</text><text x="34" y="331" text-anchor="end" class="skLbl">20</text><text x="34" y="267" text-anchor="end" class="skLbl">50</text><text x="34" y="204" text-anchor="end" class="skLbl">80</text><text x="34" y="140" text-anchor="end" class="skLbl">110</text><text x="34" y="77" text-anchor="end" class="skLbl">140</text><text x="34" y="13" text-anchor="end" class="skLbl">170</text>
+  <svg id="sockSvg" viewBox="0 0 680 400" style="width:100%;height:auto;display:block;background:#0a120c;border-radius:6px">
+<style>.skLbl{fill:#4a7a52;font-size:9px;font-family:monospace}.skZ{fill:#183a20;fill-opacity:0.55;stroke:#4ae06a;stroke-width:1.2}.skC{fill:none;stroke:#35583a;stroke-width:1;stroke-dasharray:4 3}.skT{fill:#8fd89a;font-size:10px;font-family:monospace;letter-spacing:0.05em}</style>
+<line x1="118" y1="10" x2="118" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="195" y1="10" x2="195" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="272" y1="10" x2="272" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="350" y1="10" x2="350" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="428" y1="10" x2="428" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="505" y1="10" x2="505" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="582" y1="10" x2="582" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="660" y1="10" x2="660" y2="370" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="328" x2="660" y2="328" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="264" x2="660" y2="264" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="201" x2="660" y2="201" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="137" x2="660" y2="137" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="74" x2="660" y2="74" stroke="#1c2e20" stroke-width="0.6"/><line x1="40" y1="10" x2="660" y2="10" stroke="#1c2e20" stroke-width="0.6"/><text x="118" y="384" text-anchor="middle" class="skLbl">50</text><text x="195" y="384" text-anchor="middle" class="skLbl">90</text><text x="272" y="384" text-anchor="middle" class="skLbl">130</text><text x="350" y="384" text-anchor="middle" class="skLbl">170</text><text x="428" y="384" text-anchor="middle" class="skLbl">210</text><text x="505" y="384" text-anchor="middle" class="skLbl">250</text><text x="582" y="384" text-anchor="middle" class="skLbl">290</text><text x="660" y="384" text-anchor="middle" class="skLbl">330</text><text x="34" y="331" text-anchor="end" class="skLbl">20</text><text x="34" y="267" text-anchor="end" class="skLbl">50</text><text x="34" y="204" text-anchor="end" class="skLbl">80</text><text x="34" y="140" text-anchor="end" class="skLbl">110</text><text x="34" y="77" text-anchor="end" class="skLbl">140</text><text x="34" y="13" text-anchor="end" class="skLbl">170</text>
 <text x="350" y="398" text-anchor="middle" class="skLbl">T MOY  °C</text>
 <text x="14" y="190" text-anchor="middle" class="skLbl" transform="rotate(-90 14 190)">P PRIMAIRE  bar</text>
 <polyline class="skC" points="214,368 226,367 238,367 249,366 261,365 272,364 284,363 296,362 307,360 319,359 331,357 342,355 354,352 366,350 377,347 389,343 400,340 412,336 424,331 435,326 447,321 458,315 470,308 482,301 493,294 505,285 517,277 528,267 540,257 552,246 563,234 575,221 586,208 598,194 610,178 621,162 633,145 644,127 656,108"/><text x="602" y="203" class="skLbl">saturation</text>
@@ -1055,7 +1095,7 @@ body.shake{animation:quake .9s linear;}
 <polygon class="skZ" points="369,313 377,313 385,313 393,313 400,313 408,311 416,306 424,301 431,296 439,291 447,285 455,280 462,273 470,267 478,260 486,253 493,246 501,238 509,230 517,221 524,212 532,203 540,194 548,184 555,173 563,162 571,151 579,139 586,127 594,115 596,111 596,42 594,42 586,42 579,42 571,42 563,42 555,42 548,42 540,42 532,42 524,42 517,44 509,50 501,55 493,61 486,66 478,71 470,75 462,80 455,88 447,101 439,115 431,127 424,139 416,151 408,162 400,173 393,184 385,194 377,203 369,212"/>
 <rect x="592" y="35" width="33" height="15" fill="none" stroke="#8fd18f" stroke-width="1.4"/>
 <text x="608" y="31" text-anchor="middle" class="skT" fill="#8fd18f">RP</text>
-<text x="495" y="190" text-anchor="middle" class="skT">AN/GV</text>
+<text x="495" y="190" text-anchor="middle" class="skT">AN/GV</text><text x="98" y="330" text-anchor="middle" class="skT">AN/RRA</text>
 >AN/RRA</text><text x="72.93" y="360.47" class="skT" font-size="8">API</text><text x="72.93" y="368.0" class="skT" font-size="8">APR</text>
 <polyline id="skTrail" points="" fill="none" stroke="#ffb347" stroke-width="1.6" opacity="0.85"/>
 <circle id="skPt" cx="-10" cy="-10" r="5" fill="#8fd18f" stroke="#0d151a" stroke-width="1.5"/>
@@ -1967,7 +2007,7 @@ body.shake{animation:quake .9s linear;}
     }
     var blkDue=!S.isBlk&&!S.sigIS&&!S.scram&&S.Ppzr<145&&S.Ppzr>119;S._blkDue=blkDue;
     var accDue=!S.accIso&&!S.scram&&S.accu>5&&S.Ppzr<58&&S.Ppzr>40&&S.pzrSet<60;S._accDue=accDue;
-    var reaDue=S.accIso&&!S.scram&&S.Ppzr>50&&S.pzrSet>60&&S.breche===0;
+    var reaDue=S.accIso&&!S.scram&&S.Ppzr>50&&S.pzrSet>60&&S.breche===0;S._reaDue=reaDue;
     if(reaDue&&!S._reaMsg){S._reaMsg=true;log('CONDUITE : pression r\u00e9tablie \u2014 R\u00c9ALIGNER les accumulateurs RIS (sinon indisponibilit\u00e9 injection de s\u00fbret\u00e9).','amber');}
     if(!reaDue)S._reaMsg=false;
     if(accDue&&!S._accMsg){S._accMsg=true;log('CONDUITE : ISOLER les accumulateurs RIS avant de descendre sous 42 bar \u2014 sinon ils se vidangent dans le primaire et bloquent la d\u00e9pressurisation.','amber');}
@@ -2481,6 +2521,135 @@ body.shake{animation:quake .9s linear;}
       log((S[cf[1]]?'INHIBITION EN SERVICE : ':'INHIBITION LEVÉE : ')+cf[2]+'.',S[cf[1]]?'amber':'cyan');
     };
   });
+  var LEX={
+   'RPE':'Réacteur Puisards et Évents — le circuit qui recueille les purges et évents du circuit primaire',
+   'GV':{d:'Générateur de Vapeur — la « bouilloire » : l’eau très chaude du réacteur y fait bouillir une autre eau, séparée',
+     p:'Pourquoi deux eaux séparées ? Parce que l’eau qui traverse le cœur devient légèrement radioactive. Dans le GV, elle circule dans des milliers de tubes fins et chauffe l’eau du circuit secondaire à travers le métal, sans jamais la toucher : la vapeur qui part vers la turbine est propre. Chaque tranche en a quatre, qui produisent ensemble plusieurs milliers de tonnes de vapeur par heure.'},
+   'GCT':'Contournement Turbine — une grosse soupape pilotée qui envoie la vapeur directement au condenseur, sans passer par la turbine',
+   'GCTa':'Contournement à l’atmosphère — pareil, mais la vapeur part dans l’air (propre : elle n’a jamais touché le réacteur)',
+   'ARE':'Alimentation en eau normale des GV — les grosses pompes qui remplissent les bouilloires en fonctionnement',
+   'ASG':'Alimentation de Secours des GV — les pompes de secours qui prennent le relais si l’ARE tombe',
+   'MPS':'Motopompe de secours (électrique) de l’ASG',
+   'TPS':{d:'Turbopompe de secours de l’ASG — marche à la vapeur, même sans électricité',
+     p:'C’est l’ultime recours : sa petite turbine est entraînée par la vapeur des GV eux-mêmes. Tant que le réacteur produit de la chaleur, elle a de quoi tourner — même si la centrale n’a plus un seul volt. Elle peut refroidir le réacteur toute seule.'},
+   'TPA':'Turbopompe Alimentaire — les pompes principales d’eau, entraînées par de la vapeur',
+   'GMPP':{d:'Groupes MotoPompes Primaires — les 4 énormes pompes qui font circuler l’eau du réacteur',
+     p:'Chacune consomme 5 à 6 MW (l’équivalent d’une petite ville) et leur simple frottement chauffe le circuit d’environ 20 MW au total. Si elles s’arrêtent toutes, l’eau continue de circuler doucement d’elle-même : l’eau chaude monte au cœur, refroidit dans les GV et redescend — c’est la circulation naturelle, un thermosiphon géant qui suffit à évacuer la chaleur résiduelle.'},
+   'RRA':{d:'Refroidissement du Réacteur à l’Arrêt — le circuit qui évacue la chaleur quand tout est arrêté et froid',
+     p:'Pourquoi seulement sous 180 °C et 31 bar ? Parce que le RRA est un circuit « basse pression » : le connecter à un primaire chaud et pressurisé le ferait éclater. Au-dessus de ces seuils, ce sont les GV qui évacuent la chaleur ; en dessous, le RRA prend le relais et peut descendre la température jusqu’à 20-40 °C.'},
+   'RRI':'Réfrigération Intermédiaire — le circuit d’eau qui refroidit les équipements et emporte la chaleur vers la source froide',
+   'SEC':'la source froide de secours (eau brute) qui refroidit le RRI',
+   'RIS':{d:'Injection de Secours — envoie de l’eau borée dans le réacteur en cas de fuite',
+     p:'Trois étages selon la pression : les pompes haute pression (ISHP) injectent même contre 110 bar ; les accumulateurs se vident tout seuls sous 42 bar ; les pompes basse pression (ISBP) noient le cœur quand la pression est tombée. L’eau est borée pour garantir que le réacteur reste éteint pendant qu’on le remplit.'},
+   'IS':{d:'signal d’Injection de Secours — l’alarme qui déclenche automatiquement le RIS',
+     p:'Il part notamment quand la pression du pressuriseur passe sous ~118 bar : signe probable d’une fuite. C’est pour ça qu’en descente VOLONTAIRE de pression, l’opérateur doit le BLOQUER sous 139 bar : sinon l’automate croirait à une fuite et re-remplirait le circuit qu’on essaie de vidanger. Le blocage se lève tout seul quand la pression remonte.'},
+   'EAS':'Aspersion de l’enceinte — douche géante dans le bâtiment réacteur pour faire baisser la pression',
+   'AAR / AU':{d:'Arrêt Automatique du Réacteur (arrêt d’urgence) — toutes les barres tombent en 2 secondes',
+     p:'Les grappes sont retenues en haut du cœur par des électro-aimants. Un ordre d’arrêt coupe simplement le courant : la gravité fait le reste, aucune pompe ni moteur nécessaires. En 2 secondes la réaction en chaîne est stoppée — mais attention, la chaleur résiduelle, elle, ne s’éteint jamais d’un coup.'},
+   'VVP':'les tuyauteries de Vapeur Vive Principale (entre GV et turbine)',
+   'VIV':'Vannes d’Isolement Vapeur — les vannes qui ferment les tuyaux de vapeur en urgence',
+   'KRT':'les chaînes de mesure de radioactivité de la centrale',
+   'SEBIM':'les soupapes de sûreté du pressuriseur (elles s’ouvrent si la pression monte trop)',
+   'RCV':'Contrôle Volumétrique et Chimique — règle la quantité d’eau et le bore du circuit primaire',
+   'Bore (Cb)':{d:'un « frein » chimique dissous dans l’eau : plus de bore = moins de puissance',
+     p:'C’est de l’acide borique : le bore absorbe les neutrons. Les grappes sont le réglage RAPIDE (secondes), le bore le réglage LENT (heures) : on borique pour freiner, on dilue à l’eau claire pour accélérer. Chaque dilution produit des effluents envoyés au traitement (TEP) — même piloter a un coût chimique.'},
+   'Xénon':{d:'un poison qui apparaît tout seul après un arrêt et étouffe le réacteur pendant des heures',
+     p:'Le mécanisme : la fission produit de l’iode 135, qui se transforme en xénon 135, un absorbeur de neutrons redoutable. En fonctionnement, le flux « brûle » le xénon à mesure. À l’arrêt, plus rien ne le brûle — mais l’iode accumulé continue de s’y transformer : le xénon MONTE et culmine ~9 heures après l’arrêt (près du double). Redémarrer dans cette fenêtre est très difficile ; il faut parfois attendre 1 à 2 jours qu’il disparaisse.'},
+   'Chaleur résiduelle':{d:'la chaleur que le combustible continue de produire après l’arrêt — impossible à « éteindre »',
+     p:'Elle vient de la radioactivité des produits de fission accumulés : ~6 % de la puissance à l’instant de l’arrêt (soit ~230 MW !), ~1 % après une heure, ~0,5 % le lendemain. C’est pour elle qu’existent l’ASG, le RRA, les diesels, la circulation naturelle : quoi qu’il arrive, il faut TOUJOURS refroidir, pendant des jours.'},
+   'Accumulateurs':{d:'des réservoirs d’eau borée sous pression d’azote qui se vident tout seuls en cas de grosse fuite',
+     p:'Purement passifs : pas de pompe, pas d’électricité, pas d’ordre à donner. L’azote comprimé à 42 bar pousse l’eau dès que la pression du circuit passe en dessous. Revers de la médaille : en descente volontaire, l’opérateur doit les ISOLER avant 42 bar, sinon ils se déversent dans un circuit qui n’a rien demandé.'},
+   'Tmoy':{d:'la température moyenne de l’eau du réacteur (~310 °C à pleine puissance)',
+     p:'Elle suit un « programme » : ~290 °C au ralenti, ~310 °C à pleine puissance. C’est la clé du pilotage automatique : quand tu ouvres les vannes de la turbine, la vapeur soutirée refroidit le primaire, Tmoy baisse sous son programme, et les barres se lèvent pour la rattraper. Le réacteur suit la turbine, pas l’inverse.'},
+   'Pressuriseur':{d:'le « ballon » qui fixe la pression du circuit primaire (155 bar) avec des chaufferettes et une douche',
+     p:'C’est le seul endroit du circuit où eau et vapeur coexistent : moitié eau bouillante, moitié vapeur. Pour MONTER la pression, on chauffe l’eau (plus de vapeur = plus de pression) ; pour la BAISSER, on pulvérise de l’eau froide dans la vapeur (l’aspersion), qui la condense. Pourquoi 155 bar ? Pour qu’à 310 °C l’eau du circuit reste liquide : à cette pression, elle ne bout qu’à 345 °C — la marge s’appelle la sous-saturation. Au sommet, les soupapes SEBIM veillent.'},
+   'Vannes admission HP':{d:'les robinets géants entre les bouilloires (GV) et la turbine — plus ils sont ouverts, plus la vapeur pousse, plus on produit d’électricité',
+     p:'C’est LA commande de puissance de la tranche. On ne pilote pas le réacteur directement : on ouvre les vannes, la turbine soutire plus de vapeur, le primaire se refroidit un peu, et la régulation de température lève les barres pour compenser. Ferme-les d’un coup (déclenchement turbine) et c’est l’inverse : la chaleur n’a plus de sortie, tout monte — d’où le GCT qui s’ouvre en secours.'},
+   'HP / BP':{d:'les corps Haute Pression puis Basse Pression de la turbine : la vapeur se détend dedans en cédant son énergie',
+     p:'La vapeur entre à 71 bar dans le corps HP, en sort détendue et humide, passe par des sécheurs-surchauffeurs, puis finit sa détente dans les énormes corps BP jusqu’au vide du condenseur. Le tout tourne à 1 500 tours/minute exactement, verrouillé sur les 50 Hz du réseau. Les derniers étages BP sont géants car à très basse pression, la vapeur occupe un volume monstrueux.'},
+   'Condenseur':{d:'le grand échangeur sous la turbine : la vapeur y redevient de l’eau au contact de tubes remplis d’eau froide du fleuve ou de la mer',
+     p:'Un kilogramme de vapeur à 50 mbar occupe ~28 m³ ; condensé, il devient 1 litre d’eau. Cet effondrement de volume (28 000 contre 1 !) crée une aspiration permanente derrière la turbine : le condenseur FABRIQUE le vide lui-même. Les pompes à vide ne servent qu’à évacuer l’air qui s’infiltre — c’est le rôle du CVI.'},
+   'Vide condenseur':{d:'quand la vapeur se condense, son volume s’effondre : ça crée une aspiration derrière la turbine. Plus l’eau du fleuve est FROIDE, meilleur est le vide, plus la turbine produit',
+     p:'Le travail de la turbine, c’est la chute de pression entre l’entrée (71 bar) et la sortie. Sortir à 1 bar (l’atmosphère) gâcherait tout le bas de la détente ; sortir à 50 mbar la prolonge vingt fois plus bas et rapporte 20 à 25 % du travail total. Or la pression du condenseur est EXACTEMENT la pression d’ébullition de sa température : condenser à 25 °C donne ~32 mbar, à 35 °C ~56 mbar, à 45 °C ~96 mbar. Un fleuve plus froid = condensation plus froide = meilleur vide = détente plus longue = plus de MW avec la même chaleur : ~10 °C de source froide valent 30-40 MW. Et si le CVI tombe, l’air couvre les tubes, le vide se dégrade, les MW fondent jusqu’au déclenchement turbine.'},
+   'Source froide':{d:'le fleuve, la mer ou l’aéroréfrigérant : ils emportent la chaleur que la turbine n’a pas transformée (les deux tiers !)',
+     p:'La thermodynamique est têtue : avec une source chaude à ~310 °C et une source froide à ~20 °C, on ne peut convertir qu’environ un tiers de la chaleur en électricité. Les 2 500 MW restants DOIVENT partir quelque part — fleuve, mer, ou l’évaporation dans la tour. Ce n’est pas une perte réparable, c’est la loi de Carnot.'},
+   'Aéroréfrigérant':{d:'la grande tour au panache blanc — ce n’est QUE de la vapeur d’eau propre du circuit de refroidissement, jamais l’eau du réacteur',
+     p:'Aucun ventilateur : sa forme crée un tirage naturel, comme une cheminée géante. L’eau tiède du condenseur y ruisselle, l’air qui monte en évapore ~2 %, et cette évaporation la refroidit — le panache, c’est cette vapeur propre qui se recondense dans l’air froid.'},
+   'P7 / P11 / P14':'des seuils automatiques (permissifs) qui activent ou désactivent des protections selon la puissance et la pression',
+   'CRF':'le circuit de refroidissement du condenseur à l’eau brute (la source froide principale)',
+   'CVI':{d:'le circuit de vide — maintient le vide dans le condenseur pour que la turbine fonctionne bien',
+     p:'Il n’aspire pas la vapeur (la condensation s’en charge toute seule) : il chasse l’air et les gaz incondensables qui s’infiltrent par les joints. Sans lui, l’air « couvre » les tubes froids comme une couverture, la condensation se dégrade, le vide remonte et la turbine finit par déclencher.'},
+   'CHAUSSETTE':'le diagramme pression/température : le point doit rester dans la zone autorisée, comme sur les vrais documents',
+   'Trois barrières':{d:'les trois enveloppes successives entre le combustible et l’environnement',
+     p:'1) La gaine métallique de chaque crayon emprisonne le combustible et ses produits de fission. 2) Le circuit primaire en acier (dont la cuve, 20 cm d’épaisseur) enferme l’eau activée. 3) L’enceinte en béton — double paroi sur ce palier — confine tout le reste. Toute la sûreté consiste à protéger ces trois barrières : les alarmes KRT surveillent chacune.'}
+  };
+  el('easyLex').innerHTML=Object.keys(LEX).map(function(k){
+    var v=LEX[k],d=(typeof v==='string')?v:v.d,p=(typeof v==='string')?'':'<details class="lexD"><summary>en savoir plus</summary><div class="lexP">'+v.p+'</div></details>';
+    return '<div style="break-inside:avoid;margin-bottom:6px"><b>'+k+'</b> : '+d+p+'</div>';
+  }).join('');
+  el('bEasyLex').onclick=function(){el('easyLex').classList.toggle('on');};
+  el('bEasy').onclick=function(){
+    S.easy=!S.easy;
+    el('easyCard').classList.toggle('on',S.easy);
+    el('bEasy').classList.toggle('on',S.easy);
+    log(S.easy?'MODE FACILE : guide pas-à-pas activé (pupitre formation en haut de page).':'Mode facile désactivé.','cyan');
+  };
+  function easyMsg(){
+    var e=S.etat;
+    if(S.dmg>0.05)return "🔴 Le cœur est endommagé : le combustible a trop chauffé. En vrai, ce serait un accident grave. Tu peux RÉINITIALISER la simulation, ou observer la suite.";
+    if(S.fus)return "🔴 Fusion du cœur. Réinitialise la simulation pour recommencer.";
+    if(S._ptBad)return "⚠ Le point pression/température est SORTI de la zone autorisée (onglet Chaussette). En général : refroidir moins vite, ou ajuster la consigne du pressuriseur.";
+    if(S.sigIS)return "🚨 FUITE DÉTECTÉE : l’injection de secours envoie automatiquement de l’eau borée dans le réacteur. Laisse les automatismes travailler et surveille l’inventaire en eau.";
+    if(S.scram&&S.Pn<0.02&&S.Tavg>250)return "🟠 ARRÊT D’URGENCE : toutes les barres sont tombées, la réaction est stoppée. Le réacteur chauffe encore (chaleur résiduelle) : vérifie que l’eau arrive aux générateurs de vapeur (pompes de secours ASG) — la vapeur s’évacue par le GCT.";
+    if(S._blkDue)return "👉 On descend la pression volontairement : BLOQUE l’injection de secours (bouton BLOQUER IS, carte Signaux), sinon elle se déclenchera pour rien.";
+    if(S._accDue)return "👉 ISOLE les accumulateurs (carte RIS) : ces réservoirs sous pression se videraient tout seuls dans le circuit en dessous de 42 bar.";
+    if(S._reaDue)return "👉 La pression est revenue : RÉALIGNE les accumulateurs (carte RIS) pour qu’ils protègent à nouveau le réacteur.";
+    if(S.gv<30&&e!=='ANRRA'&&S.Tavg>200)return "⚠ Le niveau d’eau baisse dans les générateurs de vapeur. Vérifie l’alimentation : ARE en marche, ou pompes de secours ASG.";
+    if(e==='RP'&&S.Pn>0.97&&Math.abs(S.turbSet-100)<2)return "✅ Pleine puissance : la centrale produit ~1 300 MW. Pour t’entraîner : baisse doucement le curseur « Vannes admission HP » (les robinets de vapeur de la turbine) et regarde les barres de contrôle suivre toutes seules.";
+    if(e==='RP'&&S.turbSet<S.turb-2)return "La turbine réduit sa charge : les barres s’enfoncent automatiquement pour suivre. Rien à faire, observe.";
+    if(e==='RP'&&!S.scram&&S.Xe>1.35&&S.Pn<0.5)return "Le xénon (un poison naturel) freine le réacteur. Pour compenser : bouton DILUER (on retire du bore, le frein chimique).";
+    if(e==='ANGV'&&S.Tavg>200)return "Arrêt sur les générateurs de vapeur. Pour refroidir : onglet Turbine, baisse la consigne GCT vers 6-8 bar. Mets aussi la consigne du pressuriseur à 27 bar : la pression suivra le domaine toute seule. Passe en ×300, ça prend quelques heures.";
+    if(e==='ANGV'&&S.Tavg<=200&&S.Tavg>178)return "Presque ! Continue de refroidir sous 180 °C en suivant les rappels (blocage IS, isolement des accumulateurs).";
+    if(e==='ANGV'&&S.Tavg<178&&S.Ppzr<31)return "✅ Conditions réunies (< 180 °C et < 31 bar) : clique l’état AN/RRA pour connecter le refroidissement à l’arrêt.";
+    if(e==='ANGV'&&S.Tavg<178)return "Température OK — attends que la pression finisse de descendre sous 31 bar, puis clique AN/RRA.";
+    if(e==='ANRRA')return "Le circuit de refroidissement à l’arrêt évacue la chaleur : la température descend vers 40-60 °C. Continue la descente (API, APR) ou remonte en cliquant AN/GV.";
+    if(e==='APIF'||e==='APIO')return "Arrêt pour intervention : circuit froid et dépressurisé"+(e==='APIO'?", cuve ouverte":"")+" — l’état des grandes maintenances.";
+    if(e==='APR')return "Arrêt pour rechargement : tout est prêt pour manipuler le combustible sous eau.";
+    if(e==='RCD')return "Cœur déchargé : le combustible est en piscine. Tu peux refaire le chemin inverse !";
+    var TIPS=[
+     "Le saviez-vous ? Plus l’eau du fleuve est froide, plus la centrale produit : la vapeur se condense mieux, le « vide » derrière la turbine est plus fort, et la même chaleur donne jusqu’à ~30 MW de plus l’hiver.",
+     "Le saviez-vous ? Environ deux tiers de la chaleur du réacteur partent dans la source froide (fleuve, mer, tour) : 3 800 MW de chaleur pour ~1 300 MW d’électricité, c’est la thermodynamique, pas un défaut.",
+     "Le saviez-vous ? Le panache blanc de la tour, c’est uniquement de la vapeur d’eau propre du circuit de refroidissement — jamais l’eau du réacteur.",
+     "Le saviez-vous ? Le circuit primaire est à 155 bar pour une seule raison : empêcher l’eau de bouillir à plus de 300 °C.",
+     "Le saviez-vous ? L’eau entre dans le cœur à ~293 °C et en ressort à ~329 °C : 36 °C gagnés en quelques secondes de traversée.",
+     "Le saviez-vous ? Les 4 pompes primaires (GMPP) brassent tout le circuit en continu — et leur simple frottement chauffe l’eau d’environ 20 MW, l’équivalent de milliers de radiateurs.",
+     "Le saviez-vous ? En arrêt d’urgence, toutes les grappes tombent par gravité en ~2 secondes. Aucun moteur : on coupe le courant des électro-aimants et elles chutent.",
+     "Le saviez-vous ? Après l’arrêt, le combustible chauffe encore : ~6 % de la puissance à l’instant même, ~1 % au bout d’une heure, ~0,5 % le lendemain. C’est pour ça qu’on refroidit pendant des jours.",
+     "Le saviez-vous ? Le xénon, poison naturel du réacteur, atteint son maximum ~9 heures après un arrêt : redémarrer pendant ce « pic xénon » est très difficile. Il disparaît en 2-3 jours.",
+     "Le saviez-vous ? On pilote aussi le réacteur… à la chimie : le bore dissous dans l’eau absorbe les neutrons. Plus de bore = moins de puissance. Diluer, c’est accélérer.",
+     "Le saviez-vous ? Le cœur contient 193 assemblages, soit environ 50 000 crayons remplis de petites pastilles d’uranium de la taille d’un dé à coudre.",
+     "Le saviez-vous ? Une seule pastille d’uranium (~7 g) libère autant d’énergie qu’environ une tonne de charbon.",
+     "Le saviez-vous ? On ne recharge pas tout le cœur : tous les 12 à 18 mois, seul un tiers du combustible est remplacé.",
+     "Le saviez-vous ? La turbine tourne à 1 500 tours/minute exactement, verrouillée sur les 50 Hz du réseau. Toutes les centrales du pays tournent « ensemble ».",
+     "Le saviez-vous ? L’alternateur produit à 20 000 volts, aussitôt élevés à 400 000 volts pour voyager sur les lignes avec le moins de pertes possible.",
+     "Le saviez-vous ? Dans chaque générateur de vapeur, l’eau du réacteur circule dans des milliers de tubes fins : elle chauffe l’autre eau à travers le métal, sans JAMAIS la toucher.",
+     "Le saviez-vous ? Trois barrières séparent le combustible de l’environnement : la gaine métallique des crayons, le circuit primaire en acier, et l’enceinte en béton.",
+     "Le saviez-vous ? L’enceinte du palier 1300 est à DOUBLE paroi de béton : la paroi interne encaisse la pression, l’externe protège des agressions.",
+     "Le saviez-vous ? 1 300 MW, c’est l’électricité d’environ un million de foyers.",
+     "Le saviez-vous ? Si la vapeur n’a plus aucune sortie, les soupapes des générateurs de vapeur crachent à l’atmosphère à partir de 90 bar : de la vapeur propre, jamais l’eau du réacteur.",
+     "Le saviez-vous ? Le GCT (contournement) peut avaler la vapeur SANS la turbine : si le réseau disparaît, le réacteur peut continuer à tourner au ralenti. C’est l’îlotage : la centrale s’alimente elle-même.",
+     "Le saviez-vous ? En cas de panne électrique totale, des moteurs diesel géants démarrent automatiquement en une quinzaine de secondes pour alimenter les systèmes de sûreté.",
+     "Le saviez-vous ? Une des pompes de secours des générateurs de vapeur (la TPS) marche… à la vapeur. Même sans une seule source électrique, elle peut refroidir le réacteur.",
+     "Le saviez-vous ? La température moyenne du circuit suit un « programme » : ~290 °C au ralenti, ~310 °C à pleine puissance. Les barres de contrôle la tiennent automatiquement.",
+     "Le saviez-vous ? L’eau du circuit primaire devient légèrement radioactive en traversant le cœur ; celle du circuit secondaire, jamais. C’est toute la raison d’être des générateurs de vapeur.",
+     "Le saviez-vous ? Le diagramme « chaussette » (onglet dédié) est un vrai document d’exploitation : les opérateurs doivent garder le point pression/température dans la zone autorisée, exactement comme toi ici.",
+     "Le saviez-vous ? Les accumulateurs sont des réservoirs d’eau borée sous pression d’azote : en cas de grosse fuite, ils se vident TOUT SEULS dans le réacteur, sans pompe ni électricité ni ordre.",
+     "Le saviez-vous ? Le réacteur répond à la turbine, pas l’inverse : ouvre plus les vannes d’admission et les barres se lèvent automatiquement pour fournir la puissance demandée.",
+     "Le saviez-vous ? Les boutons ×60 et ×300 accélèrent le temps de simulation : un refroidissement de 4 heures se regarde en moins d’une minute. La physique reste exacte, seule l’attente disparaît.",
+     "Tout est stable. Explore, ou déclenche un incident (carte Incidents) pour t’entraîner — le guide t’aidera."];
+    return TIPS[Math.floor(Date.now()/30000)%TIPS.length];
+  }
+  window.__easyMsg=easyMsg;
   el('bInhib').onclick=function(){
     S.aarInhib=!S.aarInhib;
     el('bInhib').classList.toggle('warn',S.aarInhib);
@@ -2665,11 +2834,11 @@ body.shake{animation:quake .9s linear;}
     var th=sel==='th';
     var rTh=el('tabTh').querySelector('rect'), tTh=el('tabTh').querySelector('text');
     var rE=el('tabE').querySelector('rect'), tE=el('tabE').querySelector('text');
-    rTh.setAttribute('fill',th?'#26313b':'#14191e');
+    rTh.setAttribute('fill',th?'#2c4a32':'#10180f');
     rTh.setAttribute('stroke',th?'#4a5a64':'#242e36');
     rTh.setAttribute('stroke-width',1);
     tTh.setAttribute('fill',th?'#e8a33d':'#5d6d75');
-    rE.setAttribute('fill',!th?'#26313b':'#14191e');
+    rE.setAttribute('fill',!th?'#2c4a32':'#10180f');
     rE.setAttribute('stroke',!th?'#4a5a64':'#242e36');
     rE.setAttribute('stroke-width',1);
     tE.setAttribute('fill',!th?'#e8a33d':'#5d6d75');
@@ -3079,7 +3248,7 @@ body.shake{animation:quake .9s linear;}
     setAl('aPzrLo',(!hot||S.Ptot<0.1)?'':S.Ppzr<140?'red':S.Ppzr<148?'amber':'');
     setAl('aBlkIS',S._blkDue?'amber':'');
     var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.Tavg<=255&&S.Tavg>120&&S.Ppzr>psat(S.Tavg+110)+4)||(S.etat==='ANRRA'&&(S.Tavg>182&&S.Ppzr>33))||(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&S.breche===0&&S.rtv===0&&S.fuiteGV===0&&S.inv>95); // couloir : sous 180 °C le domaine n'existe qu'à ≤31 bar
-    setAl('aPT',ptBad?'red':'');
+    S._ptBad=ptBad;setAl('aPT',ptBad?'red':'');
     setAl('aAcc',S._accDue?'amber':'');
     INH_BTNS.forEach(function(cf){var b=el(cf[0]);if(b){b.classList.toggle('warn',!!S[cf[1]]);b.textContent=S[cf[1]]?'INHIBÉ':'INHIBER';}});
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');
@@ -3183,6 +3352,7 @@ body.shake{animation:quake .9s linear;}
     var h=Math.floor(tt/3600),m=Math.floor((tt%3600)/60),s=tt%60;
     clock.textContent='T+'+(h<10?'0':'')+h+':'+(m<10?'0':'')+m+':'+(s<10?'0':'')+s+(S.accel>1?'  ×'+S.accel:'');
     if(window.renderSock)window.renderSock();
+    if(S.easy&&S.t-(S._easyT||0)>1){S._easyT=S.t;var em=el('easyMsg');if(em)em.textContent=window.__easyMsg();}
   }
 
   // ---- boucle : pas physique fixe, accélération sur les lentes seulement ----
