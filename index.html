@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4r-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4s-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4r-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4s-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1636,7 +1636,7 @@ body.shake{animation:quake .9s linear;}
       // (jamais un « maintien à 62 % » qui masquerait un déficit d'alimentation)
       // bascule d'alimentation AN/GV : à l'arrêt des TPA (minimum technique),
       // les motopompes ASG prennent le relais du niveau (une seule fois, log conduite)
-      if(S.Tavg>200&&!S.rra&&!S.tpaRun&&S.areAvail&&S.gv<49.5&&!S.mpsA&&!S.mpsB&&(S.reseau||S.diesel)){
+      if(S.Tavg>200&&!S.rra&&!S.tpaRun&&S.areAvail&&S.gv<49.5&&!S.mpsA&&!S.mpsB&&(S.reseau||S.diesel)&&!S.inhASG){
         S.mpsA=true;S.mpsB=true;
         log('AUTO : bascule de l\u2019alimentation GV sur ASG (motopompes) \u2014 TPA arr\u00eat\u00e9es au minimum technique.','cyan');
       }
@@ -1808,7 +1808,7 @@ body.shake{animation:quake .9s linear;}
       var dtc=dt; // ligne de temps unifiée : la boucle porte l'accélération
       // bilan chauffage résiduel / refroidissement RRA — la source froide du RRA
       // est le RRI, refroidi par SEC : perte SEC = perte du refroidissement RRA
-      S.Tavg+=clamp((((S.Pres*3800+S.gmppN*5)/2500)-((S.rra&&S.sec&&S.rri&&!S.rraF&&S.Pn<0.025)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc,-30/3600*dtc,30/3600*dtc); // chauffage résiduelle+GMPP, gradient RRA borné ~28-30 °C/h
+      S.Tavg+=clamp((((S.Pres*3800+S.gmppN*5)/2500)-((S.rra&&S.sec&&S.rri&&!S.rraF&&S.Pn<0.025)?(S.Tavg-(S.Tsrc+8))*0.0009:0))*dtc,-30/3600*dtc,70/3600*dtc); // refroidissement PILOTÉ borné 30 °C/h ; réchauffement libre au bilan (perte RRA : ~60 °C/h)
       S.relEnc=0;
       S.Tavg=clamp(S.Tavg,15,350);
       // dépressurisation de fin de refroidissement : la CONSIGNE pressuriseur descend
@@ -1823,6 +1823,7 @@ body.shake{animation:quake .9s linear;}
       S.areOut=0;S.asg=0;S.tpaRun=false;S.tpaN=Math.max(0,S.tpaN-dtc);
       // pression primaire tenue à la consigne d'état (RCV / bulle / atmosphère)
       S.Ppzr+=clamp((S.pzrSet-S.Ppzr)*(1-Math.exp(-dtc/20)),-0.07*dtc,0.035*dtc); // dépressurisation bornée (courbe P-T) même en branche froide
+      if(S.breche===0)S.Ppzr=Math.max(S.Ppzr,psat(S.Tavg)); // circuit fermé : si T atteint la saturation, la pression suit (perte RRA : remontée en pression)
       S.heat=false;S.spray=false;
       S.sebim=false;S.inj=0;
       S.Penc+=(1-S.Penc)*(1-Math.exp(-dtc/60));
@@ -1882,7 +1883,7 @@ body.shake{animation:quake .9s linear;}
     // AAR + isolement vapeur sur DÉCOUPLAGE pression/température : en conduite
     // normale Psteam suit la saturation de Tavg ; une RTV effondre la pression
     // alors que le primaire est encore chaud (logique très basse pression VVP)
-    if(S.Psteam<45&&S.Tavg>272&&isHot()&&!S._rtvIso){
+    if(S.Psteam<45&&S.Tavg>272&&isHot()&&!S._rtvIso&&!S.inhIsoV){
       S._rtvIso=true;S.viv=false;
       log('ISOLEMENT VAPEUR : fermeture des vannes VIV — très basse pression VVP (découplage P/T : rupture de tuyauterie vapeur suspectée).','red');
       scramReq('AU automatique : très basse pression vapeur — RTV suspectée.');
@@ -1978,9 +1979,12 @@ body.shake{animation:quake .9s linear;}
       log('AUTO : levée du blocage IS — pression au-dessus de la permissive P11','amber');
     }
     if(S.sigIS&&!S._isAux){S._isAux=true;
-      S.mpsA=true;S.mpsB=true;
-      log('Signal IS : démarrage automatique des motopompes ASG (MPS A/B) et ISOLEMENT ENCEINTE PHASE A (ventilations et circuits non essentiels).','amber');
-      S.isoEnc=true;
+      if(!S.inhASG){S.mpsA=true;S.mpsB=true;
+        log('Signal IS : démarrage automatique des motopompes ASG (MPS A/B).','amber');
+      }else{logInhib('asg','démarrage automatique ASG (signal IS)');}
+      if(!S.inhIsoE){S.isoEnc=true;
+        log('Signal IS : ISOLEMENT ENCEINTE PHASE A (ventilations et circuits non essentiels).','amber');
+      }else{logInhib('isoe','isolement enceinte phase A (signal IS)');}
     }
     if(!S.sigIS)S._isAux=false;
     if(!S.sigIS&&S.Ppzr<118&&!S.isBlk){
@@ -2174,29 +2178,6 @@ body.shake{animation:quake .9s linear;}
   },{passive:true});
   // mouchard de débordement : si un élément pousse la page au-delà du viewport,
   // il est nommé au journal (une fois) — diagnostic embarqué du décalage mobile
-  var uiDiagSeen={};
-  setInterval(function(){
-    try{
-      var de=document.documentElement;
-      var vw=de.clientWidth;
-      if(de.scrollWidth<=vw+2)return;
-      var all=document.body.getElementsByTagName('*');
-      var found=0;
-      for(var i=0;i<all.length&&found<3;i++){
-        var el2=all[i];
-        if(el2.offsetParent===null&&el2.tagName!=='svg')continue;
-        var r=el2.getBoundingClientRect();
-        if(r.right>vw+2&&r.width<=de.scrollWidth){
-          var sig=el2.tagName.toLowerCase()+(el2.id?'#'+el2.id:'')+(el2.className&&el2.className.baseVal===undefined?'.'+String(el2.className).split(' ')[0]:'');
-          if(el2.querySelector&&el2.querySelector('*')&&el2.getElementsByTagName('*').length>8)continue; // viser les feuilles, pas les conteneurs
-          if(!uiDiagSeen[sig]){
-            uiDiagSeen[sig]=true;found++;
-            log('DIAG UI : débordement horizontal — '+sig+' dépasse de '+Math.round(r.right-vw)+' px (largeur '+Math.round(r.width)+')','dim');
-          }
-        }
-      }
-    }catch(e){}
-  },2000);
   [['mnv1','synop'],['mnv2','secInc'],['mnv3','secInh'],['mnv4','secTurb'],['mnv5','secSock']].forEach(function(p){
     var b=el(p[0]);if(b)b.onclick=function(){var t=el(p[1]);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});};
   });
@@ -2493,6 +2474,13 @@ body.shake{animation:quake .9s linear;}
     log('INCIDENT injecté : DÉFAILLANCE DES DIESELS LHP/LHQ — perte totale des sources électriques (situation H3). Démarrage du turbo-alternateur d\u2019ultime secours LLS : instrumentation et joints GMPP alimentés. Moyens restants : ASG turbopompe (TPS, vapeur GV) et GCTa. MPS, RIS et EAS non alimentés.','red');
   };
 
+  var INH_BTNS=[['bInhIS','inhIS','signal IS'],['bInhEAS','inhEAS','EAS automatique'],['bInhASG','inhASG','ASG automatique'],['bInhIsoE','inhIsoE','isolement enceinte'],['bInhIsoV','inhIsoV','isolement vapeur (VIV)'],['bInhKrt','inhKrt','isolement VVP sur très haute activité (KRT)']];
+  INH_BTNS.forEach(function(cf){
+    el(cf[0]).onclick=function(){
+      S[cf[1]]=!S[cf[1]];
+      log((S[cf[1]]?'INHIBITION EN SERVICE : ':'INHIBITION LEVÉE : ')+cf[2]+'.',S[cf[1]]?'amber':'cyan');
+    };
+  });
   el('bInhib').onclick=function(){
     S.aarInhib=!S.aarInhib;
     el('bInhib').classList.toggle('warn',S.aarInhib);
@@ -3093,6 +3081,7 @@ body.shake{animation:quake .9s linear;}
     var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.Tavg<=255&&S.Tavg>120&&S.Ppzr>psat(S.Tavg+110)+4)||(S.etat==='ANRRA'&&(S.Tavg>182&&S.Ppzr>33))||(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&S.breche===0&&S.rtv===0&&S.fuiteGV===0&&S.inv>95); // couloir : sous 180 °C le domaine n'existe qu'à ≤31 bar
     setAl('aPT',ptBad?'red':'');
     setAl('aAcc',S._accDue?'amber':'');
+    INH_BTNS.forEach(function(cf){var b=el(cf[0]);if(b){b.classList.toggle('warn',!!S[cf[1]]);b.textContent=S[cf[1]]?'INHIBÉ':'INHIBER';}});
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');
     setAl('aGmpp',(!S.gmpp&&(hot||S.etat==='ANRRA'))?'red':'');
     setAl('aAu',S.scram?'red':'');

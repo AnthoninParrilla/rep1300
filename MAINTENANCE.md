@@ -100,6 +100,27 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## AUDIT GLOBAL 2.4s (revue de code + bugs cachés)
+Statique : zéro el() orphelin, zéro doublon d id, zéro fonction morte,
+fantômes S.* tous en pattern (||0) sûr ; clé morte lastInhib purgée ;
+scanner DOM de debug (DIAG UI, setInterval 2 s) RETIRÉ (outil du chantier
+« décalage horizontal iOS », clos — recette : parcourir les feuilles du DOM
+et logger celles dont getBoundingClientRect().right dépasse le viewport).
+Boucle temps : sub-stepping (accel appels de physStep(0.05) par tick) —
+stabilité numérique structurelle à ×300. Enregistreur : buffers bornés.
+LE bug d exploitation caché : la page INHIBITIONS était une façade — les
+6 points d application existaient (logInhib) mais AUCUN handler de bouton.
+Câblés (2.4s) : inhIS, inhEAS, inhASG (couvre bascule AN/GV + MPS sur IS +
+niveau très bas + TPS), inhIsoE (phase A sur IS + P enceinte), inhIsoV
+(découplage RTV + via isolement enceinte), inhKrt. Bloc IS scindé en logs
+granulaires. Campagne bugs cachés : panne mystère ×5 (pool, anti-répétition,
+réparation) ; APRP en AN/RRA ; RTGV+CRF ; LOOP+H3 ; spam boutons ; consigne
+175 bar -> AAR pression pressuriseur haute AVANT SEBIM (protection vérifiée).
+Perte RRA en AN/RRA : borne froide rendue ASYMÉTRIQUE (refroidissement piloté
+−30 °C/h, réchauffement libre +70) et loi de saturation froide ajoutée :
+Ppzr ≥ psat(Tavg) hors brèche (le circuit fermé qui sature monte en
+pression) — l accident mi-boucle devient lisible sur la chaussette.
+
 ## AUDIT DES ANNOTATIONS DE LA FIGURE 4.1 (2.4q)
 Chaque annotation du schéma -> codée ? vérifiée ? comment :
 · Tsat−30 : plancher pFloor + alarme + polygone — vérifiée (aller-retour).
