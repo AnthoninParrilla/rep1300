@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4q-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4r-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4q-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4r-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1668,7 +1668,7 @@ body.shake{animation:quake .9s linear;}
       // Domaine P-T (fig. 4.1) : plancher = courbe Tsat-30 (sous-saturation ≥ 30 °C),
       // plafond = ΔP max sur plaques GV (P ≤ P_GV + 110 bar). La cible suit le domaine.
       var pFloor=psat(S.Tavg+30)+1, pCeil=Math.min(S.Psteam+110, S.Tavg<=255?psat(Math.min(S.Tavg+110,370)):999,
-        (S.Tavg<179&&S.breche===0&&S.rtv===0&&S.fuiteGV===0)?31.5:999); // fig. 4.1 : ΔP plaques, Tsat−110, ET le couloir ≤31 bar sous 180 °C
+        (S.Tavg<179&&S.breche===0&&S.rtv===0&&S.fuiteGV===0)?30.5:999); // fig. 4.1 : ΔP plaques, Tsat−110, ET le couloir — cible DANS le couloir (30,5), la garde d admission est à la frontière (31)
       var pnat=Math.min(Math.max(S.pzrSet, pFloor), pCeil) - (100-S.inv)*1.4 + dryP;
       if(pCeil<S.pzrSet-2&&!S._ptMsg){S._ptMsg=true;log('CONDUITE : suivi du domaine P-T \u2014 d\u00e9pressurisation pilot\u00e9e par le \u0394P max plaques GV (P \u2264 P GV + 110 bar).','cyan');}
       if(pCeil>=S.pzrSet-2)S._ptMsg=false;
