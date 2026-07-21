@@ -100,6 +100,29 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## AUDIT DES ANNOTATIONS DE LA FIGURE 4.1 (2.4q)
+Chaque annotation du schéma -> codée ? vérifiée ? comment :
+· Tsat−30 : plancher pFloor + alarme + polygone — vérifiée (aller-retour).
+· Tsat−110 : plafond pCeil + alarme + polygone — vérifiée (remontée).
+· ΔP max plaques GV = 110 b : plafond pCeil + alarme — vérifiée (descente).
+· Température Max du RRA (180 °C) : garde ANRRA + verticale — vérifiée.
+· Couloir 25-31 b : plafond + alarme + yeux — vérifié (aller-retour).
+· P tarage des soupapes GV : svf tarées 90 b — VÉRIFIÉE par transitoire
+  (trip turbine pleine puissance, GCT condamné : pic 92,6 b, svf 66 %).
+  Note : à l arrêt (Tavg 294) le cap Psteam≤psat(Tavg)=79 les rend
+  inatteignables : c est leur vrai rôle (transitoires depuis la puissance).
+· Limite NPSH des pompes primaires : garde ΔTsat<8 °C sur la branche
+  chaude — RESSUSCITÉE (2.4q) : elle vivait dans trips(), coupée après
+  l AU, avec Tavg+14 codé en dur ; déplacée en zone commune slowStep
+  avec dTgm() vrai. Vérifiée : APRP -> GMPP stoppées t+2 min, log
+  « circulation naturelle », cœur couvert. Invariant banc ajouté.
+· Zones API/APR : gardes de température ALIGNÉES figure (APIF ≤70,
+  APIO ≤50, APR/RCD ≤45 — étaient 90/80/70) — parcours vérifié.
+· « Limite inférieure de connexion du RRA » (~66 b sur le schéma) :
+  LECTURE À ARBITRER PAR ANTONY — candidates : pression max de
+  dimensionnement/soupapes RRA ? borne haute de la fenêtre de connexion ?
+  La garde codée reste P ≤ 31 b (aspiration).
+
 ## LA FIGURE EST LA LOI (2.4o) — leçon de méthode d Antony
 « Si on sort des clous, c est qu il nous manque quelque chose » : on ne
 déforme JAMAIS le domaine pour englober une trajectoire. Le « pied élargi »

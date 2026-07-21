@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4p-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4q-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4p-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4q-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1352,17 +1352,17 @@ body.shake{animation:quake .9s linear;}
       if(S.Tavg>180)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 180 °C) — abaisser la consigne GCT pour refroidir sur les GV';
       if(S.Ppzr>31)return 'pression primaire trop haute ('+S.Ppzr.toFixed(0)+' bar > 31 bar) — isoler les accumulateurs puis dépressuriser (consigne pressuriseur) pour la connexion RRA';
     }
-    if(to==='APIF'&&S.Tavg>90)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 90 °C) — laisser le RRA refroidir vers l\u2019arrêt à froid';
+    if(to==='APIF'&&S.Tavg>70)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 70 °C) — laisser le RRA refroidir vers l\u2019arrêt à froid (fig. 4.1 : AN/RRA \u2264 70 °C)';
     if(to==='APIO'){
       if(S.Ppzr>5)return 'primaire encore pressurisé ('+S.Ppzr.toFixed(1)+' bar > 5 bar) — attendre la dépressurisation';
-      if(S.Tavg>80)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 80 °C) pour ouvrir le circuit primaire';
+      if(S.Tavg>50)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 50 °C) pour ouvrir le circuit primaire (fig. 4.1 : domaine API \u2264 ~45-50 °C)';
     }
     if(to==='APR'){
       if(S.Pres>0.012)return 'puissance résiduelle trop élevée ('+Math.round(S.Pres*3800)+' MWth > 45 MWth) pour la manutention combustible';
-      if(S.Tavg>70)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 70 °C) pour la manutention combustible';
+      if(S.Tavg>45)return 'Tmoy trop haute ('+S.Tavg.toFixed(0)+' °C > 45 °C) pour la manutention combustible (fig. 4.1)';
       if(S.Ppzr>5)return 'primaire pressurisé ('+S.Ppzr.toFixed(1)+' bar) — manutention impossible';
     }
-    if(to==='RCD'&&(S.Pres>0.012||S.Tavg>70||S.Ppzr>5))
+    if(to==='RCD'&&(S.Pres>0.012||S.Tavg>45||S.Ppzr>5))
       return 'conditions de déchargement non réunies (résiduelle, température ou pression) — le déchargement se fait depuis l\u2019APR, piscine en eau';
     return null;
   }
@@ -1958,6 +1958,12 @@ body.shake{animation:quake .9s linear;}
     // ---- automatismes de sauvegarde (jamais inhibés par l'AAR) ----
     if(!S._sock)S._sock=[];
     if(S.t-(S._sockT||0)>15){S._sockT=S.t;S._sock.push([S.Tavg,S.Ppzr]);if(S._sock.length>240)S._sock.shift();}
+    // consigne APRP (annotation « Limite NPSH des pompes primaires ») : arrêt GMPP
+    // sur perte du sous-refroidissement — pomper du diphasique détruit les pompes.
+    if(S.breche>0&&S.gmppN>0&&S.Ppzr<psat(S.Tavg+dTgm()+8)){
+      S.gmppN=0;
+      log('CONSIGNE APRP : ARR\u00caT DES GMPP \u2014 perte du sous-refroidissement (\u0394Tsat < 8 \u00b0C sur la branche chaude). Passage en circulation naturelle.','amber');
+    }
     var blkDue=!S.isBlk&&!S.sigIS&&!S.scram&&S.Ppzr<145&&S.Ppzr>119;S._blkDue=blkDue;
     var accDue=!S.accIso&&!S.scram&&S.accu>5&&S.Ppzr<58&&S.Ppzr>40&&S.pzrSet<60;S._accDue=accDue;
     var reaDue=S.accIso&&!S.scram&&S.Ppzr>50&&S.pzrSet>60&&S.breche===0;
@@ -2052,12 +2058,6 @@ body.shake{animation:quake .9s linear;}
     else if(S.Ppzr<135&&S.Ptot>0.1) scramReq("AU automatique : pression pressuriseur basse.");
     else if(S.gv<30&&isHot()&&(S.mpsA||S.mpsB||S.tpsA||S.tpsB||S.areAvail)) scramReq("AU automatique : niveau GV très bas.");
     else if(S.Penc>1.3) scramReq("AU automatique : pression enceinte haute.");
-    // consigne APRP : arrêt des GMPP sur perte du sous-refroidissement
-    // (pomper du diphasique détruit les pompes et vide le primaire par la brèche)
-    if(S.breche>0&&S.gmppN>0&&S.Ppzr<psat((S.Tavg+14))+8){
-      S.gmppN=0;
-      log('CONSIGNE APRP : ARRÊT DES GMPP — perte du sous-refroidissement (ΔTsat < 8 °C). Passage en circulation naturelle.','amber');
-    }
     // perte des alimentations externes (LOOP) : sans réseau ni îlotage,
     // la turbine part en survitesse puis les auxiliaires normaux tombent —
     // les GMPP ne sont pas secourues ; les diesels reprennent les tableaux secourus
