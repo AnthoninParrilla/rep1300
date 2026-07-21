@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4l-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.4p-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -60,7 +60,7 @@ if('serviceWorker' in navigator){
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
   .main,.side,.card{min-width:0}
   select{min-width:0;max-width:100%}
-  #synWrap{overflow:hidden;position:relative;touch-action:pan-y}
+  #synWrap,#sockWrap{overflow:hidden;position:relative;touch-action:pan-y}
   @keyframes puffRise{
     0%  {transform:translate(930px,283px) scale(0.95);opacity:0;}
     6%  {opacity:0.95;}
@@ -92,7 +92,7 @@ if('serviceWorker' in navigator){
   #gPanache .puff:nth-child(11){animation-delay:-7.83s}
   #gPanache .puff:nth-child(12){animation-delay:-8.62s}
   #synop{transform-origin:0 0;display:block;touch-action:pan-y}
-  #synZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#0e2431ee;border:1px solid #2a5666;color:#6fc6e0;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+  #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#0e2431ee;border:1px solid #2a5666;color:#6fc6e0;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#0c141bf2;border-top:1px solid #2a5666;box-shadow:0 -5px 16px #000a;z-index:60;backdrop-filter:blur(8px)}
   #mnav button{flex:1;background:#0e2431;border:1px solid #2a5666;color:#6fc6e0;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
   @media(max-width:1099px){#mnav{display:flex}body{padding-bottom:70px}}
@@ -227,7 +227,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4l-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.4p-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1040,8 +1040,9 @@ body.shake{animation:quake .9s linear;}
     <div class="msg" id="coreDetail" style="min-height:56px;font-size:12.5px">Toucher un assemblage pour le détail. Gestion par tiers : ⅓ neuf, ⅓ mi-vie, ⅓ en fin de cycle.</div>
   </div>
 </div>
-<div class="card" id="secSock">
-  <h2>Chaussette — domaine (P,T) des états standards <span style="font-weight:400;font-size:12px;color:#5c7d8c">fig. 4.1 · le point doit rester dans le domaine</span></h2>
+<div class="card" id="secSock" style="padding-bottom:84px">
+  <h2>Chaussette — domaine (P,T) des états standards <span style="font-weight:400;font-size:12px;color:#5c7d8c">le point doit rester dans le domaine</span></h2>
+  <div id="sockWrap"><button id="sockZr" title="Réinitialiser le zoom">⤢ 1:1</button>
   <svg id="sockSvg" viewBox="0 0 680 400" style="width:100%;height:auto;display:block;background:#0d151a;border-radius:6px">
 <style>.skLbl{fill:#4a6472;font-size:9px;font-family:monospace}.skZ{fill:#2a4a5c;fill-opacity:0.45;stroke:#57b4ff;stroke-width:1.2}.skC{fill:none;stroke:#3a5260;stroke-width:1;stroke-dasharray:4 3}.skT{fill:#7d9aa8;font-size:10px;font-family:monospace;letter-spacing:0.05em}</style>
 <line x1="118" y1="10" x2="118" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="195" y1="10" x2="195" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="272" y1="10" x2="272" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="350" y1="10" x2="350" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="428" y1="10" x2="428" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="505" y1="10" x2="505" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="582" y1="10" x2="582" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="660" y1="10" x2="660" y2="370" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="328" x2="660" y2="328" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="264" x2="660" y2="264" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="201" x2="660" y2="201" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="137" x2="660" y2="137" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="74" x2="660" y2="74" stroke="#1c2b33" stroke-width="0.6"/><line x1="40" y1="10" x2="660" y2="10" stroke="#1c2b33" stroke-width="0.6"/><text x="118" y="384" text-anchor="middle" class="skLbl">50</text><text x="195" y="384" text-anchor="middle" class="skLbl">90</text><text x="272" y="384" text-anchor="middle" class="skLbl">130</text><text x="350" y="384" text-anchor="middle" class="skLbl">170</text><text x="428" y="384" text-anchor="middle" class="skLbl">210</text><text x="505" y="384" text-anchor="middle" class="skLbl">250</text><text x="582" y="384" text-anchor="middle" class="skLbl">290</text><text x="660" y="384" text-anchor="middle" class="skLbl">330</text><text x="34" y="331" text-anchor="end" class="skLbl">20</text><text x="34" y="267" text-anchor="end" class="skLbl">50</text><text x="34" y="204" text-anchor="end" class="skLbl">80</text><text x="34" y="140" text-anchor="end" class="skLbl">110</text><text x="34" y="77" text-anchor="end" class="skLbl">140</text><text x="34" y="13" text-anchor="end" class="skLbl">170</text>
@@ -1050,16 +1051,16 @@ body.shake{animation:quake .9s linear;}
 <polyline class="skC" points="214,368 226,367 238,367 249,366 261,365 272,364 284,363 296,362 307,360 319,359 331,357 342,355 354,352 366,350 377,347 389,343 400,340 412,336 424,331 435,326 447,321 458,315 470,308 482,301 493,294 505,285 517,277 528,267 540,257 552,246 563,234 575,221 586,208 598,194 610,178 621,162 633,145 644,127 656,108"/><text x="602" y="203" class="skLbl">saturation</text>
 <polyline class="skC" points="176,367 187,366 199,366 210,365 222,364 234,362 245,361 257,359 269,358 280,356 292,353 304,351 315,348 327,345 338,341 350,337 362,333 373,328 385,323 396,317 408,311 420,304 431,296 443,288 455,280 466,270 478,260 490,249 501,238 513,226 524,212 536,198 548,184 559,168 571,151 582,133 594,115"/><text x="540" y="206" class="skLbl">Tsat−30</text>
 <polyline class="skC" points="98,360 110,358 121,356 133,354 145,352 156,349 168,346 180,342 191,338 203,334 214,329 226,324 238,319 249,313 261,306 272,299 284,291 296,283 307,273 319,264 331,253 342,242 354,230 366,217 377,203 389,189 400,173 412,157 424,139 435,121 447,101 458,81 470,59 482,37 493,13"/><text x="311" y="266" class="skLbl">Tsat−110</text>
-<polygon class="skZ" points="40,353 156,353 156,317 369,317 369,304 40,304"/>
-<polygon class="skZ" points="369,313 377,313 385,313 393,313 400,313 408,311 416,306 424,301 431,296 439,291 447,285 455,280 462,273 470,267 478,260 486,253 493,246 501,238 509,230 517,221 524,212 532,203 540,194 548,184 555,173 563,162 571,151 579,139 586,127 594,115 596,111 596,42 594,42 586,42 579,42 571,42 563,42 555,42 548,42 540,42 532,42 524,42 517,44 509,50 501,55 493,61 486,66 478,71 470,75 462,80 455,88 447,101 439,115 431,127 424,139 416,151 408,162 400,173 393,184 385,194 377,203 369,212 369,212 369,313"/>
+<polygon class="skZ" points="40,353 156,353 156,317 369,317 369,304 40,304"/><polygon class="skZ" points="40,367 108,367 108,353 40,353"/><polygon class="skZ" points="40,370 108,370 108,367 40,367"/>
+<polygon class="skZ" points="369,313 377,313 385,313 393,313 400,313 408,311 416,306 424,301 431,296 439,291 447,285 455,280 462,273 470,267 478,260 486,253 493,246 501,238 509,230 517,221 524,212 532,203 540,194 548,184 555,173 563,162 571,151 579,139 586,127 594,115 596,111 596,42 594,42 586,42 579,42 571,42 563,42 555,42 548,42 540,42 532,42 524,42 517,44 509,50 501,55 493,61 486,66 478,71 470,75 462,80 455,88 447,101 439,115 431,127 424,139 416,151 408,162 400,173 393,184 385,194 377,203 369,212"/>
 <rect x="592" y="35" width="33" height="15" fill="none" stroke="#8fd18f" stroke-width="1.4"/>
 <text x="608" y="31" text-anchor="middle" class="skT" fill="#8fd18f">RP</text>
 <text x="495" y="190" text-anchor="middle" class="skT">AN/GV</text>
-<text x="98" y="332" text-anchor="middle" class="skT">AN/RRA</text>
+>AN/RRA</text><text x="72.93" y="360.47" class="skT" font-size="8">API</text><text x="72.93" y="368.0" class="skT" font-size="8">APR</text>
 <polyline id="skTrail" points="" fill="none" stroke="#ffb347" stroke-width="1.6" opacity="0.85"/>
 <circle id="skPt" cx="-10" cy="-10" r="5" fill="#8fd18f" stroke="#0d151a" stroke-width="1.5"/>
 <text id="skVal" x="52" y="26" class="skT" fill="#e8e0c8"></text>
-</svg>
+</svg></div>
 </div>
 <div id="mnav">
   <button id="mnv1">Synoptique</button><button id="mnv2">Incidents</button><button id="mnv3">Inhibitions</button><button id="mnv4">Turbine</button><button id="mnv5">Chaussette</button>
@@ -1390,9 +1391,11 @@ body.shake{animation:quake .9s linear;}
     // part en vapeur au GCTa quand le poste d'eau (condenseur/ARE) est indisponible
     S.mpsA=!!p.asgOn;S.mpsB=!!p.asgOn;S.tpsA=false;S.tpsB=false;
     if(p.asgOn)log('Configuration ASG : motopompes MPS voies A et B en service — alimentation normale des GV au palier, turbopompes TPS disponibles sur vapeur','cyan');
-    S.breche=0;S.inv=100;S.accu=100;S.Penc=1;S.sebim=false;S.rdp=0;S.rdpBurst=false;
-    S.accIso=(e==='ANRRA'||e==='APIF'||e==='APIO'||e==='APR'||e==='RCD'); // accus isolés dans les états basse pression (procédure)
-    S.ishp=false;S.isbp=false;S.eas=false;S.sigIS=false;S.easLatch=false;S.isoEnc=false;S.isBlk=false;
+    S.breche=0;S.inv=100;S.accu=Math.min(S.accu===undefined?100:S.accu,100);S.Penc=1;S.sebim=false;S.rdp=0;S.rdpBurst=false;
+    var goingUp=(S._fromIdx!==undefined)&&(ORDER.indexOf(e)<S._fromIdx);
+    if(!goingUp){S.accIso=(e==='ANRRA'||e==='APIF'||e==='APIO'||e==='APR'||e==='RCD');} // descente : préconfig procédure ; REMONTÉE : la conduite (accus/IS) est préservée
+    S.ishp=false;S.isbp=false;S.eas=false;S.sigIS=false;S.easLatch=false;S.isoEnc=false;
+    // le blocage IS n'appartient PAS aux états : il est de la conduite — seules sorties : délevée auto à P≥139, ou Réarmer IS
     S.gctSet=74;S.gctTgt=74;el('gctSp').value=74;
     S.reseau=true;S.diesel=false;S.ilote=false;S.runbk=false;S.gctB=0;S.rodDrop=0;
     S.scram=false;S.tripMsg='';
@@ -1419,6 +1422,7 @@ body.shake{animation:quake .9s linear;}
 
   function setEtat(e){
     if(e===S.etat)return;
+    S._fromIdx=ORDER.indexOf(S.etat);
     var i1=ORDER.indexOf(e);
     var iC=ORDER.indexOf(S.etat);
     if(i1>iC){
@@ -1598,12 +1602,13 @@ body.shake{animation:quake .9s linear;}
       var bleedOpen=(S.sebim||S.breche>0);
       var cool=(bleedOpen&&!S.recircHot)?(S.injL||0)*clamp((S.Tavg-180)/100,0,1)*3.2:0;
       var dDry=(Pdry/2500-cool)*dt;
-      S.Tavg+=w*dWet+(1-w)*dDry;
+      S.Tavg+=clamp(w*dWet+(1-w)*dDry,-9*dt,((S.Ptot*3800+S.gmppN*5+2)/2500)*dt); // montée limitée à l'énergie disponible (~58 °C/h à l'arrêt)
 
       // pression vapeur GV (ancrage 71 bar seulement turbine couplée ;
       // à l'arrêt, l'équilibre vient du bilan production / décharge GCT)
       var prod=dry?0:(S.Ptot+S.gmppN*0.0013*w); // + flux GMPP traversant (source primaire -> GV couplé -> vapeur -> GCT)
       S.Psteam+=((prod-D)*8-(S.Psteam-71)*0.2*(S.turb/100)-(dry?(S.Psteam-4)*0.05:0))*dt;
+      S.Psteam=Math.min(S.Psteam,psat(S.Tavg)); // le secondaire ne dépasse jamais la saturation du primaire
       S.Psteam=clamp(S.Psteam,1,120);
 
       // TPA : turbopompes alimentaires entraînées par la vapeur du barillet.
@@ -1662,10 +1667,13 @@ body.shake{animation:quake .9s linear;}
       // La perte d'inventaire (brèche) effondre la tenue -> IS conservé.
       // Domaine P-T (fig. 4.1) : plancher = courbe Tsat-30 (sous-saturation ≥ 30 °C),
       // plafond = ΔP max sur plaques GV (P ≤ P_GV + 110 bar). La cible suit le domaine.
-      var pFloor=psat(S.Tavg+30)+1, pCeil=Math.min(S.Psteam+110, S.Tavg<=255?psat(Math.min(S.Tavg+110,370)):999); // fig. 4.1 : ΔP plaques ET Tsat−110 (sous-refroidissement max)
+      var pFloor=psat(S.Tavg+30)+1, pCeil=Math.min(S.Psteam+110, S.Tavg<=255?psat(Math.min(S.Tavg+110,370)):999,
+        (S.Tavg<179&&S.breche===0&&S.rtv===0&&S.fuiteGV===0)?31.5:999); // fig. 4.1 : ΔP plaques, Tsat−110, ET le couloir ≤31 bar sous 180 °C
       var pnat=Math.min(Math.max(S.pzrSet, pFloor), pCeil) - (100-S.inv)*1.4 + dryP;
       if(pCeil<S.pzrSet-2&&!S._ptMsg){S._ptMsg=true;log('CONDUITE : suivi du domaine P-T \u2014 d\u00e9pressurisation pilot\u00e9e par le \u0394P max plaques GV (P \u2264 P GV + 110 bar).','cyan');}
       if(pCeil>=S.pzrSet-2)S._ptMsg=false;
+      if(S.pzrSet<pFloor-2&&!S._flrMsg){S._flrMsg=true;log('CONDUITE : consigne pressuriseur sous le plancher du domaine (Tsat\u221230) \u2014 la pression suivra le refroidissement.','cyan');}
+      if(S.pzrSet>=pFloor-2)S._flrMsg=false;
       var ctrl;
       if(S.pzrAuto){
         ctrl=clamp((pnat-S.Ppzr)*0.45,-0.9,S.sebim?0.08:0.9); // la régulation vise la consigne EFFECTIVE (bornée domaine P-T), pas pzrSet brut
@@ -1822,7 +1830,9 @@ body.shake{animation:quake .9s linear;}
 
     // électrique — rendement fonction du vide condenseur (source froide, saison)
     var eta=clamp(1+(0.055-S.Pcond)*0.9,0.88,1.04);
-    var pet=(S.turb/100)*1300*Math.min(1.2,S.Psteam/71)*eta*(S.viv?1:0);
+    // loi à pertes fixes (~62 MWe : auxiliaires + hors point de conception) calée sur le réel :
+    // η net ≈ 34,7 % à 100 % · 33 % à 50 % · 31,5 % à 30 % — le rendement BAISSE à charge partielle
+    var pet=Math.max(0,(S.turb/100)*1362*Math.min(1.2,S.Psteam/71)*eta-62)*(S.viv?1:0);
     S.Pelec+=(pet-S.Pelec)*(1-Math.exp(-dt/4));
     if(S.turb<1) S.Pelec=Math.max(0,S.Pelec*(1-dt*0.8));
 
@@ -1950,6 +1960,9 @@ body.shake{animation:quake .9s linear;}
     if(S.t-(S._sockT||0)>15){S._sockT=S.t;S._sock.push([S.Tavg,S.Ppzr]);if(S._sock.length>240)S._sock.shift();}
     var blkDue=!S.isBlk&&!S.sigIS&&!S.scram&&S.Ppzr<145&&S.Ppzr>119;S._blkDue=blkDue;
     var accDue=!S.accIso&&!S.scram&&S.accu>5&&S.Ppzr<58&&S.Ppzr>40&&S.pzrSet<60;S._accDue=accDue;
+    var reaDue=S.accIso&&!S.scram&&S.Ppzr>50&&S.pzrSet>60&&S.breche===0;
+    if(reaDue&&!S._reaMsg){S._reaMsg=true;log('CONDUITE : pression r\u00e9tablie \u2014 R\u00c9ALIGNER les accumulateurs RIS (sinon indisponibilit\u00e9 injection de s\u00fbret\u00e9).','amber');}
+    if(!reaDue)S._reaMsg=false;
     if(accDue&&!S._accMsg){S._accMsg=true;log('CONDUITE : ISOLER les accumulateurs RIS avant de descendre sous 42 bar \u2014 sinon ils se vidangent dans le primaire et bloquent la d\u00e9pressurisation.','amber');}
     if(!accDue)S._accMsg=false;
     if(blkDue&&!S._blkMsg){S._blkMsg=true;log('CONDUITE : la pression approche P11 (139 bar) — BLOQUER le signal IS avant de poursuivre la descente (sinon IS + isolement enceinte à 118 bar).','amber');}
@@ -2109,8 +2122,8 @@ body.shake{animation:quake .9s linear;}
 
   turb.addEventListener('input',function(){S.turbSet=+turb.value;});
   // zoom pinch dédié à la synoptique : 2 doigts = zoom, 1 doigt = pan si zoomé
-  (function(){
-    var w=el('synWrap'),sv=el('synop'),zr=el('synZr');if(!w||!sv)return;
+  function mkPinch(wid,sid,zid){
+    var w=el(wid),sv=el(sid),zr=el(zid);if(!w||!sv)return;
     var z={s:1,x:0,y:0},pts={};
     function apply(){
       var r=w.getBoundingClientRect();
@@ -2152,7 +2165,9 @@ body.shake{animation:quake .9s linear;}
     w.addEventListener('pointerup',up);w.addEventListener('pointercancel',up);w.addEventListener('pointerleave',up);
     // ceinture iOS : bloquer le scroll de page pendant les gestes sur la synoptique zoomée
     w.addEventListener('touchmove',function(e){if(z.s>1)e.preventDefault();},{passive:false});
-  })();
+  }
+  mkPinch('synWrap','synop','synZr');
+  mkPinch('sockWrap','sockSvg','sockZr');
   // verrou anti-décalage horizontal (iOS) : la page reste calée à gauche
   window.addEventListener('scroll',function(){
     if(window.scrollX!==0)window.scrollTo(0,window.scrollY);
@@ -3065,7 +3080,7 @@ body.shake{animation:quake .9s linear;}
     setAl('aGvHi',!hot?'':S.gv>95?'red':S.gv>85?'amber':'');
     setAl('aDry',!hot?'':dry?'red':S.gv<5?'amber':'');
     setAl('aPvap',!hot?'':S.Psteam>90?'red':S.Psteam>80?'amber':'');
-    setAl('aGct',S.gct>0.02?'amber':'');
+    setAl('aGct',S.gct>0.008?'amber':'');
     setAl('aGcta',S.gctA>0.02?'amber':'');
     setAl('aVide',!hot?'':S.Pcond>0.15?'red':S.Pcond>0.10?'amber':'');
     setAl('aCvi',hot&&!S.cvi?'red':'');
@@ -3075,7 +3090,7 @@ body.shake{animation:quake .9s linear;}
     setAl('aPzrHi',!hot?'':S.Ppzr>160?'red':S.Ppzr>157.5?'amber':'');
     setAl('aPzrLo',(!hot||S.Ptot<0.1)?'':S.Ppzr<140?'red':S.Ppzr<148?'amber':'');
     setAl('aBlkIS',S._blkDue?'amber':'');
-    var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.Tavg<=255&&S.Tavg>120&&S.Ppzr>psat(S.Tavg+110)+4)||(S.etat==='ANRRA'&&(S.Tavg>182&&S.Ppzr>33));
+    var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.Tavg<=255&&S.Tavg>120&&S.Ppzr>psat(S.Tavg+110)+4)||(S.etat==='ANRRA'&&(S.Tavg>182&&S.Ppzr>33))||(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&S.breche===0&&S.rtv===0&&S.fuiteGV===0&&S.inv>95); // couloir : sous 180 °C le domaine n'existe qu'à ≤31 bar
     setAl('aPT',ptBad?'red':'');
     setAl('aAcc',S._accDue?'amber':'');
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');

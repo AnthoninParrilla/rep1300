@@ -59,8 +59,8 @@ function eyes(S,scn,t,prev){
   }
   // 7. rendement
   if(c.couple&&S.reseau&&S.Pn>0.25&&Math.abs(S.turbSet-S.turb)<1.5&&prev&&Math.abs(S.Pn-prev.Pn)<0.004){
-    const eta=S.Pelec/(S.Pn*3800);
-    if(eta<0.30||eta>0.385)flag('rendement hors 30-38 %',scn,t,(eta*100).toFixed(1)+'%');
+    const eta=S.Pelec/(S.Ptot*3800); // dénominateur thermique VRAI (la résiduelle fait aussi de la vapeur)
+    if(eta<0.29||eta>0.36)flag('rendement net hors 29-36 % (réel : 31,5-34,7)',scn,t,(eta*100).toFixed(1)+'%');
   }
   // 11. Tare ≤ Tsat(Psteam) : l eau alimentaire ne peut pas être plus chaude que la vapeur qui la chauffe
   if(S.viv&&S.Psteam>10&&S.Tare>tsat(S.Psteam)+6)flag('T ARE > Tsat(vapeur) : réchauffage impossible',scn,t,S.Tare.toFixed(0)+'>'+tsat(S.Psteam).toFixed(0));
@@ -82,6 +82,8 @@ function eyes(S,scn,t,prev){
   }
   // 20. résiduelle décroissante post-scram
   if(prev&&S.scram&&prev.scram&&S.Pres>prev.Pres+0.0004)flag('résiduelle qui remonte',scn,t,(prev.Pres*100).toFixed(2)+'→'+(S.Pres*100).toFixed(2));
+  // règle du couloir (fig. 4.1) : sous 180 °C le domaine n'existe qu'à ≤31 bar
+  if(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&!c.accident&&S.inv>95&&S.breche===0)flag('couloir : P>31 bar sous 180 °C (hors domaine)',scn,t,'T='+S.Tavg.toFixed(0)+' P='+S.Ppzr.toFixed(0));
   // bilan masse GV en régime : alimentation ≈ évaporation
   if(prev&&Math.abs(S.gv-prev.gv)<0.15&&c.prod&&!c.accident&&S.gv>30&&S.gv<70){
     const alim=(S.areOut||0)/115+(S.asg||0), evap=(S.Ptot||S.Pn);
@@ -111,9 +113,16 @@ sweep('APRP',120,m=>{m.S.breche=1;},null);
 sweep('RTGV fuite',90,m=>{m.S.fuiteGV=6;},null);
 sweep('RTV',120,m=>{m.dn['iRtv'].onclick&&m.dn['iRtv'].onclick();},null);
 sweep('LOOP (perte réseau sèche)',60,m=>{m.S.reseau=false;},null);
-sweep('descente ANGV→ANRRA (conduite)',420,m=>{m.setEtat('ANGV');m.S.Pr1=0.001;m.S.Pr2=0.003;m.S.Pr3=0.006;m.S.gctTgt=6;},
+sweep('remontée ANRRA→ANGV (chauffage résiduelle+GMPP)',300,function(m){
+  m.setEtat('ANGV');m.S.Pr1=0.001;m.S.Pr2=0.003;m.S.Pr3=0.006;m.S.gctTgt=6;m.S.pzrSet=27;
+  function rr(mins){var n=Math.round(mins*60/0.05);for(var i=0;i<n;i++){m.physStep(0.05);m.slowStep(0.05);m.trips();}}
+  for(var k=0;k<130;k++){rr(5);if(m.S.Ppzr<139)m.S.isBlk=true;if(m.S.Ppzr<52)m.S.accIso=true;if(m.S.Tavg<178&&m.S.Ppzr<31)break;}
+  m.setEtat('ANRRA');rr(60);
+ },function(m,t){
+  if(t>10&&m.S.etat==='ANRRA')m.setEtat('ANGV');
+ });
+sweep('descente ANGV→ANRRA (conduite)',420,m=>{m.setEtat('ANGV');m.S.Pr1=0.001;m.S.Pr2=0.003;m.S.Pr3=0.006;m.S.gctTgt=6;m.S.pzrSet=27;},
  function(m,t){if(m.S.Ppzr<139)m.S.isBlk=true;if(m.S.Ppzr<52)m.S.accIso=true;
-  if(m.S.Tavg<178&&m.S.pzrSet>28)m.S.pzrSet=27;
   if(m.S.Tavg<178&&m.S.Ppzr<31&&m.S.etat==='ANGV')m.setEtat('ANRRA');});
 // sens de réponse (matrice actionneur→effet)
 {const m=fresh();run(m,25);const p0=m.S.Pn;m.S.turbSet=80;run(m,10);

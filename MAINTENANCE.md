@@ -100,6 +100,37 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## LA FIGURE EST LA LOI (2.4o) — leçon de méthode d Antony
+« Si on sort des clous, c est qu il nous manque quelque chose » : on ne
+déforme JAMAIS le domaine pour englober une trajectoire. Le « pied élargi »
+(2.4m) était une rustine fausse : polygone restauré à la figure exacte
+(bas Tsat−30 borné 27, verticale 180, zéro diagonale). Les manques réels,
+trouvés grâce à ce principe : (1) la RÈGLE DU COULOIR — sous 180 °C le
+domaine n existe qu à ≤31 bar — désormais au plafond de cible pCeil
+(accidents exemptés : brèche/RTV/RTGV), dans l alarme aPT et dans les yeux ;
+(2) la SÉQUENCE canonique : consigne pressuriseur 27 posée DÈS le début de
+la descente (la pression longe le bord Tsat−30, atteint 27 vers 198 °C,
+entre dans le couloir AVANT 180) ; (3) le BLOCAGE IS n appartient pas aux
+états : applyEtat ne le reset plus jamais (seules sorties : délevée auto
+P≥139, Réarmer IS) — sinon la remontée déclenchait l IS à P=25 bar et les
+pompes de sûreté « remontaient » la pression à 150 bar sous 155 °C ;
+(4) en REMONTÉE, applyEtat préserve aussi accIso (rappel CONDUITE de
+réalignement à P>50) ; (5) cap vapeur net Psteam≤psat(Tavg). Trajectoire
+aller-retour validée : couloir → Tsat−110 → 155 bar, zéro violation.
+
+## RETOURS TERRAIN (2.4m) — 7 points d Antony
+Carte chaussette : titre sans mention fig. 4.1 ; pied du polygone AN/GV
+élargi 160-180 °C (la dépressurisation finale ~175 °C passait VISUELLEMENT
+hors tracé — physique correcte, géométrie trop stricte) ; zones API et APR
+ajoutées ; zoom pinch (mkPinch généralisé, partagé avec la synoptique,
+bouton 1:1) ; padding-bottom 84px (barre de nav). Le « 64 bar infranchissable »
+= le plancher Tsat−30 (psat(250+30)=64) : VOULU — nouveau log CONDUITE quand
+la consigne est sous le plancher (« la pression suivra le refroidissement »).
+Seuil d alarme GCT aligné sur l affichage (0.8 %). Le point fixe de remontée
+vu en fin de session précédente n a PAS été reproduit sur le build livré
+(remontée 117→294 °C à 58 °C/h validée) ; scénario remontée AJOUTÉ à la
+grille des yeux pour surveillance permanente.
+
 ## LES YEUX DU PILOTE (2.4k) — yeux.js
 Bibliothèque d auto-surveillance : ~20 règles de vraisemblance physique
 évaluées à CHAQUE échantillon d une grille de 15 scénarios (usage :
@@ -117,10 +148,14 @@ QUESTION DE DESIGN pour Antony : les presets d états téléportent encore
 Tavg (ex. ANRRA : 178→120 d un coup) — faut-il une trajectoire continue
 au RRA (~28 °C/h réels, soit ~24 s à ×300) comme on l a fait pour la
 pression ? Les yeux excluent les 12 min post-transition en attendant.
-PISTE OUVERTE (trouvée par les yeux, non traitée) : rendement apparent
-~40 % en régime à ~30 % de charge — le bouclage Pn/turb décroche de ~4
-points à basse charge (Pelec dérive de turb, Pn de la neutronique) ; à
-recaler une prochaine session. Gradient de la branche froide borné à
+PISTE RENDEMENT FERMÉE (2.4p) : Pelec était linéaire en turb SANS pertes
+fixes -> le rendement MONTAIT à charge partielle (36,2 % à 30 %) au lieu de
+baisser. Loi corrigée : pet=max(0,(turb/100)×1362×min(1.2,Psteam/71)×eta−62)
+(~62 MWe de pertes fixes : auxiliaires + hors point de conception), calée
+sur le réel : 34,7 / 34,0 / 33,0 / 31,5 % à 100/75/50/30 % — validée ±1,2 pt
+aux quatre paliers. Le seuil ~4,5 % turb où la turbine ne couvre plus les
+auxiliaires émerge naturellement. Règle yeux : dénominateur Ptot (la
+résiduelle fait aussi de la vapeur), bande 29-36 %.', Gradient de la branche froide borné à
 30 °C/h (2.4k) : le RRA ne refroidit plus en téléport après l admission.
 Écart de jouabilité ASSUMÉ : pentes turbine 0,2-1,2 %/s vs ±5 %/min réels.
 
