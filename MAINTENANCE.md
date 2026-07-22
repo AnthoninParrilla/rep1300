@@ -100,6 +100,20 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## CONFORMITÉ FIGURE 4.1 (outil permanent, 2.6.4)
+Nouveau livrable : conformite-figure.js (node conformite-figure.js
+index.html) — re-certifie CHAQUE annotation du diagramme sur le build :
+cadre RP (155/310/100 %), les 4 limites en dynamique sur l aller-retour
+complet (Tsat−30, Tsat−110, ΔP 110 b, couloir 25-31 : zéro violation),
+le mur 180 °C (admission refusée à 200 °C), les deux lois de saturation
+(Psteam≤psat à chaud ; perte RRA -> P décolle le long de psat une fois
+T>Tsat(consigne)=224 °C — le scénario doit durer ~175 min depuis le
+nouvel équilibre ANRRA ~94 °C sans GMPP), soupapes GV (pic 92,6),
+NPSH (arrêt GMPP t+2 min), gardes API/APR (70/50/45), tracé chaussette
+(5 étiquettes, 4 polygones, 3 courbes). Verdict 2.6.4 : 13/13.
+Reste UNE annotation non interprétée : « Limite inférieure de connexion
+du RRA » (~66 bar) — décision d exploitant en attente (garde codée ≤31).
+
 ## MISSION 6 + PIÈGE D ATELIER (2.6.2-2.6.3)
 Mission « Casser et réparer le vide » invalidable : le test exigeait
 Pelec>1150 MW ABSOLU alors que le parcours (missions 3-5) laisse le
