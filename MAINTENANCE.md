@@ -111,8 +111,17 @@ T>Tsat(consigne)=224 °C — le scénario doit durer ~175 min depuis le
 nouvel équilibre ANRRA ~94 °C sans GMPP), soupapes GV (pic 92,6),
 NPSH (arrêt GMPP t+2 min), gardes API/APR (70/50/45), tracé chaussette
 (5 étiquettes, 4 polygones, 3 courbes). Verdict 2.6.4 : 13/13.
-Reste UNE annotation non interprétée : « Limite inférieure de connexion
-du RRA » (~66 bar) — décision d exploitant en attente (garde codée ≤31).
+QUESTION FERMÉE (2.6.5, lecture d Antonin) : les flèches de la figure
+désignent les BARRES VERTICALES de température, pas les pressions à leur
+point d impact (66 et 88 bar = artefacts graphiques). « Limite inférieure
+de connexion du RRA » = 160 °C ; « Température Max du RRA » = 180 °C :
+LA FENÊTRE DE CONNEXION EST [160, 180] °C (à ≤31 bar). On ne descend pas
+sous 160 sans RRA (les GV s essoufflent). Codé : garde d admission aux
+deux bornes + rappel CONDUITE « la fenêtre se referme » (<166 °C sans
+RRA) + repère 160 pointillé sur la chaussette + règle yeux + tests de
+conformité aux deux bornes + guide/lexique. Élégance vérifiée : la
+consigne GCT 6-8 bar fait plafonner Tmoy vers ~163-174 : la conduite
+guidée atterrit naturellement DANS la fenêtre.
 
 ## MISSION 6 + PIÈGE D ATELIER (2.6.2-2.6.3)
 Mission « Casser et réparer le vide » invalidable : le test exigeait

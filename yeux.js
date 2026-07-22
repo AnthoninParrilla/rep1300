@@ -82,6 +82,8 @@ function eyes(S,scn,t,prev){
   }
   // 20. résiduelle décroissante post-scram
   if(prev&&S.scram&&prev.scram&&S.Pres>prev.Pres+0.0004)flag('résiduelle qui remonte',scn,t,(prev.Pres*100).toFixed(2)+'→'+(S.Pres*100).toFixed(2));
+  // fenêtre de connexion du RRA (fig. 4.1, lecture exploitant) : ne pas descendre sous 160 °C sans RRA
+  if(S.etat==='ANGV'&&!S.rra&&S.Tavg<157&&S.Tavg>80&&!c.accident&&prev&&S.Tavg<prev.Tavg-0.05&&scn.indexOf('remontée')<0)flag('descendu sous la fenêtre de connexion RRA (<160 °C) sans RRA',scn,t,'T='+S.Tavg.toFixed(0));
   // règle du couloir (fig. 4.1) : sous 180 °C le domaine n'existe qu'à ≤31 bar
   if(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&!c.accident&&S.inv>95&&S.breche===0)flag('couloir : P>31 bar sous 180 °C (hors domaine)',scn,t,'T='+S.Tavg.toFixed(0)+' P='+S.Ppzr.toFixed(0));
   // bilan masse GV en régime : alimentation ≈ évaporation

@@ -30,6 +30,12 @@ console.log('— Les quatre limites du domaine AN/GV, en dynamique (aller-retour
  ck('« ΔP max plaques GV = 110 b » : jamais dépassé',vDP===0,'violations='+vDP);
  ck('« 25b/27b » : le couloir ≤31 bar sous 180 °C tenu',vC===0,'violations='+vC);
  ck('aller-retour complet RP↔AN/RRA dans le domaine',S.Tavg>288&&S.Ppzr>150,'retour '+S.Tavg.toFixed(0)+' °C / '+S.Ppzr.toFixed(0)+' bar');}
+console.log('— La fenêtre de connexion du RRA : [160, 180] °C (lecture exploitant) —');
+{const {m}=fresh();const S=m.S;function R(x){const n=Math.round(x*60/0.05);for(let i=0;i<n;i++){m.physStep(0.05);m.slowStep(0.05);m.trips();}}
+ R(20);m.setEtat('ANGV');S.Pr1=0.001;S.Pr2=0.002;S.Pr3=0.004;S.Tavg=150;S.Ppzr=29;S.pzrSet=27;m.setEtat('ANRRA');
+ ck('admission REFUSÉE sous 160 °C (limite inférieure de connexion)',S.etat==='ANGV','à 150 °C : resté '+S.etat);
+ S.Tavg=170;for(let i=0;i<40;i++){m.physStep(0.05);m.slowStep(0.05);m.trips();}S.Tavg=170;S.Ppzr=29;m.setEtat('ANRRA');
+ ck('admission ACCEPTÉE dans la fenêtre (170 °C)',S.etat==='ANRRA','');}
 console.log('— « Température Max du RRA » (le mur à 180 °C) —');
 {const {m}=fresh();const S=m.S;function R(x){const n=Math.round(x*60/0.05);for(let i=0;i<n;i++){m.physStep(0.05);m.slowStep(0.05);m.trips();}}
  R(20);m.setEtat('ANGV');S.Tavg=200;S.Ppzr=29;S.pzrSet=27;m.setEtat('ANRRA');
@@ -63,6 +69,6 @@ console.log('— Le tracé de la chaussette (statique) —');
  const polys=(html.match(/class="skZ"/g)||[]).length;
  const curves=(html.match(/class="skC"/g)||[]).length;
  ck('5 étiquettes de zones · '+polys+' polygones · '+curves+' courbes limites tracées',zones&&polys===4&&curves===3,'');}
-console.log('— Point documenté NON INTERPRÉTÉ —');
-console.log('  ◦ « Limite inférieure de connexion du RRA » (~66 bar) : lecture d'+String.fromCharCode(0x2019)+'exploitant en attente ; la garde codée reste P ≤ 31 bar (aspiration).');
+console.log('— Lecture exploitant (fermée) —');
+console.log('  ◦ Les flèches de la figure désignent les BARRES de température : 160 °C = limite inférieure de connexion du RRA, 180 °C = T max du RRA. Fenêtre de connexion [160-180] °C, codée et testée aux deux bornes.');
 console.log('════════ '+P+' conformes / '+F+' écarts ════════');
