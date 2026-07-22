@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.5-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.10-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -235,9 +235,9 @@ if('serviceWorker' in navigator){
   .flowdash{stroke:#fff;stroke-opacity:.55;stroke-width:2.2;fill:none;stroke-dasharray:6 12}
   .steamline{stroke:var(--steam);stroke-width:5;fill:none;stroke-opacity:.85}
   .steamsmall{stroke:var(--steam);stroke-width:3;fill:none;stroke-opacity:.7}
-  .waterline{stroke:#6fb0d8;stroke-width:4;fill:none;stroke-opacity:.85}
-  .watersmall{stroke:#6fb0d8;stroke-width:3;fill:none;stroke-opacity:.75}
-  .vessel{fill:#1a232b;stroke:#3b4a54;stroke-width:2}
+  .waterline{stroke:#2a6a3e;stroke-width:4;fill:none;stroke-opacity:.85}
+  .watersmall{stroke:#2a6a3e;stroke-width:3;fill:none;stroke-opacity:.75}
+  .vessel{fill:#16241a;stroke:#3a5a42;stroke-width:2}
   .sens rect{fill:#0b0f13;stroke:#2a343c;stroke-width:1;rx:3}
   .sens .sl{font-family:var(--cond);font-size:8.5px;fill:#5d6d75;letter-spacing:.06em}
   .sens .sv{font-family:var(--mono);font-size:11px;fill:#4fc57a;font-weight:700}
@@ -267,7 +267,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.5-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.10-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -294,10 +294,10 @@ body.shake{animation:quake .9s linear;}
         <text class="lblS" x="620" y="28">CIRCUIT SECONDAIRE</text>
 
         <!-- enceinte de confinement -->
-        <rect x="28" y="34" width="330" height="433" rx="26" fill="none" stroke="#46564e" stroke-width="2.5"/>
+        <rect x="28" y="34" width="330" height="433" rx="26" fill="none" stroke="#3a5a42" stroke-width="2.5"/>
         <text class="lblS" x="296" y="462" text-anchor="end" font-size="9">ENCEINTE</text>
         <!-- aspersion EAS -->
-        <g id="easSpray" opacity="0" stroke="#57b8d8" stroke-width="2" fill="none">
+        <g id="easSpray" opacity="0" stroke="#5fd88a" stroke-width="2" fill="none">
           <path d="M110 44 q8 10 16 0 M134 44 q8 10 16 0 M158 44 q8 10 16 0 M218 44 q8 10 16 0 M242 44 q8 10 16 0"/>
         </g>
 
@@ -311,31 +311,31 @@ body.shake{animation:quake .9s linear;}
 
         <!-- cuve trapue (r52) : plan de tubulures unique y=210, MCG connecté par
              adaptateurs de couvercle, RIC par le fond — ordre de peinture propre -->
-        <g id="gHeadB"><path d="M58 152 A44 44 0 0 1 146 152 Z" fill="#131b22"/></g>
-        <path d="M50 158 V318 A52 52 0 0 0 154 318 V158 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+        <g id="gHeadB"><path d="M58 152 A44 44 0 0 1 146 152 Z" fill="#10180f"/></g>
+        <path d="M50 158 V318 A52 52 0 0 0 154 318 V158 Z" fill="#16241a" stroke="#3a5a42" stroke-width="2"/>
         <clipPath id="cuveClip"><path d="M58 152 A44 44 0 0 1 146 152 V318 A44 44 0 0 1 58 318 Z"/></clipPath>
-        <path d="M58 152 A44 44 0 0 1 146 152 V318 A44 44 0 0 1 58 318 Z" fill="#131b22"/>
-        <rect id="vesselWater" x="58" y="106" width="88" height="256" fill="#1c3a4e" clip-path="url(#cuveClip)"/>
-        <rect x="66" y="240" width="72" height="104" fill="none" stroke="#3a4a54" stroke-width="1.5" clip-path="url(#cuveClip)"/>
-        <line x1="66" y1="240" x2="138" y2="240" stroke="#4a5a64" stroke-width="2.5"/>
-        <line x1="66" y1="344" x2="138" y2="344" stroke="#4a5a64" stroke-width="2.5"/>
-        <g id="gFuel"><rect x="67.7" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="67.7" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="67.7" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="75.6" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="75.6" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="75.6" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="83.5" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="83.5" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="83.5" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="91.4" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="91.4" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="91.4" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="99.3" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="99.3" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="99.3" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="107.2" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="107.2" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="107.2" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="115.1" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="115.1" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="115.1" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="123.0" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="123.0" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="123.0" y="335" width="5.4" height="3" fill="#7a8a94"/><rect x="130.9" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="130.9" y="246" width="5.4" height="3" fill="#7a8a94"/><rect x="130.9" y="335" width="5.4" height="3" fill="#7a8a94"/></g>
-        <path d="M78 166 V240 M90 166 V240 M102 166 V240 M114 166 V240 M126 166 V240" stroke="#26323c" stroke-width="5.5"/>
-        <g id="rods"><rect x="76.3" y="165" width="3.4" height="74" fill="#8a97a0"/><rect x="88.3" y="165" width="3.4" height="74" fill="#8a97a0"/><rect x="100.3" y="165" width="3.4" height="74" fill="#8a97a0"/><rect x="112.3" y="165" width="3.4" height="74" fill="#8a97a0"/><rect x="124.3" y="165" width="3.4" height="74" fill="#8a97a0"/></g>
-        <rect x="46" y="151" width="112" height="7" fill="#222d36" stroke="#3b4a54" stroke-width="1.5"/>
-        <path d="M56.0 146 v12 M71.3 146 v12 M86.6 146 v12 M101.9 146 v12 M117.2 146 v12 M132.5 146 v12 M147.8 146 v12" stroke="#4a5a64" stroke-width="2"/>
+        <path d="M58 152 A44 44 0 0 1 146 152 V318 A44 44 0 0 1 58 318 Z" fill="#10180f"/>
+        <rect id="vesselWater" x="58" y="106" width="88" height="256" fill="#1a4a2a" clip-path="url(#cuveClip)"/>
+        <rect x="66" y="240" width="72" height="104" fill="none" stroke="#3a5a42" stroke-width="1.5" clip-path="url(#cuveClip)"/>
+        <line x1="66" y1="240" x2="138" y2="240" stroke="#4a7a52" stroke-width="2.5"/>
+        <line x1="66" y1="344" x2="138" y2="344" stroke="#4a7a52" stroke-width="2.5"/>
+        <g id="gFuel"><rect x="67.7" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="67.7" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="67.7" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="75.6" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="75.6" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="75.6" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="83.5" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="83.5" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="83.5" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="91.4" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="91.4" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="91.4" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="99.3" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="99.3" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="99.3" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="107.2" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="107.2" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="107.2" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="115.1" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="115.1" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="115.1" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="123.0" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="123.0" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="123.0" y="335" width="5.4" height="3" fill="#8c8c86"/><rect x="130.9" y="246" width="5.4" height="92" fill="#4a2e1a"/><rect x="130.9" y="246" width="5.4" height="3" fill="#8c8c86"/><rect x="130.9" y="335" width="5.4" height="3" fill="#8c8c86"/></g>
+        <path d="M78 166 V240 M90 166 V240 M102 166 V240 M114 166 V240 M126 166 V240" stroke="#1c2e20" stroke-width="5.5"/>
+        <g id="rods"><rect x="76.3" y="165" width="3.4" height="74" fill="#8ab890"/><rect x="88.3" y="165" width="3.4" height="74" fill="#8ab890"/><rect x="100.3" y="165" width="3.4" height="74" fill="#8ab890"/><rect x="112.3" y="165" width="3.4" height="74" fill="#8ab890"/><rect x="124.3" y="165" width="3.4" height="74" fill="#8ab890"/></g>
+        <rect x="46" y="151" width="112" height="7" fill="#1a2a1e" stroke="#3a5a42" stroke-width="1.5"/>
+        <path d="M56.0 146 v12 M71.3 146 v12 M86.6 146 v12 M101.9 146 v12 M117.2 146 v12 M132.5 146 v12 M147.8 146 v12" stroke="#4a7a52" stroke-width="2"/>
         <g id="gHead">
-          <path d="M50 150 A52 52 0 0 1 154 150 Z" fill="none" stroke="#3b4a54" stroke-width="2"/>
-          <rect x="46" y="144" width="112" height="7" fill="#222d36" stroke="#3b4a54" stroke-width="1.5"/>
-          <path d="M78 112 V72 M90 112 V72 M102 112 V72 M114 112 V72 M126 112 V72" stroke="#5a6a74" stroke-width="2.6"/>
-          <rect x="75.3" y="96.9" width="5.4" height="12" rx="1.2" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="87.3" y="92.4" width="5.4" height="12" rx="1.2" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="99.3" y="91.0" width="5.4" height="12" rx="1.2" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="111.3" y="92.4" width="5.4" height="12" rx="1.2" fill="#26323c" stroke="#4a5a64" stroke-width="1"/><rect x="123.3" y="96.9" width="5.4" height="12" rx="1.2" fill="#26323c" stroke="#4a5a64" stroke-width="1"/>
-          <rect x="78" y="60" width="48" height="12" rx="2.5" fill="#26323c" stroke="#4a5a64" stroke-width="1.2"/>
-          <line x1="80" y1="112" x2="124" y2="112" stroke="#3b4a54" stroke-width="2"/>
+          <path d="M50 150 A52 52 0 0 1 154 150 Z" fill="none" stroke="#3a5a42" stroke-width="2"/>
+          <rect x="46" y="144" width="112" height="7" fill="#1a2a1e" stroke="#3a5a42" stroke-width="1.5"/>
+          <path d="M78 112 V72 M90 112 V72 M102 112 V72 M114 112 V72 M126 112 V72" stroke="#5a8a62" stroke-width="2.6"/>
+          <rect x="75.3" y="96.9" width="5.4" height="12" rx="1.2" fill="#1c2e20" stroke="#4a7a52" stroke-width="1"/><rect x="87.3" y="92.4" width="5.4" height="12" rx="1.2" fill="#1c2e20" stroke="#4a7a52" stroke-width="1"/><rect x="99.3" y="91.0" width="5.4" height="12" rx="1.2" fill="#1c2e20" stroke="#4a7a52" stroke-width="1"/><rect x="111.3" y="92.4" width="5.4" height="12" rx="1.2" fill="#1c2e20" stroke="#4a7a52" stroke-width="1"/><rect x="123.3" y="96.9" width="5.4" height="12" rx="1.2" fill="#1c2e20" stroke="#4a7a52" stroke-width="1"/>
+          <rect x="78" y="60" width="48" height="12" rx="2.5" fill="#1c2e20" stroke="#4a7a52" stroke-width="1.2"/>
+          <line x1="80" y1="112" x2="124" y2="112" stroke="#3a5a42" stroke-width="2"/>
         </g>
         <!-- tubulures : plan unique sous la bride, de part et d'autre -->
-        <rect x="44" y="204" width="12" height="12" rx="2" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
-        <rect x="148" y="204" width="12" height="12" rx="2" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
-        <path d="M84 366.8 v9 M93 369.2 v9 M102 370.0 v9 M111 369.2 v9 M120 366.8 v9" stroke="#5a6a74" stroke-width="2"/>
+        <rect x="44" y="204" width="12" height="12" rx="2" fill="#16241a" stroke="#3a5a42" stroke-width="1.5"/>
+        <rect x="148" y="204" width="12" height="12" rx="2" fill="#16241a" stroke="#3a5a42" stroke-width="1.5"/>
+        <path d="M84 366.8 v9 M93 369.2 v9 M102 370.0 v9 M111 369.2 v9 M120 366.8 v9" stroke="#5a8a62" stroke-width="2"/>
         <text class="lblS" x="126" y="380" font-size="7">RIC</text>
         <text class="lbl" x="102" y="392" text-anchor="middle">CUVE</text>
         <text class="lblS" x="102" y="406" text-anchor="middle" id="rodTxt">Grappes 95 %</text>
@@ -344,36 +344,36 @@ body.shake{animation:quake .9s linear;}
           <text class="sl" x="66" y="442">RRA</text>
           <text class="sv" x="66" y="454" id="rraTxt">isolé</text>
         </g>
-        <rect id="puisFill" x="40" y="459" width="0" height="6" rx="2" fill="#1f4258" opacity="0"/>
+        <rect id="puisFill" x="40" y="459" width="0" height="6" rx="2" fill="#1a4a2a" opacity="0"/>
         <text class="lblS" x="140" y="465" font-size="7.5">PUISARDS</text>
 
         <!-- pressuriseur : capsule, chaufferettes, aspersion, SEBIM latérale -> RDP -->
         <path class="flowhot" d="M178 215 V131" stroke-width="5"/>
-        <path d="M156 68 A22 22 0 0 1 200 68 V110 A22 22 0 0 1 156 110 Z" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+        <path d="M156 68 A22 22 0 0 1 200 68 V110 A22 22 0 0 1 156 110 Z" fill="#16241a" stroke="#3a5a42" stroke-width="2"/>
         <clipPath id="pzrClip"><path d="M162 68 A16 16 0 0 1 194 68 V110 A16 16 0 0 1 162 110 Z"/></clipPath>
-        <path d="M162 68 A16 16 0 0 1 194 68 V110 A16 16 0 0 1 162 110 Z" fill="#131b22"/>
-        <rect x="162" y="86" width="32" height="37" fill="#274257" id="pzrWater" clip-path="url(#pzrClip)"/>
+        <path d="M162 68 A16 16 0 0 1 194 68 V110 A16 16 0 0 1 162 110 Z" fill="#10180f"/>
+        <rect x="162" y="86" width="32" height="37" fill="#1a4a2a" id="pzrWater" clip-path="url(#pzrClip)"/>
         <g id="pzrHeat" opacity="0">
           <path d="M167.0 124 v-9 M172.5 124 v-9 M178.0 124 v-9 M183.5 124 v-9 M189.0 124 v-9 M194.5 124 v-9" stroke="#e8a33d" stroke-width="2.2"/>
         </g>
         <g id="pzrSpray" opacity="0">
-          <path d="M178 52 v5 M172 57 q6 8 12 0" stroke="#57b8d8" stroke-width="2" fill="none"/>
+          <path d="M178 52 v5 M172 57 q6 8 12 0" stroke="#5fd88a" stroke-width="2" fill="none"/>
         </g>
-        <rect x="174" y="36" width="8" height="10" rx="1.5" fill="#26323c" stroke="#4a5a64" stroke-width="1.2"/>
+        <rect x="174" y="36" width="8" height="10" rx="1.5" fill="#1c2e20" stroke="#4a7a52" stroke-width="1.2"/>
         <path class="steamline" d="M182 40 H210 V58" opacity="0.35"/>
         <path class="flowdash fdash" id="fSebim" d="M182 40 H210 V58" opacity="0"/>
         <text class="lblS" x="172" y="28" text-anchor="end">PRESSU</text>
         <text class="digitsG" x="172" y="41" text-anchor="end" font-size="12" id="pzrTxt">155.0 b</text>
-        <g id="pzrTdH" opacity="0"><circle cx="196" cy="118" r="3.6" fill="#05090c" stroke="#5a6a74" stroke-width="1.4"/><rect x="200" y="112" width="7" height="4" rx="1" fill="#26323c" stroke="#4a5a64" stroke-width="1" transform="rotate(35 200 114)"/></g>
-        <rect x="204" y="58" width="44" height="22" rx="7" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
-        <rect id="rdpFill" x="207" y="77" width="38" height="0" rx="3" fill="#274257"/>
+        <g id="pzrTdH" opacity="0"><circle cx="196" cy="118" r="3.6" fill="#05090c" stroke="#5a8a62" stroke-width="1.4"/><rect x="200" y="112" width="7" height="4" rx="1" fill="#1c2e20" stroke="#4a7a52" stroke-width="1" transform="rotate(35 200 114)"/></g>
+        <rect x="204" y="58" width="44" height="22" rx="7" fill="#16241a" stroke="#3a5a42" stroke-width="1.8"/>
+        <rect id="rdpFill" x="207" y="77" width="38" height="0" rx="3" fill="#1a4a2a"/>
         <path id="rdpDisc" d="M244 80 l6 7 M250 80 l-4 8 M247 84 l7 3" stroke="#e6483d" stroke-width="1.6" opacity="0"/>
         <text class="lblS" x="226" y="72" text-anchor="middle" font-size="8">RDP</text>
         <!-- accumulateurs RIS : réservoirs sous azote, décharge passive < 42 bar -->
         <path class="watersmall" d="M226 384 V424"/>
         <rect class="vessel" x="216" y="350" width="20" height="34" rx="5"/>
-        <rect id="accuFill" x="219" y="360" width="14" height="21" rx="2" fill="#1f4258"/>
-        <text class="lblS" x="226" y="375" text-anchor="middle" font-size="6" fill="#7a8a94">N₂</text>
+        <rect id="accuFill" x="219" y="360" width="14" height="21" rx="2" fill="#1a4a2a"/>
+        <text class="lblS" x="226" y="375" text-anchor="middle" font-size="6" fill="#8c8c86">N₂</text>
         <text class="lblS" x="226" y="344" text-anchor="middle" font-size="7">ACCU</text>
         <!-- P enceinte -->
         <g class="sens">
@@ -393,16 +393,16 @@ body.shake{animation:quake .9s linear;}
         <path class="watersmall" d="M268 504 V444 H245 V440"/>
         <path class="flowdash fdash" id="fRcv" d="M268 504 V444 H245 V440" opacity="0.85"/>
         <rect x="263" y="463" width="10" height="8" fill="#16241a" stroke="#3a5a42" stroke-width="1.2"/>
-        <path id="recircPipe" d="M334 466 V488 H320" stroke="#57b8d8" stroke-width="2.5" fill="none" stroke-dasharray="5 4" opacity="0.12"/>
-        <circle cx="312" cy="512" r="8" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
-        <path d="M312 506 L316 512 L312 518 L308 512 Z" fill="#57b8d8"/>
-        <circle cx="268" cy="512" r="8" fill="#1a232b" stroke="#3b4a54" stroke-width="1.8"/>
+        <path id="recircPipe" d="M334 466 V488 H320" stroke="#5fd88a" stroke-width="2.5" fill="none" stroke-dasharray="5 4" opacity="0.12"/>
+        <circle cx="312" cy="512" r="8" fill="#16241a" stroke="#3a5a42" stroke-width="1.8"/>
+        <path d="M312 506 L316 512 L312 518 L308 512 Z" fill="#5fd88a"/>
+        <circle cx="268" cy="512" r="8" fill="#16241a" stroke="#3a5a42" stroke-width="1.8"/>
         <path d="M268 506 L272 512 L268 518 L264 512 Z" fill="#8fd0a8"/>
         <text class="lblS" x="312" y="551" text-anchor="middle" font-size="8">RIS</text>
         <text class="lblS" x="266" y="551" text-anchor="middle" font-size="7.5">RCV · joints</text>
         <rect class="vessel" x="314" y="500" width="88" height="34" rx="5"/>
-        <rect id="ptrFill" x="318" y="506" width="80" height="24" rx="3" fill="#1f4258"/>
-        <text class="lblS" x="358" y="520" text-anchor="middle" fill="#9fb6c2">BÂCHE PTR</text>
+        <rect id="ptrFill" x="318" y="506" width="80" height="24" rx="3" fill="#1a4a2a"/>
+        <text class="lblS" x="358" y="520" text-anchor="middle" fill="#8fd89a">BÂCHE PTR</text>
         <text class="lblS" x="358" y="546" text-anchor="middle" font-size="8" id="ptrTxt">100 %</text>
 
         <!-- GMPP sur branche froide -->
@@ -418,17 +418,17 @@ body.shake{animation:quake .9s linear;}
         </clipPath>
         <!-- enveloppe -->
         <path d="M272 385 V235 L252 195 V132 Q252 108 276 108 H324 Q348 108 348 132 V195 L328 235 V385 A28 22 0 0 1 272 385 Z"
-              fill="#131b22" stroke="#3b4a54" stroke-width="2"/>
+              fill="#10180f" stroke="#3a5a42" stroke-width="2"/>
         <!-- eau côté secondaire (niveau variable) -->
-        <rect x="252" y="176" width="96" height="209" fill="#1f4258" clip-path="url(#gvClip)" id="gvWater"/>
+        <rect x="252" y="176" width="96" height="209" fill="#1a4a2a" clip-path="url(#gvClip)" id="gvWater"/>
         <!-- boîte à eau primaire : partition chaud / froid -->
         <path d="M272 385 A28 22 0 0 0 300 407 L300 385 Z" fill="#4a2018" clip-path="url(#gvClip)"/>
-        <path d="M300 407 A28 22 0 0 0 328 385 L300 385 Z" fill="#1e3a52" clip-path="url(#gvClip)"/>
-        <line x1="300" y1="385" x2="300" y2="406" stroke="#3b4a54" stroke-width="2"/>
+        <path d="M300 407 A28 22 0 0 0 328 385 L300 385 Z" fill="#1a3a24" clip-path="url(#gvClip)"/>
+        <line x1="300" y1="385" x2="300" y2="406" stroke="#3a5a42" stroke-width="2"/>
         <!-- plaque tubulaire -->
-        <line x1="272" y1="385" x2="328" y2="385" stroke="#4a5a64" stroke-width="3"/>
+        <line x1="272" y1="385" x2="328" y2="385" stroke="#4a7a52" stroke-width="3"/>
         <!-- faisceau tubulaire en U -->
-        <g stroke="#5a6a74" stroke-width="2.4" fill="none">
+        <g stroke="#5a8a62" stroke-width="2.4" fill="none">
           <path d="M280 385 V268 A20 20 0 0 1 320 268 V385"/>
           <path d="M287 385 V276 A13 13 0 0 1 313 276 V385"/>
           <path d="M294 385 V284 A6 6 0 0 1 306 284 V385"/>
@@ -468,15 +468,15 @@ body.shake{animation:quake .9s linear;}
 
         <!-- turbine HP / BP, alternateur -->
         <path class="steamline" d="M570 88 H640"/>
-        <polygon points="640,64 700,50 700,126 640,112" fill="#232e37" stroke="#4a5a64" stroke-width="2"/>
+        <polygon points="640,64 700,50 700,126 640,112" fill="#1c2820" stroke="#4a7a52" stroke-width="2"/>
         <text class="lblS" x="670" y="92" text-anchor="middle">HP</text>
         <path class="steamline" d="M700 88 H730"/>
-        <rect x="703" y="70" width="24" height="36" rx="4" fill="#1a232b" stroke="#4a5a64" stroke-width="1.5"/>
+        <rect x="703" y="70" width="24" height="36" rx="4" fill="#16241a" stroke="#4a7a52" stroke-width="1.5"/>
         <text class="lblS" x="715" y="92" text-anchor="middle" font-size="8.5">GSS</text>
-        <polygon points="730,52 810,36 810,140 730,124" fill="#232e37" stroke="#4a5a64" stroke-width="2"/>
+        <polygon points="730,52 810,36 810,140 730,124" fill="#1c2820" stroke="#4a7a52" stroke-width="2"/>
         <text class="lblS" x="770" y="92" text-anchor="middle">BP</text>
-        <path d="M810 88 H846" stroke="#5d6d75" stroke-width="6"/>
-        <circle cx="884" cy="88" r="38" fill="#1a232b" stroke="#4a5a64" stroke-width="2"/>
+        <path d="M810 88 H846" stroke="#5a8a62" stroke-width="6"/>
+        <circle cx="884" cy="88" r="38" fill="#16241a" stroke="#4a7a52" stroke-width="2"/>
         <text class="lblS" x="884" y="80" text-anchor="middle">ALT</text>
         <text class="digitsG" x="884" y="98" text-anchor="middle" font-size="14" id="digPe">1300</text>
         <text class="lblS" x="884" y="138" text-anchor="middle">MWe</text>
@@ -484,12 +484,12 @@ body.shake{animation:quake .9s linear;}
         <!-- condenseur -->
         <path class="steamline" d="M770 140 V332" stroke-opacity=".5"/>
         <rect class="vessel" x="560" y="332" width="270" height="86" rx="10"/>
-        <rect x="568" y="376" width="254" height="34" rx="6" fill="#1f4258"/>
+        <rect x="568" y="376" width="254" height="34" rx="6" fill="#1a4a2a"/>
         <text class="lbl" x="695" y="362" text-anchor="middle">CONDENSEUR</text>
         <!-- CRF : station de pompage source froide -->
         <path class="watersmall" d="M640 418 V448 H612" id="crfIn"/>
         <path class="watersmall" d="M760 418 V448 H792" id="crfOut"/>
-        <rect x="586" y="440" width="26" height="18" rx="3" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
+        <rect x="586" y="440" width="26" height="18" rx="3" fill="#16241a" stroke="#3a5a42" stroke-width="1.5"/>
         <text class="lblS" x="599" y="453" text-anchor="middle" font-size="8.5">CRF</text>
         <text class="lblS" x="695" y="436" text-anchor="middle" id="crfTxt">CRF · mer 12 °C</text>
         <!-- aéroréfrigérant (circuit fermé) -->
@@ -500,11 +500,11 @@ body.shake{animation:quake .9s linear;}
           <filter id="fCloud" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="3.4"/>
           </filter>
-          <path d="M 906.3 288.0 L 907.2 296.0 L 907.9 304.0 L 908.3 312.0 L 908.5 320.0 L 908.4 328.0 L 908.1 336.0 L 907.6 344.0 L 906.8 352.0 L 905.8 360.0 L 904.6 368.0 L 903.3 376.0 L 901.9 384.0 L 900.3 392.0 L 898.6 400.0 L 896.9 408.0 L 895.1 416.0 L 964.9 416.0 L 963.1 408.0 L 961.4 400.0 L 959.7 392.0 L 958.1 384.0 L 956.7 376.0 L 955.4 368.0 L 954.2 360.0 L 953.2 352.0 L 952.4 344.0 L 951.9 336.0 L 951.6 328.0 L 951.5 320.0 L 951.7 312.0 L 952.1 304.0 L 952.8 296.0 L 953.7 288.0 Z" fill="#141e28" stroke="#5a6a74" stroke-width="2.5" stroke-linejoin="round"/>
-          <path d="M 917.0 288.0 L 917.5 296.0 L 917.8 304.0 L 918.1 312.0 L 918.2 320.0 L 918.1 328.0 L 918.0 336.0 L 917.7 344.0 L 917.2 352.0 L 916.7 360.0 L 916.0 368.0 L 915.3 376.0 L 914.5 384.0 L 913.7 392.0 L 912.7 400.0 L 911.8 408.0 L 910.8 416.0 M 930.0 288.0 L 930.0 296.0 L 930.0 304.0 L 930.0 312.0 L 930.0 320.0 L 930.0 328.0 L 930.0 336.0 L 930.0 344.0 L 930.0 352.0 L 930.0 360.0 L 930.0 368.0 L 930.0 376.0 L 930.0 384.0 L 930.0 392.0 L 930.0 400.0 L 930.0 408.0 L 930.0 416.0 M 943.0 288.0 L 942.5 296.0 L 942.2 304.0 L 941.9 312.0 L 941.8 320.0 L 941.9 328.0 L 942.0 336.0 L 942.3 344.0 L 942.8 352.0 L 943.3 360.0 L 944.0 368.0 L 944.7 376.0 L 945.5 384.0 L 946.3 392.0 L 947.3 400.0 L 948.2 408.0 L 949.2 416.0" stroke="#283842" stroke-width="1" fill="none" opacity="0.55"/>
-          <ellipse cx="930" cy="288" rx="23.7" ry="5" fill="#0d151c" stroke="#5a6a74" stroke-width="2"/>
-          <path d="M898.6 416 L900.4 429 M898.6 416 L891.2 429 M909.0 416 L911.8 429 M909.0 416 L902.6 429 M919.5 416 L923.2 429 M919.5 416 L914.0 429 M930.0 416 L934.6 429 M930.0 416 L925.4 429 M940.5 416 L946.0 429 M940.5 416 L936.8 429 M951.0 416 L957.4 429 M951.0 416 L948.2 429 M961.4 416 L968.8 429 M961.4 416 L959.6 429" stroke="#5a6a74" stroke-width="1.6" fill="none"/>
-          <ellipse cx="930" cy="429" rx="40" ry="4.5" fill="#0f1820" stroke="#5a6a74" stroke-width="1.5"/>
+          <path d="M 906.3 288.0 L 907.2 296.0 L 907.9 304.0 L 908.3 312.0 L 908.5 320.0 L 908.4 328.0 L 908.1 336.0 L 907.6 344.0 L 906.8 352.0 L 905.8 360.0 L 904.6 368.0 L 903.3 376.0 L 901.9 384.0 L 900.3 392.0 L 898.6 400.0 L 896.9 408.0 L 895.1 416.0 L 964.9 416.0 L 963.1 408.0 L 961.4 400.0 L 959.7 392.0 L 958.1 384.0 L 956.7 376.0 L 955.4 368.0 L 954.2 360.0 L 953.2 352.0 L 952.4 344.0 L 951.9 336.0 L 951.6 328.0 L 951.5 320.0 L 951.7 312.0 L 952.1 304.0 L 952.8 296.0 L 953.7 288.0 Z" fill="#141e28" stroke="#5a8a62" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M 917.0 288.0 L 917.5 296.0 L 917.8 304.0 L 918.1 312.0 L 918.2 320.0 L 918.1 328.0 L 918.0 336.0 L 917.7 344.0 L 917.2 352.0 L 916.7 360.0 L 916.0 368.0 L 915.3 376.0 L 914.5 384.0 L 913.7 392.0 L 912.7 400.0 L 911.8 408.0 L 910.8 416.0 M 930.0 288.0 L 930.0 296.0 L 930.0 304.0 L 930.0 312.0 L 930.0 320.0 L 930.0 328.0 L 930.0 336.0 L 930.0 344.0 L 930.0 352.0 L 930.0 360.0 L 930.0 368.0 L 930.0 376.0 L 930.0 384.0 L 930.0 392.0 L 930.0 400.0 L 930.0 408.0 L 930.0 416.0 M 943.0 288.0 L 942.5 296.0 L 942.2 304.0 L 941.9 312.0 L 941.8 320.0 L 941.9 328.0 L 942.0 336.0 L 942.3 344.0 L 942.8 352.0 L 943.3 360.0 L 944.0 368.0 L 944.7 376.0 L 945.5 384.0 L 946.3 392.0 L 947.3 400.0 L 948.2 408.0 L 949.2 416.0" stroke="#1e3226" stroke-width="1" fill="none" opacity="0.55"/>
+          <ellipse cx="930" cy="288" rx="23.7" ry="5" fill="#0d151c" stroke="#5a8a62" stroke-width="2"/>
+          <path d="M898.6 416 L900.4 429 M898.6 416 L891.2 429 M909.0 416 L911.8 429 M909.0 416 L902.6 429 M919.5 416 L923.2 429 M919.5 416 L914.0 429 M930.0 416 L934.6 429 M930.0 416 L925.4 429 M940.5 416 L946.0 429 M940.5 416 L936.8 429 M951.0 416 L957.4 429 M951.0 416 L948.2 429 M961.4 416 L968.8 429 M961.4 416 L959.6 429" stroke="#5a8a62" stroke-width="1.6" fill="none"/>
+          <ellipse cx="930" cy="429" rx="40" ry="4.5" fill="#0f1820" stroke="#5a8a62" stroke-width="1.5"/>
           <path class="watersmall" d="M792 448 H930 V429"/>
           <text class="lblS" x="930" y="448" text-anchor="middle" font-size="9">AÉRORÉFRIGÉRANT</text>
         </g>
@@ -533,15 +533,15 @@ body.shake{animation:quake .9s linear;}
         <path class="waterline" d="M560 400 H513"/>
         <!-- alimentation vapeur de la TPA (soutirage barillet) -->
         <path class="steamsmall" d="M490 88 V388 H497" id="tpaSteam" opacity="0.7"/>
-        <circle cx="500" cy="400" r="13" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cTpa"/>
+        <circle cx="500" cy="400" r="13" fill="#16241a" stroke="#3a5a42" stroke-width="2" id="cTpa"/>
         <path d="M500 390 L506 400 L500 410 L494 400 Z" fill="#3ae065" id="iTpa"/>
         <text class="lblS" x="500" y="426" text-anchor="middle">TPA ×2</text>
         <text class="lblS" x="500" y="438" text-anchor="middle" id="tpaTxt">100 %</text>
         <path class="waterline" d="M487 400 H430 V185 H348"/>
         <path class="flowdash fdash" id="fFw" d="M560 400 H430 V185 H348"/>
         <g id="vAre" transform="translate(430,320)">
-          <polygon points="-9,-9 9,0 -9,9" fill="#6fb0d8"/>
-          <polygon points="9,-9 -9,0 9,9" fill="#6fb0d8"/>
+          <polygon points="-9,-9 9,0 -9,9" fill="#6fd890"/>
+          <polygon points="9,-9 -9,0 9,9" fill="#6fd890"/>
         </g>
         <text class="lblS" x="446" y="316">ARE</text>
         <text class="lblS" x="446" y="329" id="areTxt">Auto · 100 %</text>
@@ -549,19 +549,19 @@ body.shake{animation:quake .9s linear;}
         <!-- ============ ASG : eau alimentaire de secours ============ -->
         <!-- bâche + pompes -->
         <rect class="vessel" x="462" y="502" width="110" height="32" rx="5"/>
-        <rect x="466" y="514" width="102" height="16" rx="3" fill="#1f4258"/>
-        <text class="lblS" x="517" y="525" text-anchor="middle" fill="#9fb6c2">BÂCHE ASG</text>
+        <rect x="466" y="514" width="102" height="16" rx="3" fill="#1a4a2a"/>
+        <text class="lblS" x="517" y="525" text-anchor="middle" fill="#8fd89a">BÂCHE ASG</text>
         <path class="watersmall" d="M492 502 V482 M540 502 V482"/>
         <!-- refoulement commun -> injection GV (haut) -->
         <path class="watersmall" d="M528 470 H448 V150 H348" id="asgpipe" opacity="0.25"/>
         <path class="flowdash fdash" id="fAsg" d="M528 470 H448 V150 H348" opacity="0"/>
         <!-- MPS (motopompe) -->
-        <circle cx="492" cy="470" r="12" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cMps"/>
+        <circle cx="492" cy="470" r="12" fill="#16241a" stroke="#3a5a42" stroke-width="2" id="cMps"/>
         <path d="M492 461 L497 470 L492 479 L487 470 Z" fill="#3ae065" id="iMps" opacity="0.25"/>
         <text class="lblS" x="492" y="452" text-anchor="middle">MPS</text>
         <!-- TPS (turbopompe, vapeur GV) -->
         <path class="steamsmall" d="M470 88 V392 A8 8 0 0 1 470 408 V440 H540 V458" id="tpsSteam" opacity="0.25"/>
-        <circle cx="540" cy="470" r="12" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cTps"/>
+        <circle cx="540" cy="470" r="12" fill="#16241a" stroke="#3a5a42" stroke-width="2" id="cTps"/>
         <path d="M540 461 L545 470 L540 479 L535 470 Z" fill="#3ae065" id="iTps" opacity="0.25"/>
         <text class="lblS" x="563" y="474">TPS</text>
         <text class="lblS" x="405" y="144" text-anchor="middle">ASG</text>
@@ -583,12 +583,12 @@ body.shake{animation:quake .9s linear;}
           <text class="sv" x="364" y="434" id="sTcold">296.0 °C</text>
         </g>
         <!-- cheminée DVN (palier P4) : fût à diamètre constant, escalier hélicoïdal -->
-        <rect x="4" y="456" width="20" height="6" rx="1.5" fill="#222d36" stroke="#3b4a54" stroke-width="1"/>
-        <rect x="8" y="172" width="12" height="286" fill="#1a232b" stroke="#3b4a54" stroke-width="1.5"/>
-        <path d="M14.0 458.0 L16.7 454.4 L18.9 450.9 L20.5 447.3 L21.0 443.7 L20.5 440.1 L18.9 436.6 L16.7 433.0 L14.0 429.4 L11.3 425.8 L9.1 422.2 L7.5 418.7 L7.0 415.1 L7.5 411.5 L9.1 407.9 L11.3 404.4 L14.0 400.8 L16.7 397.2 L18.9 393.6 L20.5 390.1 L21.0 386.5 L20.5 382.9 L18.9 379.4 L16.7 375.8 L14.0 372.2 L11.3 368.6 L9.1 365.1 L7.5 361.5 L7.0 357.9 L7.5 354.3 L9.1 350.8 L11.3 347.2 L14.0 343.6 L16.7 340.0 L18.9 336.4 L20.5 332.9 L21.0 329.3 L20.5 325.7 L18.9 322.1 L16.7 318.6 L14.0 315.0 L11.3 311.4 L9.1 307.9 L7.5 304.3 L7.0 300.7 L7.5 297.1 L9.1 293.6 L11.3 290.0 L14.0 286.4 L16.7 282.8 L18.9 279.2 L20.5 275.7 L21.0 272.1 L20.5 268.5 L18.9 264.9 L16.7 261.4 L14.0 257.8 L11.3 254.2 L9.1 250.7 L7.5 247.1 L7.0 243.5 L7.5 239.9 L9.1 236.3 L11.3 232.8 L14.0 229.2 L16.7 225.6 L18.9 222.1 L20.5 218.5 L21.0 214.9 L20.5 211.3 L18.9 207.8 L16.7 204.2 L14.0 200.6 L11.3 197.0 L9.1 193.4 L7.5 189.9 L7.0 186.3 L7.5 182.7 L9.1 179.1 L11.3 175.6 L14.0 172.0" stroke="#5a6a74" stroke-width="1.1" fill="none" opacity="0.85"/>
-        <line x1="8" y1="175" x2="20" y2="175" stroke="#3b4a54" stroke-width="1.2"/>
+        <rect x="4" y="456" width="20" height="6" rx="1.5" fill="#1a2a1e" stroke="#3a5a42" stroke-width="1"/>
+        <rect x="8" y="172" width="12" height="286" fill="#16241a" stroke="#3a5a42" stroke-width="1.5"/>
+        <path d="M14.0 458.0 L16.7 454.4 L18.9 450.9 L20.5 447.3 L21.0 443.7 L20.5 440.1 L18.9 436.6 L16.7 433.0 L14.0 429.4 L11.3 425.8 L9.1 422.2 L7.5 418.7 L7.0 415.1 L7.5 411.5 L9.1 407.9 L11.3 404.4 L14.0 400.8 L16.7 397.2 L18.9 393.6 L20.5 390.1 L21.0 386.5 L20.5 382.9 L18.9 379.4 L16.7 375.8 L14.0 372.2 L11.3 368.6 L9.1 365.1 L7.5 361.5 L7.0 357.9 L7.5 354.3 L9.1 350.8 L11.3 347.2 L14.0 343.6 L16.7 340.0 L18.9 336.4 L20.5 332.9 L21.0 329.3 L20.5 325.7 L18.9 322.1 L16.7 318.6 L14.0 315.0 L11.3 311.4 L9.1 307.9 L7.5 304.3 L7.0 300.7 L7.5 297.1 L9.1 293.6 L11.3 290.0 L14.0 286.4 L16.7 282.8 L18.9 279.2 L20.5 275.7 L21.0 272.1 L20.5 268.5 L18.9 264.9 L16.7 261.4 L14.0 257.8 L11.3 254.2 L9.1 250.7 L7.5 247.1 L7.0 243.5 L7.5 239.9 L9.1 236.3 L11.3 232.8 L14.0 229.2 L16.7 225.6 L18.9 222.1 L20.5 218.5 L21.0 214.9 L20.5 211.3 L18.9 207.8 L16.7 204.2 L14.0 200.6 L11.3 197.0 L9.1 193.4 L7.5 189.9 L7.0 186.3 L7.5 182.7 L9.1 179.1 L11.3 175.6 L14.0 172.0" stroke="#5a8a62" stroke-width="1.1" fill="none" opacity="0.85"/>
+        <line x1="8" y1="175" x2="20" y2="175" stroke="#3a5a42" stroke-width="1.2"/>
         <g id="fDvn" opacity="0">
-          <path d="M8 167 q3 -2.5 6 0 q3 2.5 6 0 M6.5 160 q3.7 -3 7.5 0 q3.7 3 7.5 0 M5 153 q4.5 -3.5 9 0 q4.5 3.5 9 0" stroke="#8fb8c8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <path d="M8 167 q3 -2.5 6 0 q3 2.5 6 0 M6.5 160 q3.7 -3 7.5 0 q3.7 3 7.5 0 M5 153 q4.5 -3.5 9 0 q4.5 3.5 9 0" stroke="#8fd0a0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
         </g>
         <text class="lblS" x="14" y="472" text-anchor="middle" font-size="7">DVN</text>
         <!-- P dôme GV -->
@@ -633,25 +633,25 @@ body.shake{animation:quake .9s linear;}
           <text x="77" y="481" text-anchor="middle" font-size="11" fill="#e8a33d" font-family="Arial Narrow,sans-serif">MWth</text>
         </g>
         <g class="tab" id="tabE">
-          <rect x="112" y="468" width="62" height="18" rx="3" fill="#14191e" stroke="#242e36" stroke-width="1"/>
-          <text x="143" y="481" text-anchor="middle" font-size="11" fill="#5d6d75" font-family="Arial Narrow,sans-serif">MWe</text>
+          <rect x="112" y="468" width="62" height="18" rx="3" fill="#14191e" stroke="#1c2820" stroke-width="1"/>
+          <text x="143" y="481" text-anchor="middle" font-size="11" fill="#5a8a62" font-family="Arial Narrow,sans-serif">MWe</text>
         </g>
-        <rect x="40" y="490" width="214" height="52" rx="6" fill="#000" stroke="#2a343c" stroke-width="1.5"/>
+        <rect x="40" y="490" width="214" height="52" rx="6" fill="#000" stroke="#202e24" stroke-width="1.5"/>
         <text class="digits" id="digMain" x="147" y="526" text-anchor="middle" font-size="30">3800</text>
         <text class="lblS" x="147" y="538" text-anchor="middle" id="lblMain">PUISSANCE RÉACTEUR · MWth</text>
                 <g id="gPanache" opacity="0.5" filter="url(#fCloud)">
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#d9e3e8" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#d9e3e8" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#d9e3e8" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#d9e3e8" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#d9e3e8" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#d9e3e8" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#d9e3e8" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
           </g>
       </svg>
       </div>
@@ -763,7 +763,7 @@ body.shake{animation:quake .9s linear;}
         <button class="logclear" id="recCopy" style="margin-left:0">copier</button>
         <button class="logclear" id="recClear" style="margin-left:0">effacer</button>
         <span class="val" id="recCount" style="font-size:11px">0 lignes</span></h2>
-      <div id="recSel" style="display:flex;flex-wrap:wrap;gap:2px 10px;margin:4px 0 6px"></div>
+      <div id="recSel" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:3px 8px;margin:4px 0 8px;padding:6px 8px;background:#0a120c;border:1px solid #2c4a32;border-radius:6px"></div>
       <div id="recWrap" style="overflow:auto;height:280px;resize:vertical;border:1px solid #22303a;border-radius:6px;background:#0a1016">
         <pre id="recHead" style="position:sticky;top:0;margin:0;padding:6px 8px 2px;background:#0d151c;color:#8fa3ad;font-size:11px;line-height:1.35;border-bottom:1px solid #22303a"></pre>
         <pre id="recTxt" style="margin:0;padding:2px 8px 6px;color:#c7d3d9;font-size:11px;line-height:1.35"></pre>
@@ -1264,8 +1264,8 @@ body.shake{animation:quake .9s linear;}
   var recBox=el('recSel'), recSelSet={thot:true,ppzr:true,pgv:true,ngv:true,pth:true,pe:true};
   REC_CH.forEach(function(c){
     var lb=document.createElement('label');
-    lb.style.cssText='display:inline-flex;align-items:center;gap:3px;font-size:10.5px;color:#93a7b1;cursor:pointer';
-    var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!recSelSet[c.id];
+    lb.style.cssText='display:inline-flex;align-items:center;gap:4px;font-size:10.5px;color:#8fe89a;cursor:pointer;font-family:var(--mono)';
+    var cb=document.createElement('input');cb.type='checkbox';cb.checked=!!recSelSet[c.id];cb.style.cssText='accent-color:#3ae065;width:13px;height:13px;margin:0';
     cb.addEventListener('change',function(){recSelSet[c.id]=cb.checked;recRender(true);});
     lb.appendChild(cb);lb.appendChild(document.createTextNode(c.sh));
     lb.title=c.lbl+' ('+c.u+')';
@@ -3006,11 +3006,12 @@ body.shake{animation:quake .9s linear;}
       ?((S.areAuto?'Auto · ':'Manu · ')+Math.round(S.areOut)+' %')
       :'INDISPONIBLE';
     el('fSteam').style.opacity=(!dry&&S.Ptot>0.02)?0.55:0.06;
-    el('fFw').style.opacity=S.areOut>1?0.55:0.06;
+    el('fFw').style.opacity=S.areOut>1?0.55:0; // pas de débit : pas de flux affiché (les pointillés animés à 6 % restaient visibles)
     el('tpaTxt').textContent=Math.round(S.tpaN)+' %';
     el('tpaSteam').setAttribute('opacity',S.tpaRun?0.7:0.2);
     el('iTpa').setAttribute('opacity',S.tpaRun?1:0.25);
     var _gl=el('iGmppL');if(_gl){_gl.setAttribute('opacity',S.gmppN>0?1:0.25);_gl.setAttribute('fill',S.gmppN>=4?'#3ae065':(S.gmppN>0?'#f0a91c':'#3ae065'));}
+    el('fRcv').setAttribute('opacity',S.gmppN>0?0.85:0); // injection aux joints : seulement GMPP en service
     el('cTpa').setAttribute('stroke',S.tpaRun?'#4fc57a':'#3b4a54');
     el('tpaVal').textContent=S.tpaRun?('en service · '+Math.round(S.tpaN)+' %'):'à l\u2019arrêt';
 
