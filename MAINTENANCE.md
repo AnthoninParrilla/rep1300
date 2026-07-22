@@ -100,6 +100,28 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## PIÈGE MAJEUR 2.5.9-2.5.10 : LE TOGGLE FANTÔME (bouton qui clignote)
+Symptôme : le bouton ISOLER (bAccIso) clignotait en permanence en RP.
+Deux diagnostics FAUX avant le bon : (1) « repaint du textContent chaque
+frame » — protégé, sans effet ; (2) « S.accIso stable » — VRAI mais à
+côté : la valeur était stable… à undefined. La cause : S.accIso n était
+initialisé nulle part dans var S={} (posé seulement par applyEtat aux
+changements d état — le boot n en fait pas). Or la spec DOM dit :
+classList.toggle('on', undefined) === toggle SANS force === ALTERNANCE.
+Une mutation de classe PAR FRAME (mesuré : 6 001 en 5 min à 20 Hz) ; le
+clignotement cessait après le premier changement d état, d où des
+scénarios de test aveugles. MÉTHODE QUI A TRANCHÉ : instrumenter le stub
+DOM du harnais pour COMPTER les mutations réelles (texte/classe qui
+change) par id, puis capturer classe + stack du premier writer — le
+chiffre accuse, la spéculation se tait. FIX : accIso:false et easy:false
+initialisés dans S + blindage GÉNÉRIQUE !! sur tous les
+classList.toggle('x', S.y) du render. RÈGLES : tout flag consommé par un
+toggle à force DOIT être initialisé booléen ; tout toggle à force prend
+!! ; en cas de « clignotement », compter les mutations DOM avant de
+théoriser. (Crédit : l intuition d Antonin « condition qui bagote sans
+hystérésis » était fonctionnellement la bonne — la condition bagotait
+au niveau DOM, pas logique.)
+
 ## FINITIONS 2.5.1-2.5.8 (retours terrain PC)
 2.5.1 : « 71 bar » statique retiré du titre synoptique. 2.5.2 : purge des
 9 derniers résidus du thème sombre (bouton coreOpen inline, scrollbars

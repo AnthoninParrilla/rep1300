@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.5.8-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.5.10-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -97,7 +97,7 @@ if('serviceWorker' in navigator){
   #gPanache .puff:nth-child(10){animation-delay:-7.05s}
   #gPanache .puff:nth-child(11){animation-delay:-7.83s}
   #gPanache .puff:nth-child(12){animation-delay:-8.62s}
-  #synop{transform-origin:0 0;display:block;touch-action:pan-y}
+  #synop,#sockSvg{transform-origin:0 0;display:block;touch-action:pan-y}
   #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#1a2a1cee;border:1px solid #3a6a42;color:#8fe89a;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#c2b494f2;border-top:2px solid #6e5c44;box-shadow:0 -5px 16px #0007;z-index:60;backdrop-filter:blur(8px)}
   #mnav button{flex:1;background:linear-gradient(180deg,#ddd2b8,#c2b494);border:1px solid #6e5c44;color:#2b2318;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
@@ -261,7 +261,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.5.8-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.5.10-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -1132,7 +1132,7 @@ body.shake{animation:quake .9s linear;}
     heat:false, spray:false, digSel:'th',
     Padm:69, Tare:230, Pcond:0.06,
     cvi:true, air:0, gctA:0,
-    etat:'RP', rra:false, pzrSet:155, turbRate:0.6,
+    etat:'RP',accIso:false,easy:false, rra:false, pzrSet:155, turbRate:0.6,
     Penc:1.0, inv:100, accu:100, breche:0, sebim:false,
     rdp:0, rdpBurst:false, // réservoir de décharge pressuriseur (SEBIM) + disque de rupture
     ishp:false, isbp:false, eas:false,
@@ -2468,7 +2468,7 @@ body.shake{animation:quake .9s linear;}
   el('iDiluI').onclick=function(){
     S.diluI=!S.diluI;
     el('iDiluI').textContent=S.diluI?'Isoler l\u2019appoint (REA)':'Dilution intempestive';
-    el('iDiluI').classList.toggle('on',S.diluI);
+    el('iDiluI').classList.toggle('on',!!S.diluI);
     if(S.diluI){S.diluCb0=S.Cb;
       log('INCIDENT injecté : DILUTION INTEMPESTIVE — appoint d\u2019eau claire non borée au primaire (~3 ppm/min). Aucune alarme immédiate : surveiller le comptage source (RPN) et le bilan de bore.','red');}
     else{S.diluMsg=false;
@@ -2542,7 +2542,7 @@ body.shake{animation:quake .9s linear;}
    'RIS':{d:'Injection de Secours — envoie de l’eau borée dans le réacteur en cas de fuite',
      p:'Trois étages selon la pression : les pompes haute pression (ISHP) injectent même contre 110 bar ; les accumulateurs se vident tout seuls sous 42 bar ; les pompes basse pression (ISBP) noient le cœur quand la pression est tombée. L’eau est borée pour garantir que le réacteur reste éteint pendant qu’on le remplit.'},
    'IS':{d:'signal d’Injection de Secours — l’alarme qui déclenche automatiquement le RIS',
-     p:'Il part notamment quand la pression du pressuriseur passe sous ~118 bar : signe probable d’une fuite. C’est pour ça qu’en descente VOLONTAIRE de pression, l’opérateur doit le BLOQUER sous 139 bar : sinon l’automate croirait à une fuite et re-remplirait le circuit qu’on essaie de vidanger. Le blocage se lève tout seul quand la pression remonte.'},
+     p:'Pourquoi ce signal existe : une brèche du circuit primaire fait fuir de l’eau, et qui dit perte de fluide dit chute de pression. L’automate surveille donc la pression du pressuriseur : sous ~118 bar, il conclut à une fuite et injecte de l’eau borée pour compenser la masse perdue et garder le cœur couvert. Mais lors d’un CHANGEMENT D’ÉTAT DE TRANCHE (la descente AN/GV → AN/RRA), l’opérateur baisse volontairement pression et température — sans la moindre fuite. Il doit alors BLOQUER le signal sous 139 bar (permissif P11) : sinon l’automate, trompé par la basse pression, injecterait et re-pressuriserait le circuit, stoppant net la descente. Le blocage se lève automatiquement quand la pression repasse au-dessus de 139 bar.'},
    'EAS':'Aspersion de l’enceinte — douche géante dans le bâtiment réacteur pour faire baisser la pression',
    'AAR / AU':{d:'Arrêt Automatique du Réacteur (arrêt d’urgence) — toutes les barres tombent en 2 secondes',
      p:'Les grappes sont retenues en haut du cœur par des électro-aimants. Un ordre d’arrêt coupe simplement le courant : la gravité fait le reste, aucune pompe ni moteur nécessaires. En 2 secondes la réaction en chaîne est stoppée — mais attention, la chaleur résiduelle, elle, ne s’éteint jamais d’un coup.'},
@@ -2590,8 +2590,8 @@ body.shake{animation:quake .9s linear;}
   el('bEasyLex').onclick=function(){el('easyLex').classList.toggle('on');};
   el('bEasy').onclick=function(){
     S.easy=!S.easy;
-    el('easyCard').classList.toggle('on',S.easy);
-    el('bEasy').classList.toggle('on',S.easy);
+    el('easyCard').classList.toggle('on',!!S.easy);
+    el('bEasy').classList.toggle('on',!!S.easy);
     log(S.easy?'MODE FACILE : guide pas-à-pas activé (pupitre formation en haut de page).':'Mode facile désactivé.','cyan');
   };
   function easyMsg(){
@@ -2601,7 +2601,7 @@ body.shake{animation:quake .9s linear;}
     if(S._ptBad)return "⚠ Le point pression/température est SORTI de la zone autorisée (onglet Chaussette). En général : refroidir moins vite, ou ajuster la consigne du pressuriseur.";
     if(S.sigIS)return "🚨 FUITE DÉTECTÉE : l’injection de secours envoie automatiquement de l’eau borée dans le réacteur. Laisse les automatismes travailler et surveille l’inventaire en eau.";
     if(S.scram&&S.Pn<0.02&&S.Tavg>250)return "🟠 ARRÊT D’URGENCE : toutes les barres sont tombées, la réaction est stoppée. Le réacteur chauffe encore (chaleur résiduelle) : vérifie que l’eau arrive aux générateurs de vapeur (pompes de secours ASG) — la vapeur s’évacue par le GCT.";
-    if(S._blkDue)return "👉 On descend la pression volontairement : BLOQUE l’injection de secours (bouton BLOQUER IS, carte Signaux), sinon elle se déclenchera pour rien.";
+    if(S._blkDue)return "👉 Changement d’état de tranche : on baisse la pression volontairement, sans fuite. BLOQUE l’injection de secours (bouton BLOQUER IS, carte Signaux) — sinon l’automate croira à une brèche et re-pressurisera le circuit.";
     if(S._accDue)return "👉 ISOLE les accumulateurs (carte RIS) : ces réservoirs sous pression se videraient tout seuls dans le circuit en dessous de 42 bar.";
     if(S._reaDue)return "👉 La pression est revenue : RÉALIGNE les accumulateurs (carte RIS) pour qu’ils protègent à nouveau le réacteur.";
     if(S.gv<30&&e!=='ANRRA'&&S.Tavg>200)return "⚠ Le niveau d’eau baisse dans les générateurs de vapeur. Vérifie l’alimentation : ARE en marche, ou pompes de secours ASG.";
@@ -2652,7 +2652,7 @@ body.shake{animation:quake .9s linear;}
   window.__easyMsg=easyMsg;
   el('bInhib').onclick=function(){
     S.aarInhib=!S.aarInhib;
-    el('bInhib').classList.toggle('warn',S.aarInhib);
+    el('bInhib').classList.toggle('warn',!!S.aarInhib);
     el('bInhib').textContent=S.aarInhib?'INHIBÉ':'INHIBER';
     log(S.aarInhib
       ?'OPÉRATEUR : INHIBITION DE L\u2019AAR — les protections automatiques n\u2019arrêteront plus le réacteur'
@@ -2807,7 +2807,7 @@ body.shake{animation:quake .9s linear;}
   el('bSprayM').onclick=function(){if(!S.pzrAuto){S.sprayM=!S.sprayM;log('OPÉRATEUR : aspersion '+(S.sprayM?'OUVERTE':'fermée'),'cyan');}};
   el('bSebimM').onclick=function(){
     S.sebimM=!S.sebimM;
-    el('bSebimM').classList.toggle('warn',S.sebimM);
+    el('bSebimM').classList.toggle('warn',!!S.sebimM);
     log(S.sebimM?'OPÉRATEUR : OUVERTURE VOLONTAIRE SEBIM — décharge primaire (gavé-ouvert)'
                :'OPÉRATEUR : refermeture SEBIM (commande volontaire levée)','red');
   };
@@ -2990,16 +2990,17 @@ body.shake{animation:quake .9s linear;}
     el('easSpray').setAttribute('opacity',S.eas?1:0);
 
     // sauvegarde
-    el('bIshp').classList.toggle('on',S.ishp);
-    el('bIsbp').classList.toggle('on',S.isbp);
-    el('bEas').classList.toggle('on',S.eas);
+    el('bIshp').classList.toggle('on',!!S.ishp);
+    el('bIsbp').classList.toggle('on',!!S.isbp);
+    el('bEas').classList.toggle('on',!!S.eas);
     el('ishpVal').textContent=S.ishp?(S.Ppzr<150?'injecte':'P > refoulement'):'arrêt';
     el('isbpVal').textContent=S.isbp?(S.Ppzr<12?'injecte':'P > refoulement'):'arrêt';
     el('accuVal').textContent=Math.round(S.accu)+' %'+(S.accIso?' · ISOLÉS':' · P < 42 bar');
-    el('bAccIso').classList.toggle('on',S.accIso);
-    el('bAccIso').textContent=S.accIso?'ISOLÉS':'ISOLER';
+    var _ba=el('bAccIso'),_bt=S.accIso?'ISOLÉS':'ISOLER';
+    _ba.classList.toggle('on',!!S.accIso);
+    if(_ba.textContent!==_bt)_ba.textContent=_bt;
     el('easVal').textContent=S.eas?'aspersion':'arrêt';
-    el('bIsBlk').classList.toggle('warn',S.isBlk);
+    el('bIsBlk').classList.toggle('warn',!!S.isBlk);
     el('bIsBlk').textContent=S.isBlk?'BLOQUÉ':'BLOQUER';
     el('isBlkVal').textContent=S.isBlk?'actif':(S.Ppzr<139?'possible':'P > P11');
 
@@ -3119,7 +3120,7 @@ body.shake{animation:quake .9s linear;}
     // VIV / GCT / pressuriseur manuels
     el('vivVal').textContent=S.viv?'ouvertes':'FERMÉES';
     el('vivVal').style.color=S.viv?'var(--green)':'var(--red)';
-    el('bVivO').classList.toggle('on',S.viv);
+    el('bVivO').classList.toggle('on',!!S.viv);
     el('bVivF').classList.toggle('warn',!S.viv);
     el('gctManVal').textContent=S.gctMode==='manu'?Math.round(S.gct*100)+' %':'—';
     el('gctaManVal').textContent=S.gctaMode==='manu'?Math.round(S.gctA*100)+' %':'—';
@@ -3250,7 +3251,7 @@ body.shake{animation:quake .9s linear;}
     var ptBad=(S.Tavg>120&&S.inv>95&&S.breche===0&&S.Ppzr<psat(S.Tavg+30)-3)||(S.Ppzr>S.Psteam+112)||(S.Tavg<=255&&S.Tavg>120&&S.Ppzr>psat(S.Tavg+110)+4)||(S.etat==='ANRRA'&&(S.Tavg>182&&S.Ppzr>33))||(S.Tavg<178&&S.Tavg>75&&S.Ppzr>32&&S.breche===0&&S.rtv===0&&S.fuiteGV===0&&S.inv>95); // couloir : sous 180 °C le domaine n'existe qu'à ≤31 bar
     S._ptBad=ptBad;setAl('aPT',ptBad?'red':'');
     setAl('aAcc',S._accDue?'amber':'');
-    INH_BTNS.forEach(function(cf){var b=el(cf[0]);if(b){b.classList.toggle('warn',!!S[cf[1]]);b.textContent=S[cf[1]]?'INHIBÉ':'INHIBER';}});
+    INH_BTNS.forEach(function(cf){var b=el(cf[0]);if(b){b.classList.toggle('warn',!!S[cf[1]]);var t=S[cf[1]]?'INHIBÉ':'INHIBER';if(b.textContent!==t)b.textContent=t;}});
     setAl('aMan',(hot&&!S.auto&&!S.scram)?'amber':'');
     setAl('aGmpp',(!S.gmpp&&(hot||S.etat==='ANRRA'))?'red':'');
     setAl('aAu',S.scram?'red':'');
