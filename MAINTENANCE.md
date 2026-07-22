@@ -100,6 +100,27 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## SESSIONS 2.6.6 -> 2.7.2 (monochrome, treize retours, 16 missions)
+Monochrome intégral synoptique : mapping ~30 teintes inline PUIS la
+classe CSS .vessel (fonds condenseur/bâches/accus — invisible à la
+chasse aux hex inline !) ; l eau en vert SOMBRE #1a4a2a (pas fluo),
+vapeur seule blanche. Flux fantômes : fFw opacité 0.06 rémanente (les
+pointillés ANIMÉS restaient visibles TPA arrêtées -> 0 net) ; fRcv
+opacité 0.85 EN DUR jamais pilotée -> asservie gmppN>0. Enregistreur :
+grille de voies alignée + zone d affichage écran + événements *** en
+ambre (innerHTML échappé). Treize retours : safe-area env() (l encoche),
+.main{display:grid;gap} devait être GLOBAL (mobile collait les cartes),
+vis en radial-gradients ::after (reculées à 7px : l arrondi hérité les
+rognait), align-items:start (les grands vides = étirement de rangée),
+panache SANS clip + overflow:visible sur #synop/#synWrap/.mimic (le
+« 4e mur » : décision d Antonin), messages d état ANRRA/API/APR/RCD
+ajoutés (le fallback RP mentait en arrêt). 16 missions (moteur inchangé,
+b-fonctions) ; lexique sourcé (ASNR/Wikipédia : enceinte 120+55 cm,
+23 325 m3/h/GMPP) + carnet (GSS, poste d eau, bâche dégazante, TPA=APP
+vapeur vive). PIÈGE D ATELIER : jamais de re.sub avec \1 via bash -c
+double quotes (le \1 devient \x01 littéral et ÉCRASE le groupe) ->
+heredoc PYEOF obligatoire pour tout python à regex.
+
 ## CONFORMITÉ FIGURE 4.1 (outil permanent, 2.6.4)
 Nouveau livrable : conformite-figure.js (node conformite-figure.js
 index.html) — re-certifie CHAQUE annotation du diagramme sur le build :

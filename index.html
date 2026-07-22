@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.11-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.7.2-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -65,6 +65,9 @@ if('serviceWorker' in navigator){
   html,body{overflow-x:hidden;overflow-x:clip;max-width:100vw;touch-action:manipulation}
   .layout{display:grid;grid-template-columns:1fr;gap:10px}
   .main,.side,.card{min-width:0}
+  @supports(padding:env(safe-area-inset-top)){
+    body{padding-top:env(safe-area-inset-top);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);padding-bottom:env(safe-area-inset-bottom)}
+  }
   select{min-width:0;max-width:100%}
   #synWrap,#sockWrap{overflow:hidden;position:relative;touch-action:pan-y}
   @keyframes puffRise{
@@ -98,6 +101,8 @@ if('serviceWorker' in navigator){
   #gPanache .puff:nth-child(11){animation-delay:-7.83s}
   #gPanache .puff:nth-child(12){animation-delay:-8.62s}
   #synop,#sockSvg{transform-origin:0 0;display:block;touch-action:pan-y}
+  #synop{overflow:visible}
+  #synWrap,.mimic{overflow:visible !important}
   #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#1a2a1cee;border:1px solid #3a6a42;color:#8fe89a;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#c2b494f2;border-top:2px solid #6e5c44;box-shadow:0 -5px 16px #0007;z-index:60;backdrop-filter:blur(8px)}
   #mnav button{flex:1;background:linear-gradient(180deg,#ddd2b8,#c2b494);border:1px solid #6e5c44;color:#2b2318;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
@@ -106,8 +111,15 @@ if('serviceWorker' in navigator){
   .mimic{border:3px solid #4a463c;background:var(--scr);border-radius:8px;padding:8px;box-shadow:inset 0 0 20px #000e, 0 2px 5px #0005}
   .mimic svg{width:100%;height:auto;display:block}
   .side{display:grid;gap:10px;align-content:start}
+  .main{display:grid;gap:10px;align-items:start}
 
-  .card{border:2px solid #7a6850;background:linear-gradient(180deg,#ddd4bf,#cfc5ac);border-radius:6px;padding:10px 12px;box-shadow:0 2px 4px #0003, inset 0 1px 0 #fff7}
+  .card{position:relative;border:2px solid #7a6850;background:linear-gradient(180deg,#ddd4bf,#cfc5ac);border-radius:6px;padding:10px 12px;box-shadow:0 2px 4px #0003, inset 0 1px 0 #fff7;margin-bottom:10px}
+  .main .card,.side .card{margin-bottom:0}
+  .main{align-items:start}
+  .card::after{content:'';position:absolute;inset:2px;pointer-events:none;
+    background-image:radial-gradient(circle at 7px 7px,#a89878 0 1.4px,#4c3e2c 1.5px 2.8px,transparent 3px),radial-gradient(circle at calc(100% - 7px) 7px,#a89878 0 1.4px,#4c3e2c 1.5px 2.8px,transparent 3px),radial-gradient(circle at 7px calc(100% - 7px),#a89878 0 1.4px,#4c3e2c 1.5px 2.8px,transparent 3px),radial-gradient(circle at calc(100% - 7px) calc(100% - 7px),#a89878 0 1.4px,#4c3e2c 1.5px 2.8px,transparent 3px);
+    background-repeat:no-repeat}
+  @media(max-width:540px){.row{gap:6px 8px}.row button.sw{flex:1 1 auto;min-width:104px}}
   .card h2{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#3a2f20;
     background:#e9e1cc;border:1px solid #9a8664;border-radius:3px;box-shadow:inset 0 1px 0 #fff9;
     padding:4px 8px;margin:-2px -2px 9px;font-weight:700}
@@ -267,7 +279,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.11-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.7.2-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -500,11 +512,11 @@ body.shake{animation:quake .9s linear;}
           <filter id="fCloud" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur stdDeviation="3.4"/>
           </filter>
-          <path d="M 906.3 288.0 L 907.2 296.0 L 907.9 304.0 L 908.3 312.0 L 908.5 320.0 L 908.4 328.0 L 908.1 336.0 L 907.6 344.0 L 906.8 352.0 L 905.8 360.0 L 904.6 368.0 L 903.3 376.0 L 901.9 384.0 L 900.3 392.0 L 898.6 400.0 L 896.9 408.0 L 895.1 416.0 L 964.9 416.0 L 963.1 408.0 L 961.4 400.0 L 959.7 392.0 L 958.1 384.0 L 956.7 376.0 L 955.4 368.0 L 954.2 360.0 L 953.2 352.0 L 952.4 344.0 L 951.9 336.0 L 951.6 328.0 L 951.5 320.0 L 951.7 312.0 L 952.1 304.0 L 952.8 296.0 L 953.7 288.0 Z" fill="#141e28" stroke="#5a8a62" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M 906.3 288.0 L 907.2 296.0 L 907.9 304.0 L 908.3 312.0 L 908.5 320.0 L 908.4 328.0 L 908.1 336.0 L 907.6 344.0 L 906.8 352.0 L 905.8 360.0 L 904.6 368.0 L 903.3 376.0 L 901.9 384.0 L 900.3 392.0 L 898.6 400.0 L 896.9 408.0 L 895.1 416.0 L 964.9 416.0 L 963.1 408.0 L 961.4 400.0 L 959.7 392.0 L 958.1 384.0 L 956.7 376.0 L 955.4 368.0 L 954.2 360.0 L 953.2 352.0 L 952.4 344.0 L 951.9 336.0 L 951.6 328.0 L 951.5 320.0 L 951.7 312.0 L 952.1 304.0 L 952.8 296.0 L 953.7 288.0 Z" fill="#1c2e20" stroke="#5a8a62" stroke-width="2.5" stroke-linejoin="round"/>
           <path d="M 917.0 288.0 L 917.5 296.0 L 917.8 304.0 L 918.1 312.0 L 918.2 320.0 L 918.1 328.0 L 918.0 336.0 L 917.7 344.0 L 917.2 352.0 L 916.7 360.0 L 916.0 368.0 L 915.3 376.0 L 914.5 384.0 L 913.7 392.0 L 912.7 400.0 L 911.8 408.0 L 910.8 416.0 M 930.0 288.0 L 930.0 296.0 L 930.0 304.0 L 930.0 312.0 L 930.0 320.0 L 930.0 328.0 L 930.0 336.0 L 930.0 344.0 L 930.0 352.0 L 930.0 360.0 L 930.0 368.0 L 930.0 376.0 L 930.0 384.0 L 930.0 392.0 L 930.0 400.0 L 930.0 408.0 L 930.0 416.0 M 943.0 288.0 L 942.5 296.0 L 942.2 304.0 L 941.9 312.0 L 941.8 320.0 L 941.9 328.0 L 942.0 336.0 L 942.3 344.0 L 942.8 352.0 L 943.3 360.0 L 944.0 368.0 L 944.7 376.0 L 945.5 384.0 L 946.3 392.0 L 947.3 400.0 L 948.2 408.0 L 949.2 416.0" stroke="#1e3226" stroke-width="1" fill="none" opacity="0.55"/>
-          <ellipse cx="930" cy="288" rx="23.7" ry="5" fill="#0d151c" stroke="#5a8a62" stroke-width="2"/>
+          <ellipse cx="930" cy="288" rx="23.7" ry="5" fill="#1c2e20" stroke="#5a8a62" stroke-width="2"/>
           <path d="M898.6 416 L900.4 429 M898.6 416 L891.2 429 M909.0 416 L911.8 429 M909.0 416 L902.6 429 M919.5 416 L923.2 429 M919.5 416 L914.0 429 M930.0 416 L934.6 429 M930.0 416 L925.4 429 M940.5 416 L946.0 429 M940.5 416 L936.8 429 M951.0 416 L957.4 429 M951.0 416 L948.2 429 M961.4 416 L968.8 429 M961.4 416 L959.6 429" stroke="#5a8a62" stroke-width="1.6" fill="none"/>
-          <ellipse cx="930" cy="429" rx="40" ry="4.5" fill="#0f1820" stroke="#5a8a62" stroke-width="1.5"/>
+          <ellipse cx="930" cy="429" rx="40" ry="4.5" fill="#1c2e20" stroke="#5a8a62" stroke-width="1.5"/>
           <path class="watersmall" d="M792 448 H930 V429"/>
           <text class="lblS" x="930" y="448" text-anchor="middle" font-size="9">AÉRORÉFRIGÉRANT</text>
         </g>
@@ -754,7 +766,7 @@ body.shake{animation:quake .9s linear;}
 
     <div class="card">
       <h2 style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">Enregistreur
-        <select id="recPas" class="logclear" style="margin-left:auto;background:#0a120c;color:#8fe89a;border:1px solid #2c4a32;border-radius:5px;padding:2px 6px">
+        <select id="recPas" class="logclear" style="margin-left:auto;background:#f2ecd8;color:#2b2318;border:1px solid #6e5c44;border-radius:5px;padding:2px 6px">
           <option value="1">pas 1 s</option>
           <option value="10" selected>pas 10 s</option>
           <option value="60">pas 1 min</option>
@@ -2550,7 +2562,7 @@ body.shake{animation:quake .9s linear;}
   var LEX={
    'RPE':'Réacteur Puisards et Évents — le circuit qui recueille les purges et évents du circuit primaire',
    'GV':{d:'Générateur de Vapeur — la « bouilloire » : l’eau très chaude du réacteur y fait bouillir une autre eau, séparée',
-     p:'Pourquoi deux eaux séparées ? Parce que l’eau qui traverse le cœur devient légèrement radioactive. Dans le GV, elle circule dans des milliers de tubes fins et chauffe l’eau du circuit secondaire à travers le métal, sans jamais la toucher : la vapeur qui part vers la turbine est propre. Chaque tranche en a quatre, qui produisent ensemble plusieurs milliers de tonnes de vapeur par heure.'},
+     p:'Pourquoi deux eaux séparées ? Parce que l’eau qui traverse le cœur devient légèrement radioactive. Dans le GV, elle circule dans plus de 5 000 tubes fins (19 mm de diamètre, moins de 1,1 mm d’épaisseur — le métal le plus mince entre le primaire et le secondaire) et chauffe l’eau du circuit secondaire à travers ce métal, sans jamais la toucher : la vapeur qui part vers la turbine est propre. Chaque tranche en a quatre, qui produisent ensemble plusieurs milliers de tonnes de vapeur par heure.'},
    'GCT':'Contournement Turbine — une grosse soupape pilotée qui envoie la vapeur directement au condenseur, sans passer par la turbine',
    'GCTa':'Contournement à l’atmosphère — pareil, mais la vapeur part dans l’air (propre : elle n’a jamais touché le réacteur)',
    'ARE':'Alimentation en eau normale des GV — les grosses pompes qui remplissent les bouilloires en fonctionnement',
@@ -2558,9 +2570,9 @@ body.shake{animation:quake .9s linear;}
    'MPS':'Motopompe de secours (électrique) de l’ASG',
    'TPS':{d:'Turbopompe de secours de l’ASG — marche à la vapeur, même sans électricité',
      p:'C’est l’ultime recours : sa petite turbine est entraînée par la vapeur des GV eux-mêmes. Tant que le réacteur produit de la chaleur, elle a de quoi tourner — même si la centrale n’a plus un seul volt. Elle peut refroidir le réacteur toute seule.'},
-   'TPA':'Turbopompe Alimentaire — les pompes principales d’eau, entraînées par de la vapeur',
+   'TPA (APP)':{d:'Turbopompes Alimentaires Principales — les grosses pompes d’eau des GV, entraînées par de la vapeur',p:'Leur turbine d’entraînement tourne à la VAPEUR VIVE, piquée directement sur le barillet VVP — comme les GSS. La vapeur du palier a donc trois vies : le travail dans la turbine principale, les soutirages (vapeur déjà détendue) pour les réchauffeurs ABP/AHP et la bâche, et la vapeur vive pour la resurchauffe GSS et l’entraînement des TPA. C’est aussi pourquoi les TPA s’essoufflent quand la pression des GV descend : leur moteur, c’est la pression vapeur.'},
    'GMPP':{d:'Groupes MotoPompes Primaires — les 4 énormes pompes qui font circuler l’eau du réacteur',
-     p:'Chacune consomme 5 à 6 MW (l’équivalent d’une petite ville) et leur simple frottement chauffe le circuit d’environ 20 MW au total. Si elles s’arrêtent toutes, l’eau continue de circuler doucement d’elle-même : l’eau chaude monte au cœur, refroidit dans les GV et redescend — c’est la circulation naturelle, un thermosiphon géant qui suffit à évacuer la chaleur résiduelle.'},
+     p:'Chacune brasse environ 23 000 m³/h (près de 100 000 m³/h à quatre — une piscine olympique toutes les 100 secondes), consomme 5 à 6 MW, et leur simple frottement chauffe le circuit d’environ 20 MW au total. Si elles s’arrêtent toutes, l’eau continue de circuler doucement d’elle-même : l’eau chaude monte au cœur, refroidit dans les GV et redescend — c’est la circulation naturelle, un thermosiphon géant qui suffit à évacuer la chaleur résiduelle.'},
    'RRA':{d:'Refroidissement du Réacteur à l’Arrêt — le circuit qui évacue la chaleur quand tout est arrêté et froid',
      p:'La connexion se fait dans une FENÊTRE : entre 160 et 180 °C, à moins de 31 bar. Au-dessus de 180 °C, le RRA (un circuit basse pression) ne tiendrait pas ; et on ne descend pas sous 160 °C sans l’avoir connecté, car les GV s’essoufflent à basse température — ce serait se priver de moyen d’évacuation. Une fois connecté, le RRA descend la température jusqu’à 20-40 °C.'},
    'RRI':'Réfrigération Intermédiaire — le circuit d’eau qui refroidit les équipements et emporte la chaleur vers la source froide',
@@ -2606,8 +2618,14 @@ body.shake{animation:quake .9s linear;}
    'CVI':{d:'le circuit de vide — maintient le vide dans le condenseur pour que la turbine fonctionne bien',
      p:'Il n’aspire pas la vapeur (la condensation s’en charge toute seule) : il chasse l’air et les gaz incondensables qui s’infiltrent par les joints. Sans lui, l’air « couvre » les tubes froids comme une couverture, la condensation se dégrade, le vide remonte et la turbine finit par déclencher.'},
    'CHAUSSETTE':'le diagramme pression/température : le point doit rester dans la zone autorisée, comme sur les vrais documents',
+   'GSS':{d:'les Sécheurs-Surchauffeurs, entre les corps HP et BP de la turbine',
+     p:'À la sortie du corps HP, la vapeur est détendue et HUMIDE — des gouttelettes qui éroderaient les ailettes BP. Les GSS la sèchent (séparateurs) puis la resurchauffent avec de la vapeur vive prélevée en amont : la détente BP repart avec une vapeur sèche et plus chaude. Un étage discret, un gain de rendement réel.'},
+   'Poste d’eau (ABP/AHP)':{d:'la chaîne de réchauffeurs qui préchauffe l’eau du condenseur avant son retour aux GV',
+     p:'L’eau condensée (~33 °C) ne repart pas froide vers les GV : elle traverse les réchauffeurs basse pression (ABP), la bâche dégazante, puis les réchauffeurs haute pression (AHP), chauffés par des SOUTIRAGES de vapeur prélevés sur la turbine. Réchauffer l’eau alimentaire avec de la vapeur déjà partiellement détendue coûte peu et améliore nettement le rendement du cycle : elle arrive à ~220 °C aux GV.'},
+   'Bâche alimentaire / dégazeur':{d:'le grand réservoir tampon du poste d’eau, qui chasse aussi les gaz dissous',
+     p:'Entre ABP et AHP, l’eau séjourne dans une bâche portée à ébullition par un soutirage : les gaz dissous (surtout l’oxygène, corrosif pour les tubes des GV) s’en échappent — c’est le dégazage thermique. La bâche donne aussi de la réserve d’eau et de la hauteur d’aspiration aux TPA.'},
    'Trois barrières':{d:'les trois enveloppes successives entre le combustible et l’environnement',
-     p:'1) La gaine métallique de chaque crayon emprisonne le combustible et ses produits de fission. 2) Le circuit primaire en acier (dont la cuve, 20 cm d’épaisseur) enferme l’eau activée. 3) L’enceinte en béton — double paroi sur ce palier — confine tout le reste. Toute la sûreté consiste à protéger ces trois barrières : les alarmes KRT surveillent chacune.'}
+     p:'1) La gaine métallique de chaque crayon emprisonne le combustible et ses produits de fission. 2) Le circuit primaire en acier (dont la cuve, 20 cm d’épaisseur) enferme l’eau activée. 3) L’enceinte en béton — double paroi sur ce palier : 120 cm de béton précontraint à l’intérieur, 55 cm de béton armé à l’extérieur — confine tout le reste. Toute la sûreté consiste à protéger ces trois barrières : les alarmes KRT surveillent chacune.'}
   };
   el('easyLex').innerHTML=Object.keys(LEX).map(function(k){
     var v=LEX[k],d=(typeof v==='string')?v:v.d,p=(typeof v==='string')?'':'<details class="lexD"><summary>en savoir plus</summary><div class="lexP">'+v.p+'</div></details>';
@@ -2627,10 +2645,16 @@ body.shake{animation:quake .9s linear;}
    {t:'Compenser au bore',c:'Le xénon freine ? Compense à la chimie : clique DILUER (onglet Réactivité) plusieurs fois pour retirer du bore.',test:function(){return S._mW.cb0!==undefined&&S.Cb<S._mW.cb0-5;},watch:function(){if(S._mW.cb0===undefined)S._mW.cb0=S.Cb;},b:'Tu viens de piloter à l’acide borique ! Grappes = réglage rapide, bore = réglage lent : les deux mains du pilotage d’un REP.'},
    {t:'La revanche du fleuve',c:'Carte Source froide : baisse la température de l’eau (curseur, ou saison hiver). Regarde P ÉLECTRIQUE gagner des mégawatts — sans rien changer au réacteur.',test:function(){return S._mW.ts0!==undefined&&S.Tsrc<S._mW.ts0-3&&S.Pelec>S._mW.pe0+6;},watch:function(){if(S._mW.ts0===undefined){S._mW.ts0=S.Tsrc;S._mW.pe0=S.Pelec;}},b:'La magie du vide condenseur : eau plus froide → meilleure condensation → meilleur vide → détente plus longue → plus de MW avec la MÊME chaleur. (Tout est raconté au lexique, entrée « Vide condenseur ».)'},
    {t:'Casser (et réparer) le vide',c:'Repasse en ×1 (le défi est chronométré !) puis provoque une Perte CVI (carte Incidents) : le vide se dégrade, les MW fondent. RE-CLIQUE pour réparer avant que la turbine ne déclenche (~2 min). Trop tard, turbine déclenchée ? Pas grave : répare le CVI, remonte les vannes admission HP, retrouve ta puissance — mission validée aussi.',test:function(){return S._mW.sawCvi&&((S.cvi&&!S.scram&&S.Pelec>Math.max(150,(S._mW.pe0||0)*0.92))||S.scram);},watch:function(){if(S._mW.pe0===undefined&&S.cvi&&!S.scram)S._mW.pe0=S.Pelec;if(!S.cvi)S._mW.sawCvi=true;},b:function(){return S.scram?'La turbine a déclenché… et l’AAR a suivi automatiquement : tu viens de voir une CHAÎNE DE PROTECTION complète — vide dégradé → déclenchement turbine → arrêt du réacteur. Leçon retenue ! La formation continue en post-AU.':'Sauvée ! Tu as vu l’air « étouffer » les tubes du condenseur, puis le CVI reprendre la main. En salle, cette course contre la montre existe vraiment.';}},
+   {t:'L’exutoire de secours (GCTa)',c:'Passe le GCTa en MANUEL (carte GCT) et ouvre-le vers 15-20 % : de la vapeur PROPRE part à l’atmosphère. Puis referme-le.',test:function(){return S._mW.sawGcta&&S.gcta<0.02;},watch:function(){if(S.gcta>0.10)S._mW.sawGcta=true;},b:'C’est la décharge de secours : si le condenseur disparaît (perte de vide, perte CRF), le GCTa évacue la chaleur directement à l’atmosphère. Vapeur du circuit secondaire : jamais en contact avec le réacteur.'},
+   {t:'La première barrière',c:'Carte Incidents : monte le curseur « ruptures de gaine » à ~15 crayons. Ouvre KRT : l’activité du circuit primaire grimpe. Puis redescends-le à 0.',test:function(){return S._mW.sawGaine&&S.gaineN<2;},watch:function(){if(S.gaineN>=12)S._mW.sawGaine=true;},b:'Tu viens de percer la PREMIÈRE barrière : les produits de fission passent dans l’eau primaire, les chaînes KRT le voient immédiatement. Restent deux barrières — le circuit primaire et l’enceinte — et le RCV qui épure l’eau en continu.'},
    {t:'Le bouton rouge',c:'Le grand moment : appuie sur ARRÊT D’URGENCE (le bouton rouge). Observe : toutes les barres tombent en 2 secondes, la puissance s’effondre… mais pas à zéro.',test:function(){return S.scram&&S.Pn<0.05;},b:'Réaction stoppée net — mais regarde P THERMIQUE : la chaleur résiduelle continue (des dizaines de MW). C’est pour ELLE que tout le refroidissement de secours existe.'},
    {t:'Surveiller le repli',c:'Laisse la tranche se stabiliser (×60) : vérifie que l’eau arrive aux GV (carte ASG) et que Tmoy se cale vers ~294 °C — l’arrêt à chaud.',test:function(){return S.scram&&Math.abs(S.Tavg-294)<7&&S.gv>28;},b:'Tranche stable en arrêt à chaud : le GCT évacue la résiduelle, l’ASG nourrit les GV. Une tranche arrêtée, ça se CONDUIT.'},
+   {t:'Le pic xénon',c:'Reste en arrêt à chaud, passe en ×300 et regarde l’onglet Réactivité : le xénon MONTE pendant des heures après l’arrêt. Attends qu’il dépasse ~150 % de l’équilibre (pic vers 9 h).',test:function(){return S.scram&&S.Xe>1.5;},b:'Voilà le fameux pic xénon : l’iode accumulé continue de se transformer en xénon alors que plus rien ne le brûle. Redémarrer maintenant serait très difficile — c’est LA contrainte de planning des vrais exploitants.'},
+   {t:'Réarmer et re-diverger',c:'Laisse le xénon retomber (encore ×300, ~1 jour simulé), puis RÉARME (bouton Réarmer, panneau Arrêt d’urgence) et remonte les vannes admission HP à 30 % : la tranche revit.',test:function(){return !S.scram&&S.Pn>0.25;},b:'Tu viens de faire une re-divergence complète : réarmement des grappes, retour en puissance. En vrai il faudrait la chimie, les essais et l’accord du réseau — mais la physique, tu l’as.'},
    {t:'Changer d’état',c:'Passe officiellement à l’état AN/GV (bandeau des états, en haut de page).',test:function(){return S.etat==='ANGV';},b:'Te voilà en Arrêt Normal sur les GV. Prochaine étape : la vraie descente d’un exploitant.'},
-   {t:'La descente complète',c:'Objectif final : rejoins l’AN/RRA. Consigne GCT vers 6-8 bar, consigne pressuriseur à 27 bar, ×300, et SUIS LES RAPPELS du guide (blocage IS, isolement des accumulateurs). La chaussette est ton juge.',test:function(){return S.etat==='ANRRA';},b:'🏆 CHAPEAU ! Tu viens de conduire une tranche de 1 300 MW de la pleine puissance jusqu’au refroidissement à l’arrêt, dans les clous du domaine. Continue vers l’API/APR/RCD, remonte, ou casse tout pour voir — le guide reste là.'}
+   {t:'La descente complète',c:'Objectif final : rejoins l’AN/RRA. Consigne GCT vers 6-8 bar, consigne pressuriseur à 27 bar, ×300, et SUIS LES RAPPELS du guide (blocage IS, isolement des accumulateurs). La chaussette est ton juge.',test:function(){return S.etat==='ANRRA';},b:'🏆 CHAPEAU ! Tu viens de conduire une tranche de 1 300 MW de la pleine puissance jusqu’au refroidissement à l’arrêt, dans les clous du domaine. Continue vers l’API/APR/RCD, remonte, ou casse tout pour voir — le guide reste là.'},
+   {t:'Perte du RRA',c:'En AN/RRA, déclenche la Perte RRA (carte Incidents) : plus rien n’évacue la chaleur, la température remonte toute seule. RÉPARE avant de repasser 180 °C !',test:function(){return S._mW.sawRraF&&!S.rraF&&S.etat==='ANRRA'&&S.Tavg<178;},watch:function(){if(S.rraF)S._mW.sawRraF=true;},b:'Tu as vu la tranche « morte » se réchauffer seule : la chaleur résiduelle n’attend personne, et la pression finit par décoller le long de la courbe de saturation. C’est LE scénario qui justifie les secours du RRA.'},
+   {t:'La boucle complète',c:'Dernier défi : remonte TOUTE la tranche. AN/GV (les GMPP redémarrent), laisse réchauffer (×300), repasse RP, recouple la turbine et retrouve les 100 %.',test:function(){return S.etat==='RP'&&S.Pn>0.9;},b:'🏆 RP retrouvé après un cycle complet descente-remontée : tu as fait, en accéléré, ce qu’une équipe de conduite fait sur plusieurs jours. La tranche est à toi.'},
   ];
   S.mIdx=S.mIdx||0;S._mW=S._mW||{};
   function easyMission(){
@@ -2700,6 +2724,12 @@ body.shake{animation:quake .9s linear;}
      "Le saviez-vous ? Les accumulateurs sont des réservoirs d’eau borée sous pression d’azote : en cas de grosse fuite, ils se vident TOUT SEULS dans le réacteur, sans pompe ni électricité ni ordre.",
      "Le saviez-vous ? Le réacteur répond à la turbine, pas l’inverse : ouvre plus les vannes d’admission et les barres se lèvent automatiquement pour fournir la puissance demandée.",
      "Le saviez-vous ? Les boutons ×60 et ×300 accélèrent le temps de simulation : un refroidissement de 4 heures se regarde en moins d’une minute. La physique reste exacte, seule l’attente disparaît.",
+     "Le saviez-vous ? La France exploite 20 tranches de 1 300 MW comme celle-ci : à elles seules, elles représentent environ 40 % de la puissance nucléaire du pays.",
+     "Le saviez-vous ? Chaque pompe primaire brasse ~23 000 m³/h. Les quatre ensemble font transiter l’équivalent d’une piscine olympique toutes les 100 secondes.",
+     "Le saviez-vous ? L’enceinte du palier 1300 a deux parois : 1,20 m de béton précontraint à l’intérieur, 55 cm de béton armé à l’extérieur — la première tient la pression, la seconde encaisse les agressions.",
+     "Le saviez-vous ? Entre les corps HP et BP de la turbine, les sécheurs-surchauffeurs (GSS) essorent puis réchauffent la vapeur : sans eux, les gouttelettes éroderaient les ailettes BP.",
+     "Le saviez-vous ? L’eau du condenseur ne repart pas froide vers les GV : une chaîne de réchauffeurs (le poste d’eau) la porte à ~220 °C avec de la vapeur soutirée de la turbine — un des secrets du rendement.",
+     "Le saviez-vous ? La bâche alimentaire fait bouillir l’eau pour en chasser l’oxygène dissous : le dégazage protège les tubes des GV de la corrosion. Même l’eau se prépare.",
      "Tout est stable. Explore, ou déclenche un incident (carte Incidents) pour t’entraîner — le guide t’aidera."];
     return TIPS[Math.floor(Date.now()/30000)%TIPS.length];
   }
@@ -3401,6 +3431,14 @@ body.shake{animation:quake .9s linear;}
       msg.textContent="Transitoire de charge — les grappes ajustent la réactivité pour tenir Tmoy sur son programme.";
     }else if(S.etat==='ANGV'&&!S.scram){
       msg.textContent="AN/GV — arrêt à chaud : réacteur sous-critique boré, primaire à 155 bar / ~297 °C, puissance résiduelle évacuée par les GV via le GCT. C'est un domaine d'exploitation, l'état standard reste l'AN/GV.";
+    }else if(S.etat==='ANRRA'){
+      msg.textContent="AN/RRA — refroidissement à l’arrêt : GMPP arrêtées, le RRA assure la circulation et évacue la puissance résiduelle vers le RRI. Réacteur boré grappes insérées, pressuriseur en eau vers 25-31 bar.";
+    }else if(S.etat==='APIF'||S.etat==='APIO'){
+      msg.textContent="API — arrêt pour intervention : primaire froid (moins de 70 °C) et dépressurisé, RRA en service continu. Circuit ouvrable pour la maintenance.";
+    }else if(S.etat==='APR'){
+      msg.textContent="APR — arrêt pour rechargement : cuve ouverte sous eau borée, piscine en communication. Le RRA reste l’unique évacuation de la puissance résiduelle.";
+    }else if(S.etat==='RCD'){
+      msg.textContent="RCD — réacteur complètement déchargé : le combustible est en piscine BK. La tranche n’a plus de source de chaleur nucléaire.";
     }else{
       msg.textContent="Régime établi. Les grappes tiennent Tmoy au programme, la puissance réacteur suit l'appel de vapeur.";
     }
