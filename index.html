@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.5.10-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.0-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -261,7 +261,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.5.10-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.0-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -275,7 +275,7 @@ body.shake{animation:quake .9s linear;}
 
 <div id="easyCard"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
   <span style="font-size:11px;letter-spacing:.12em;font-weight:700;color:#8a6a10">PUPITRE FORMATION</span>
-  <button class="sw" id="bEasyLex" style="margin-left:auto">LEXIQUE</button></div>
+  <button class="sw" id="bMSkip" style="margin-left:auto;font-size:11px">PASSER LA MISSION</button><button class="sw" id="bEasyLex">LEXIQUE</button></div>
   <div id="easyMsg">Bienvenue ! Ici, je t’explique quoi faire, sans jargon. Astuce : les boutons ×60 et ×300 (en haut) accélèrent le temps quand il ne se passe rien.</div>
   <div id="easyLex"></div>
 </div>
@@ -2594,17 +2594,44 @@ body.shake{animation:quake .9s linear;}
     el('bEasy').classList.toggle('on',!!S.easy);
     log(S.easy?'MODE FACILE : guide pas-à-pas activé (pupitre formation en haut de page).':'Mode facile désactivé.','cyan');
   };
+  var MISSIONS=[
+   {t:'Prendre la main',c:'Baisse la charge : mets le curseur « Vannes admission HP » (onglet Turbine) sur 80 %. Regarde les barres de contrôle descendre toutes seules pour suivre.',test:function(){return S.turb<83&&S.turb>74&&Math.abs(S.turbSet-80)<3;},b:'Tu viens de voir le cœur du pilotage : le réacteur SUIT la turbine. Tu as demandé moins de vapeur, la température a monté d’un poil, et la régulation a inséré les barres pour la ramener au programme.'},
+   {t:'Pleine puissance',c:'Remonte les vannes à 100 % : la tranche doit retrouver ses ~1 300 MW.',test:function(){return S.turb>97&&S.Pn>0.955;},b:'1 300 MW retrouvés. Monter est aussi simple que descendre — tant que le xénon ne s’en mêle pas… justement, parlons-en.'},
+   {t:'Réveiller le xénon',c:'Descends la charge à 50 % et LAISSE TOURNER (passe en ×60) : ouvre l’onglet Réactivité et regarde la courbe du xénon monter.',test:function(){return S.turb<56&&S.Xe>1.12;},b:'Tu le vois : le xénon, un poison produit par la fission elle-même, s’accumule après chaque baisse de charge. Il « mange » des neutrons et freine le réacteur.'},
+   {t:'Compenser au bore',c:'Le xénon freine ? Compense à la chimie : clique DILUER (onglet Réactivité) plusieurs fois pour retirer du bore.',test:function(){return S._mW.cb0!==undefined&&S.Cb<S._mW.cb0-5;},watch:function(){if(S._mW.cb0===undefined)S._mW.cb0=S.Cb;},b:'Tu viens de piloter à l’acide borique ! Grappes = réglage rapide, bore = réglage lent : les deux mains du pilotage d’un REP.'},
+   {t:'La revanche du fleuve',c:'Carte Source froide : baisse la température de l’eau (curseur, ou saison hiver). Regarde P ÉLECTRIQUE gagner des mégawatts — sans rien changer au réacteur.',test:function(){return S._mW.ts0!==undefined&&S.Tsrc<S._mW.ts0-3&&S.Pelec>S._mW.pe0+6;},watch:function(){if(S._mW.ts0===undefined){S._mW.ts0=S.Tsrc;S._mW.pe0=S.Pelec;}},b:'La magie du vide condenseur : eau plus froide → meilleure condensation → meilleur vide → détente plus longue → plus de MW avec la MÊME chaleur. (Tout est raconté au lexique, entrée « Vide condenseur ».)'},
+   {t:'Casser (et réparer) le vide',c:'Provoque une Perte CVI (carte Incidents) : le vide se dégrade, les MW fondent. Puis RE-CLIQUE pour réparer AVANT que la turbine ne déclenche !',test:function(){return S._mW.sawCvi&&S.cvi&&S.Pelec>1150&&!S.scram;},watch:function(){if(!S.cvi)S._mW.sawCvi=true;},b:'Sauvée ! Tu as vu l’air « étouffer » les tubes du condenseur, puis le CVI reprendre la main. En salle, cette course contre la montre existe vraiment.'},
+   {t:'Le bouton rouge',c:'Le grand moment : appuie sur ARRÊT D’URGENCE (le bouton rouge). Observe : toutes les barres tombent en 2 secondes, la puissance s’effondre… mais pas à zéro.',test:function(){return S.scram&&S.Pn<0.05;},b:'Réaction stoppée net — mais regarde P THERMIQUE : la chaleur résiduelle continue (des dizaines de MW). C’est pour ELLE que tout le refroidissement de secours existe.'},
+   {t:'Surveiller le repli',c:'Laisse la tranche se stabiliser (×60) : vérifie que l’eau arrive aux GV (carte ASG) et que Tmoy se cale vers ~294 °C — l’arrêt à chaud.',test:function(){return S.scram&&Math.abs(S.Tavg-294)<7&&S.gv>28;},b:'Tranche stable en arrêt à chaud : le GCT évacue la résiduelle, l’ASG nourrit les GV. Une tranche arrêtée, ça se CONDUIT.'},
+   {t:'Changer d’état',c:'Passe officiellement à l’état AN/GV (bandeau des états, en haut de page).',test:function(){return S.etat==='ANGV';},b:'Te voilà en Arrêt Normal sur les GV. Prochaine étape : la vraie descente d’un exploitant.'},
+   {t:'La descente complète',c:'Objectif final : rejoins l’AN/RRA. Consigne GCT vers 6-8 bar, consigne pressuriseur à 27 bar, ×300, et SUIS LES RAPPELS du guide (blocage IS, isolement des accumulateurs). La chaussette est ton juge.',test:function(){return S.etat==='ANRRA';},b:'🏆 CHAPEAU ! Tu viens de conduire une tranche de 1 300 MW de la pleine puissance jusqu’au refroidissement à l’arrêt, dans les clous du domaine. Continue vers l’API/APR/RCD, remonte, ou casse tout pour voir — le guide reste là.'}
+  ];
+  S.mIdx=S.mIdx||0;S._mW=S._mW||{};
+  function easyMission(){
+    if(S.mIdx>=MISSIONS.length)return null;
+    var M=MISSIONS[S.mIdx];
+    if(M.watch)M.watch();
+    if(S._mBravo){
+      if(Date.now()-S._mBravo>9000){S._mBravo=0;S.mIdx++;S._mW={};
+        if(S.mIdx>=MISSIONS.length)return '🎓 Formation terminée ! Le guide, le lexique et les alertes restent à ton service.';
+        var N=MISSIONS[S.mIdx];return 'MISSION '+(S.mIdx+1)+'/'+MISSIONS.length+' — '+N.t+' : '+N.c;}
+      return '✅ '+M.b;}
+    if(M.test()){S._mBravo=Date.now();return '✅ '+M.b;}
+    return 'MISSION '+(S.mIdx+1)+'/'+MISSIONS.length+' — '+M.t+' : '+M.c;
+  }
+  el('bMSkip').onclick=function(){if(S.easy&&S.mIdx<MISSIONS.length){S._mBravo=0;S._mW={};S.mIdx++;log('Formation : mission passée.','dim');}};
   function easyMsg(){
     var e=S.etat;
     if(S.dmg>0.05)return "🔴 Le cœur est endommagé : le combustible a trop chauffé. En vrai, ce serait un accident grave. Tu peux RÉINITIALISER la simulation, ou observer la suite.";
     if(S.fus)return "🔴 Fusion du cœur. Réinitialise la simulation pour recommencer.";
     if(S._ptBad)return "⚠ Le point pression/température est SORTI de la zone autorisée (onglet Chaussette). En général : refroidir moins vite, ou ajuster la consigne du pressuriseur.";
     if(S.sigIS)return "🚨 FUITE DÉTECTÉE : l’injection de secours envoie automatiquement de l’eau borée dans le réacteur. Laisse les automatismes travailler et surveille l’inventaire en eau.";
-    if(S.scram&&S.Pn<0.02&&S.Tavg>250)return "🟠 ARRÊT D’URGENCE : toutes les barres sont tombées, la réaction est stoppée. Le réacteur chauffe encore (chaleur résiduelle) : vérifie que l’eau arrive aux générateurs de vapeur (pompes de secours ASG) — la vapeur s’évacue par le GCT.";
     if(S._blkDue)return "👉 Changement d’état de tranche : on baisse la pression volontairement, sans fuite. BLOQUE l’injection de secours (bouton BLOQUER IS, carte Signaux) — sinon l’automate croira à une brèche et re-pressurisera le circuit.";
     if(S._accDue)return "👉 ISOLE les accumulateurs (carte RIS) : ces réservoirs sous pression se videraient tout seuls dans le circuit en dessous de 42 bar.";
     if(S._reaDue)return "👉 La pression est revenue : RÉALIGNE les accumulateurs (carte RIS) pour qu’ils protègent à nouveau le réacteur.";
     if(S.gv<30&&e!=='ANRRA'&&S.Tavg>200)return "⚠ Le niveau d’eau baisse dans les générateurs de vapeur. Vérifie l’alimentation : ARE en marche, ou pompes de secours ASG.";
+    var _mm=easyMission();if(_mm)return _mm;
+    if(S.scram&&S.Pn<0.02&&S.Tavg>250)return "🟠 ARRÊT D’URGENCE : toutes les barres sont tombées, la réaction est stoppée. Le réacteur chauffe encore (chaleur résiduelle) : vérifie que l’eau arrive aux générateurs de vapeur (pompes de secours ASG) — la vapeur s’évacue par le GCT.";
     if(e==='RP'&&S.Pn>0.97&&Math.abs(S.turbSet-100)<2)return "✅ Pleine puissance : la centrale produit ~1 300 MW. Pour t’entraîner : baisse doucement le curseur « Vannes admission HP » (les robinets de vapeur de la turbine) et regarde les barres de contrôle suivre toutes seules.";
     if(e==='RP'&&S.turbSet<S.turb-2)return "La turbine réduit sa charge : les barres s’enfoncent automatiquement pour suivre. Rien à faire, observe.";
     if(e==='RP'&&!S.scram&&S.Xe>1.35&&S.Pn<0.5)return "Le xénon (un poison naturel) freine le réacteur. Pour compenser : bouton DILUER (on retire du bore, le frein chimique).";

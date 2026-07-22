@@ -100,6 +100,21 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## MOTEUR DE MISSIONS 2.6.0 (mode Facile actif)
+Le guide devient PROACTIF : tableau MISSIONS (10 défis progressifs :
+charge 80 %, retour 100 %, réveil xénon, dilution, source froide/vide,
+perte CVI + réparation chronométrée, AU volontaire, repli ~294 °C,
+passage AN/GV, descente complète -> AN/RRA). Chaque mission = {t,c,test,
+watch?,b} ; watch() pose des flags intermédiaires dans S._mW (reset à
+chaque mission) et mémorise des snapshots (cb0, ts0/pe0) pour les tests
+relatifs ; réussite -> bravo 9 s réelles (Date.now) puis avance auto ;
+bouton PASSER (bMSkip). HIÉRARCHIE D AFFICHAGE (l ordre est fonctionnel) :
+alertes (dmg/fus/ptBad/sigIS) > jalons de conduite (_blkDue/_accDue/
+_reaDue/gv bas) > MISSIONS > descriptifs d état (dont scram-chaud,
+DÉPLACÉ après les missions — sinon il masquait les missions 7-9 post-AU,
+bug attrapé par la panoplie) > astuces. Piège de test : forcer mIdx sans
+purger S._mBravo fait consommer le bravo précédent (avance d une mission).
+
 ## PIÈGE MAJEUR 2.5.9-2.5.10 : LE TOGGLE FANTÔME (bouton qui clignote)
 Symptôme : le bouton ISOLER (bAccIso) clignotait en permanence en RP.
 Deux diagnostics FAUX avant le bon : (1) « repaint du textContent chaque
