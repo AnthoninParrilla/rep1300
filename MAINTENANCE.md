@@ -100,6 +100,22 @@ de T ARE effondrait le poste d'eau au trip et fermait le GCT par choc froid).
 Les bancs doivent échantillonner FIN les transitoires de bascule (ARE→ASG,
 TPA→ASG...) : un pas de 10 min passe entre les gouttes.
 
+## MISSION 6 + PIÈGE D ATELIER (2.6.2-2.6.3)
+Mission « Casser et réparer le vide » invalidable : le test exigeait
+Pelec>1150 MW ABSOLU alors que le parcours (missions 3-5) laisse le
+joueur à 50 % (~640 MW). Corrigé : test RELATIF (retour à ≥92 % de la
+puissance d avant-panne, snapshot pe0 par watch) + DOUBLE ISSUE : le trip
+turbine subi (fenêtre mesurée : 120 s sim avant déclenchement sur vide,
+puis AAR par P7) VALIDE AUSSI la mission avec un bravo dédié « chaîne de
+protection » (b peut être une fonction, le moteur gère les deux formes).
+Transitoire vérifié sain : Ppzr min 155,0 bar, sigIS jamais.
+PIÈGE D ATELIER : un reset de conteneur mi-chantier a produit un fichier
+HYBRIDE (patch 2.6.2 perdu, consigne 2.6.3 présente, version restée
+2.6.1, sw en avance v263) — passé inaperçu car le bump de version était
+SILENCIEUX (replace avec count=0). RÈGLES : (1) le bump de version est
+TOUJOURS asserté (count attendu ==2) ; (2) avant tout patch, vérifier la
+version affichée DU FICHIER DE TRAVAIL, pas celle qu on croit.
+
 ## MOTEUR DE MISSIONS 2.6.0 (mode Facile actif)
 Le guide devient PROACTIF : tableau MISSIONS (10 défis progressifs :
 charge 80 %, retour 100 %, réveil xénon, dilution, source froide/vide,

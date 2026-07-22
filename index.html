@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.1-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.3-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -267,7 +267,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.1-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.3-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -2615,7 +2615,7 @@ body.shake{animation:quake .9s linear;}
    {t:'Réveiller le xénon',c:'Descends la charge à 50 % et LAISSE TOURNER (passe en ×60) : ouvre l’onglet Réactivité et regarde la courbe du xénon monter.',test:function(){return S.turb<56&&S.Xe>1.12;},b:'Tu le vois : le xénon, un poison produit par la fission elle-même, s’accumule après chaque baisse de charge. Il « mange » des neutrons et freine le réacteur.'},
    {t:'Compenser au bore',c:'Le xénon freine ? Compense à la chimie : clique DILUER (onglet Réactivité) plusieurs fois pour retirer du bore.',test:function(){return S._mW.cb0!==undefined&&S.Cb<S._mW.cb0-5;},watch:function(){if(S._mW.cb0===undefined)S._mW.cb0=S.Cb;},b:'Tu viens de piloter à l’acide borique ! Grappes = réglage rapide, bore = réglage lent : les deux mains du pilotage d’un REP.'},
    {t:'La revanche du fleuve',c:'Carte Source froide : baisse la température de l’eau (curseur, ou saison hiver). Regarde P ÉLECTRIQUE gagner des mégawatts — sans rien changer au réacteur.',test:function(){return S._mW.ts0!==undefined&&S.Tsrc<S._mW.ts0-3&&S.Pelec>S._mW.pe0+6;},watch:function(){if(S._mW.ts0===undefined){S._mW.ts0=S.Tsrc;S._mW.pe0=S.Pelec;}},b:'La magie du vide condenseur : eau plus froide → meilleure condensation → meilleur vide → détente plus longue → plus de MW avec la MÊME chaleur. (Tout est raconté au lexique, entrée « Vide condenseur ».)'},
-   {t:'Casser (et réparer) le vide',c:'Provoque une Perte CVI (carte Incidents) : le vide se dégrade, les MW fondent. Puis RE-CLIQUE pour réparer AVANT que la turbine ne déclenche !',test:function(){return S._mW.sawCvi&&S.cvi&&S.Pelec>1150&&!S.scram;},watch:function(){if(!S.cvi)S._mW.sawCvi=true;},b:'Sauvée ! Tu as vu l’air « étouffer » les tubes du condenseur, puis le CVI reprendre la main. En salle, cette course contre la montre existe vraiment.'},
+   {t:'Casser (et réparer) le vide',c:'Repasse en ×1 (le défi est chronométré !) puis provoque une Perte CVI (carte Incidents) : le vide se dégrade, les MW fondent. RE-CLIQUE pour réparer avant que la turbine ne déclenche (~2 min). Trop tard, turbine déclenchée ? Pas grave : répare le CVI, remonte les vannes admission HP, retrouve ta puissance — mission validée aussi.',test:function(){return S._mW.sawCvi&&((S.cvi&&!S.scram&&S.Pelec>Math.max(150,(S._mW.pe0||0)*0.92))||S.scram);},watch:function(){if(S._mW.pe0===undefined&&S.cvi&&!S.scram)S._mW.pe0=S.Pelec;if(!S.cvi)S._mW.sawCvi=true;},b:function(){return S.scram?'La turbine a déclenché… et l’AAR a suivi automatiquement : tu viens de voir une CHAÎNE DE PROTECTION complète — vide dégradé → déclenchement turbine → arrêt du réacteur. Leçon retenue ! La formation continue en post-AU.':'Sauvée ! Tu as vu l’air « étouffer » les tubes du condenseur, puis le CVI reprendre la main. En salle, cette course contre la montre existe vraiment.';}},
    {t:'Le bouton rouge',c:'Le grand moment : appuie sur ARRÊT D’URGENCE (le bouton rouge). Observe : toutes les barres tombent en 2 secondes, la puissance s’effondre… mais pas à zéro.',test:function(){return S.scram&&S.Pn<0.05;},b:'Réaction stoppée net — mais regarde P THERMIQUE : la chaleur résiduelle continue (des dizaines de MW). C’est pour ELLE que tout le refroidissement de secours existe.'},
    {t:'Surveiller le repli',c:'Laisse la tranche se stabiliser (×60) : vérifie que l’eau arrive aux GV (carte ASG) et que Tmoy se cale vers ~294 °C — l’arrêt à chaud.',test:function(){return S.scram&&Math.abs(S.Tavg-294)<7&&S.gv>28;},b:'Tranche stable en arrêt à chaud : le GCT évacue la résiduelle, l’ASG nourrit les GV. Une tranche arrêtée, ça se CONDUIT.'},
    {t:'Changer d’état',c:'Passe officiellement à l’état AN/GV (bandeau des états, en haut de page).',test:function(){return S.etat==='ANGV';},b:'Te voilà en Arrêt Normal sur les GV. Prochaine étape : la vraie descente d’un exploitant.'},
@@ -2630,8 +2630,8 @@ body.shake{animation:quake .9s linear;}
       if(Date.now()-S._mBravo>9000){S._mBravo=0;S.mIdx++;S._mW={};
         if(S.mIdx>=MISSIONS.length)return '🎓 Formation terminée ! Le guide, le lexique et les alertes restent à ton service.';
         var N=MISSIONS[S.mIdx];return 'MISSION '+(S.mIdx+1)+'/'+MISSIONS.length+' — '+N.t+' : '+N.c;}
-      return '✅ '+M.b;}
-    if(M.test()){S._mBravo=Date.now();return '✅ '+M.b;}
+      return '✅ '+((typeof M.b==='function')?M.b():M.b);}
+    if(M.test()){S._mBravo=Date.now();return '✅ '+((typeof M.b==='function')?M.b():M.b);}
     return 'MISSION '+(S.mIdx+1)+'/'+MISSIONS.length+' — '+M.t+' : '+M.c;
   }
   el('bMSkip').onclick=function(){if(S.easy&&S.mIdx<MISSIONS.length){S._mBravo=0;S._mW={};S.mIdx++;log('Formation : mission passée.','dim');}};
