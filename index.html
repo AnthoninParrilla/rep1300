@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.3-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.4-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -267,7 +267,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.3-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.4-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -406,9 +406,9 @@ body.shake{animation:quake .9s linear;}
         <text class="lblS" x="358" y="546" text-anchor="middle" font-size="8" id="ptrTxt">100 %</text>
 
         <!-- GMPP sur branche froide -->
-        <circle cx="245" cy="424" r="16" fill="#1a232b" stroke="#3b4a54" stroke-width="2"/>
+        <circle cx="245" cy="424" r="16" fill="#16241a" stroke="#3a5a42" stroke-width="2"/>
         <g id="pump">
-          <path d="M245 412 L251 424 L245 436 L239 424 Z" fill="#57b8d8"/>
+          <path id="iGmppL" d="M245 412 L251 424 L245 436 L239 424 Z" fill="#3ae065"/>
         </g>
         <text class="lblS" x="226" y="452" text-anchor="end">GMPP ×4</text>
 
@@ -534,7 +534,7 @@ body.shake{animation:quake .9s linear;}
         <!-- alimentation vapeur de la TPA (soutirage barillet) -->
         <path class="steamsmall" d="M490 88 V388 H497" id="tpaSteam" opacity="0.7"/>
         <circle cx="500" cy="400" r="13" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cTpa"/>
-        <path d="M500 390 L506 400 L500 410 L494 400 Z" fill="#57b8d8" id="iTpa"/>
+        <path d="M500 390 L506 400 L500 410 L494 400 Z" fill="#3ae065" id="iTpa"/>
         <text class="lblS" x="500" y="426" text-anchor="middle">TPA ×2</text>
         <text class="lblS" x="500" y="438" text-anchor="middle" id="tpaTxt">100 %</text>
         <path class="waterline" d="M487 400 H430 V185 H348"/>
@@ -557,12 +557,12 @@ body.shake{animation:quake .9s linear;}
         <path class="flowdash fdash" id="fAsg" d="M528 470 H448 V150 H348" opacity="0"/>
         <!-- MPS (motopompe) -->
         <circle cx="492" cy="470" r="12" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cMps"/>
-        <path d="M492 461 L497 470 L492 479 L487 470 Z" fill="#57b8d8" id="iMps" opacity="0.25"/>
+        <path d="M492 461 L497 470 L492 479 L487 470 Z" fill="#3ae065" id="iMps" opacity="0.25"/>
         <text class="lblS" x="492" y="452" text-anchor="middle">MPS</text>
         <!-- TPS (turbopompe, vapeur GV) -->
         <path class="steamsmall" d="M470 88 V392 A8 8 0 0 1 470 408 V440 H540 V458" id="tpsSteam" opacity="0.25"/>
         <circle cx="540" cy="470" r="12" fill="#1a232b" stroke="#3b4a54" stroke-width="2" id="cTps"/>
-        <path d="M540 461 L545 470 L540 479 L535 470 Z" fill="#57b8d8" id="iTps" opacity="0.25"/>
+        <path d="M540 461 L545 470 L540 479 L535 470 Z" fill="#3ae065" id="iTps" opacity="0.25"/>
         <text class="lblS" x="563" y="474">TPS</text>
         <text class="lblS" x="405" y="144" text-anchor="middle">ASG</text>
         <text class="lblS" x="405" y="166" text-anchor="middle" id="asgTxt">0 %</text>
@@ -1185,7 +1185,7 @@ body.shake{animation:quake .9s linear;}
   var PRESET={
     RP:   {Pn:1.0,   pzrSet:155,gv:50,turb:100,rod:95,gmpp:true, rra:false},
     ANGV: {Pn:0.0002,pzrSet:155,gv:50,turb:0,  rod:0, Cb:200, gmpp:true, rra:false, asgOn:true},
-    ANRRA:{Pn:0.0002, pzrSet:25, turb:0,  rod:0, Cb:500, gmpp:true, rra:true}, // ni Ppzr ni Tavg téléportées : trajectoires physiques bornées
+    ANRRA:{Pn:0.0002, pzrSet:25, turb:0,  rod:0, Cb:500, gmpp:false,rra:true}, // GMPP à l'arrêt : le RRA assure la circulation ; trajectoires physiques bornées
     APIF: {Pn:0.0002, pzrSet:3,  turb:0,  rod:0, Cb:800, gmpp:false,rra:true},
     APIO: {Pn:0.0002, pzrSet:1,  turb:0,  rod:0, Cb:1000,gmpp:false,rra:true},
     APR:  {Pn:0.0002, pzrSet:1,  turb:0,  rod:0, Cb:1300,gmpp:false,rra:true},
@@ -1417,6 +1417,7 @@ body.shake{animation:quake .9s linear;}
     var pOld=S.Ppzr;
     var p=PRESET[e];
     for(var k in p){if(k!=='Cb')S[k]=p[k];}
+    if(p.gmpp!==undefined)S.gmppN=p.gmpp?4:0; // le compteur de pompes suit la préconfig d'état
     if(e==='RCD'){S.Pr1=0;S.Pr2=0;S.Pr3=0;S.Pres=0;}
     if(e==='RP'){
       // calage critique au bore selon l'empoisonnement xénon courant
@@ -3003,6 +3004,7 @@ body.shake{animation:quake .9s linear;}
     el('tpaTxt').textContent=Math.round(S.tpaN)+' %';
     el('tpaSteam').setAttribute('opacity',S.tpaRun?0.7:0.2);
     el('iTpa').setAttribute('opacity',S.tpaRun?1:0.25);
+    var _gl=el('iGmppL');if(_gl){_gl.setAttribute('opacity',S.gmppN>0?1:0.25);_gl.setAttribute('fill',S.gmppN>=4?'#3ae065':(S.gmppN>0?'#f0a91c':'#3ae065'));}
     el('cTpa').setAttribute('stroke',S.tpaRun?'#4fc57a':'#3b4a54');
     el('tpaVal').textContent=S.tpaRun?('en service · '+Math.round(S.tpaN)+' %'):'à l\u2019arrêt';
 
