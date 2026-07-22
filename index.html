@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.10-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.11-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -267,7 +267,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.10-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.11-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -764,9 +764,9 @@ body.shake{animation:quake .9s linear;}
         <button class="logclear" id="recClear" style="margin-left:0">effacer</button>
         <span class="val" id="recCount" style="font-size:11px">0 lignes</span></h2>
       <div id="recSel" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:3px 8px;margin:4px 0 8px;padding:6px 8px;background:#0a120c;border:1px solid #2c4a32;border-radius:6px"></div>
-      <div id="recWrap" style="overflow:auto;height:280px;resize:vertical;border:1px solid #22303a;border-radius:6px;background:#0a1016">
-        <pre id="recHead" style="position:sticky;top:0;margin:0;padding:6px 8px 2px;background:#0d151c;color:#8fa3ad;font-size:11px;line-height:1.35;border-bottom:1px solid #22303a"></pre>
-        <pre id="recTxt" style="margin:0;padding:2px 8px 6px;color:#c7d3d9;font-size:11px;line-height:1.35"></pre>
+      <div id="recWrap" style="overflow:auto;height:280px;resize:vertical;border:1px solid #2c4a32;border-radius:6px;background:#0a120c;-webkit-overflow-scrolling:touch">
+        <pre id="recHead" style="position:sticky;top:0;margin:0;padding:6px 8px 2px;background:#0d1a10;color:#3ae065;font-weight:700;font-size:11px;line-height:1.35;border-bottom:1px solid #2c4a32"></pre>
+        <pre id="recTxt" style="margin:0;padding:2px 8px 6px;color:#8fe89a;font-size:11px;line-height:1.35"></pre>
       </div>
       <div class="row"><span class="note">Échantillonnage à pas fixe en temps tranche — une ligne complète par pas, toutes voies. Les événements (AU, alarmes) s'insèrent dans le flux. Poignée en bas du cadre pour redimensionner.</span></div>
     </div>
@@ -1295,7 +1295,12 @@ body.shake{animation:quake .9s linear;}
     var wrap=el('recWrap');
     if(box.scrollWidth>0)head.style.minWidth=box.scrollWidth+'px';
     var atBottom=(wrap.scrollHeight-wrap.scrollTop-(wrap.clientHeight||0))<48;
-    box.textContent=lines.join('\n');
+    var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');};
+    box.innerHTML=lines.map(function(L){
+      if(L.slice(0,3)==='***')return '<span style="color:#f0a91c">'+esc(L)+'</span>';
+      if(L.charAt(0)==='\u2026')return '<span style="color:#5a8a62">'+esc(L)+'</span>';
+      return esc(L);
+    }).join('\n');
     if(atBottom||force)wrap.scrollTop=wrap.scrollHeight;
   }
   el('recRun').onclick=function(){
