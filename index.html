@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.0-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.6.1-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -115,8 +115,14 @@ if('serviceWorker' in navigator){
   .row label{font-size:13px;min-width:118px;color:var(--ink)}
   .val{font-family:var(--mono);font-size:13px;color:#3ae065;background:#101208;border:1px solid #4a4432;border-radius:3px;padding:1px 7px;box-shadow:inset 0 0 6px #000c;margin-left:auto;white-space:nowrap}
   .note{font-size:11px;color:var(--dim)}
-  input[type=range]{flex:1;min-width:110px;accent-color:var(--amber);height:22px}
-  input[type=range]:disabled{accent-color:#3a444c;opacity:.5}
+  input[type=range]{flex:1;min-width:110px;height:26px;-webkit-appearance:none;appearance:none;background:transparent}
+  input[type=range]::-webkit-slider-runnable-track{height:8px;border-radius:4px;background:#8a7a5c;box-shadow:inset 0 1px 3px #0007}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#efe4c8,#a8987a);border:2px solid #5c4c36;box-shadow:0 1px 3px #0006;cursor:pointer;margin-top:-9px}
+  input[type=range]::-moz-range-track{height:8px;border-radius:4px;background:#8a7a5c}
+  input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#efe4c8,#a8987a);border:2px solid #5c4c36}
+  input[type=range]:disabled{opacity:.45}
+  #slideBub{position:fixed;display:none;z-index:99;background:#101208;color:#3ae065;border:2px solid #6e5c44;border-radius:6px;padding:5px 12px;font-family:var(--mono);font-size:17px;font-weight:700;box-shadow:0 3px 10px #0008, inset 0 0 6px #000c;pointer-events:none;transform:translate(-50%,-115%);white-space:nowrap}
+  #slideBub.on{display:block}
 
   button.sw{background:linear-gradient(180deg,#c2b494,#a89a78);border:1px solid #6e5c44;color:#2b2318;
     font-family:var(--cond);font-size:13px;padding:6px 12px;border-radius:4px;cursor:pointer;letter-spacing:.04em;
@@ -261,7 +267,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.0-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.6.1-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -2210,6 +2216,15 @@ body.shake{animation:quake .9s linear;}
     // ceinture iOS : bloquer le scroll de page pendant les gestes sur la synoptique zoomée
     w.addEventListener('touchmove',function(e){if(z.s>1)e.preventDefault();},{passive:false});
   }
+  // bulle de valeur des curseurs (le pouce ne masque plus le réglage)
+  var _sb=document.createElement('div');_sb.id='slideBub';document.body.appendChild(_sb);
+  var SFMT={rod:[1,' %'],turb:[0,' %'],gctSp:[1,' bar'],gctMan:[0,' %'],gctaMan:[0,' %'],tsrc:[1,' \u00b0C'],are:[0,' %'],gaineN:[0,' crayons']};
+  function sbShow(sl){var f=SFMT[sl.id]||[0,''];var r=sl.getBoundingClientRect?sl.getBoundingClientRect():{left:0,top:0,width:100};var mn=+sl.min||0,mx=+sl.max||100,v=+sl.value||0;var x=r.left+(mx>mn?(v-mn)/(mx-mn):0.5)*r.width;_sb.textContent=v.toFixed(f[0])+f[1];_sb.style.left=x+'px';_sb.style.top=(r.top-8)+'px';_sb.classList.add('on');}
+  function sbHide(){_sb.classList.remove('on');}
+  document.addEventListener('input',function(e){if(e.target&&e.target.type==='range')sbShow(e.target);},true);
+  document.addEventListener('pointerdown',function(e){if(e.target&&e.target.type==='range')sbShow(e.target);},true);
+  document.addEventListener('pointerup',sbHide,true);
+  document.addEventListener('pointercancel',sbHide,true);
   mkPinch('synWrap','synop','synZr');
   mkPinch('sockWrap','sockSvg','sockZr');
   // verrou anti-décalage horizontal (iOS) : la page reste calée à gauche
