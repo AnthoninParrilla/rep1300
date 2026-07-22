@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<title>Synoptique REP 1300 MWe — Palier P4 · version 2.7.2-rc</title>
+<title>Synoptique REP 1300 MWe — Palier P4 · version 2.7.4-rc</title>
 <!-- mode application plein écran quand ajouté à l'écran d'accueil iOS/Android -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -101,14 +101,14 @@ if('serviceWorker' in navigator){
   #gPanache .puff:nth-child(11){animation-delay:-7.83s}
   #gPanache .puff:nth-child(12){animation-delay:-8.62s}
   #synop,#sockSvg{transform-origin:0 0;display:block;touch-action:pan-y}
-  #synop{overflow:visible}
-  #synWrap,.mimic{overflow:visible !important}
+  #synWrap{overflow:hidden;position:relative;border-radius:5px}
+  #panOver{pointer-events:none;overflow:visible;transition:opacity .35s}
   #synZr,#sockZr{display:none;position:absolute;top:6px;right:6px;z-index:5;background:#1a2a1cee;border:1px solid #3a6a42;color:#8fe89a;border-radius:7px;padding:6px 10px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
   #mnav{position:fixed;bottom:0;left:0;right:0;display:none;gap:8px;padding:9px 10px calc(9px + env(safe-area-inset-bottom));background:#c2b494f2;border-top:2px solid #6e5c44;box-shadow:0 -5px 16px #0007;z-index:60;backdrop-filter:blur(8px)}
   #mnav button{flex:1;background:linear-gradient(180deg,#ddd2b8,#c2b494);border:1px solid #6e5c44;color:#2b2318;border-radius:8px;padding:12px 4px;font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.03em;cursor:pointer}
   @media(max-width:1099px){#mnav{display:flex}body{padding-bottom:70px}}
   .al{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .mimic{border:3px solid #4a463c;background:var(--scr);border-radius:8px;padding:8px;box-shadow:inset 0 0 20px #000e, 0 2px 5px #0005}
+  .mimic{position:relative;border:3px solid #4a463c;background:var(--scr);border-radius:8px;padding:8px;box-shadow:inset 0 0 20px #000e, 0 2px 5px #0005}
   .mimic svg{width:100%;height:auto;display:block}
   .side{display:grid;gap:10px;align-content:start}
   .main{display:grid;gap:10px;align-items:start}
@@ -279,7 +279,7 @@ body.shake{animation:quake .9s linear;}
   <div>
     <h1>Tranche REP 1300 MWe</h1>
     <div class="sub">Palier P4 · Synoptique primaire / secondaire
-      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.7.2-rc · by Claude &amp; AnthoninP</span></div>
+      <span style="float:right;color:var(--dim);font-size:11px;letter-spacing:0.5px">version 2.7.4-rc · by Claude &amp; AnthoninP</span></div>
   </div>
   <div class="spacer"></div>
   <div class="clock" id="etatChip" style="color:var(--green)">RP</div>
@@ -651,22 +651,23 @@ body.shake{animation:quake .9s linear;}
         <rect x="40" y="490" width="214" height="52" rx="6" fill="#000" stroke="#202e24" stroke-width="1.5"/>
         <text class="digits" id="digMain" x="147" y="526" text-anchor="middle" font-size="30">3800</text>
         <text class="lblS" x="147" y="538" text-anchor="middle" id="lblMain">PUISSANCE RÉACTEUR · MWth</text>
-                <g id="gPanache" opacity="0.5" filter="url(#fCloud)">
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
-          </g>
+                
+            
       </svg>
       </div>
+      <svg id="panOver" viewBox="0 0 1000 560" style="position:absolute;left:8px;top:8px;width:calc(100% - 16px);height:auto"><g id="gPanache" opacity="0.5" filter="url(#fCloud)">
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g><g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+            <g class="puff"><circle cx="-9" cy="2" r="14" fill="#cfeacf" opacity="0.8"/><circle cx="8" cy="-4" r="12.5" fill="#cfeacf" opacity="0.72"/><circle cx="0" cy="-11" r="11" fill="#cfeacf" opacity="0.66"/><circle cx="-4" cy="7" r="10" fill="#cfeacf" opacity="0.6"/><circle cx="11" cy="4" r="9.5" fill="#cfeacf" opacity="0.56"/><circle cx="-14" cy="-3" r="9" fill="#cfeacf" opacity="0.52"/><circle cx="4" cy="10" r="8.5" fill="#cfeacf" opacity="0.5"/></g>
+          </g></svg>
     </div>
 
     <div class="msg" id="msg">Régime établi.</div>
@@ -2205,6 +2206,7 @@ body.shake{animation:quake .9s linear;}
       z.y=Math.min(0,Math.max(r.height*(1-z.s),z.y));
       if(z.s<=1.02){z.s=1;z.x=0;z.y=0;}
       sv.style.transform='translate('+z.x+'px,'+z.y+'px) scale('+z.s+')';
+      if(sid==='synop'){var _po=document.getElementById('panOver');if(_po)_po.style.opacity=(z.s>1.02)?0:1;}
       var ta=(z.s>1)?'none':'pan-y';
       w.style.touchAction=ta;sv.style.touchAction=ta; // touch-action se lit sur la CIBLE (le svg)
 
